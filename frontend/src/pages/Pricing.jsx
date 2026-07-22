@@ -31,11 +31,11 @@ const plans = [
     description: "For professionals who want custom domains, analytics, and premium themes.",
     features: [
       "Everything in Free",
-      "Unlimited Portfolio Sections",
-      "Custom Domain Support (yourname.com)",
-      "High-Res Video Uploads",
-      "SEO Meta Optimization",
-      "Priority Customer Support"
+      "Interactive Embeds (Figma, YouTube)",
+      "Advanced Contact Forms",
+      "Premium Hover Animations",
+      "Custom Domain Support",
+      "SEO Meta Optimization"
     ],
     cta: "Buy Pro Plan",
     popular: true
@@ -48,10 +48,11 @@ const plans = [
     description: "Designed for small agencies, design teams, and multiple portfolio sites.",
     features: [
       "Everything in Pro",
+      "Cinematic Video Backgrounds",
+      "Advanced Data Metrics Component",
+      "Interactive 3D Embeds (Spline)",
       "Up to 5 Team Portfolios",
-      "Custom CSS Injection",
-      "White-Label Branding",
-      "Dedicated Account Manager"
+      "White-Label Branding"
     ],
     cta: "Buy Studio Plan",
     popular: false
