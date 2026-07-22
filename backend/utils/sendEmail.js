@@ -1,30 +1,34 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
 const sendEmail = async (options) => {
-  // Create reusable transporter
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.mailtrap.io',
-    port: process.env.SMTP_PORT || 2525,
-    auth: {
-      user: process.env.SMTP_EMAIL || '',
-      pass: process.env.SMTP_PASSWORD || ''
-    }
-  });
+  if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  } else {
+    console.log('[Email Service Mock Output] SENDGRID_API_KEY not set.');
+    console.log(`To: ${options.email} | Subject: ${options.subject}`);
+    console.log(`[Email Service Message]: ${options.message}`);
+    return;
+  }
 
-  const message = {
-    from: `${process.env.FROM_NAME || 'Portfolio Platform'} <${process.env.FROM_EMAIL || 'noreply@portfolioplatform.com'}>`,
+  const msg = {
     to: options.email,
+    from: process.env.FROM_EMAIL || 'noreply@portfolioplatform.com',
     subject: options.subject,
     text: options.message,
-    html: options.html || `<p>${options.message}</p>`
+    html: options.html || `<p>${options.message.replace(/\n/g, '<br>')}</p>`,
   };
 
-  if (process.env.SMTP_HOST && process.env.SMTP_EMAIL) {
-    const info = await transporter.sendMail(message);
-    console.log('Message sent: %s', info.messageId);
-  } else {
-    console.log(`[Email Service Mock Output] To: ${options.email} | Subject: ${options.subject}`);
-    console.log(`[Email Service Message]: ${options.message}`);
+  try {
+    const response = await sgMail.send(msg);
+    console.log('SendGrid Email sent successfully:', response[0].statusCode);
+  } catch (error) {
+    console.error('SendGrid Error sending email:');
+    if (error.response) {
+      console.error(error.response.body);
+    } else {
+      console.error(error);
+    }
+    throw error;
   }
 };
 
