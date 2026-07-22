@@ -72,7 +72,8 @@ router.post('/register', async (req, res) => {
     await user.save();
 
     // Send verification email
-    const verifyUrl = `${req.protocol}://${req.get('host').includes('localhost') ? 'localhost:5173' : req.get('host')}/verify-email?token=${verificationToken}`;
+    const clientUrl = process.env.CLIENT_URL || (req.get('host').includes('localhost') ? 'http://localhost:5173' : `${req.protocol}://${req.get('host')}`);
+    const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
     const message = `You are receiving this email because you (or someone else) registered a new account on PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
 
     try {
@@ -259,7 +260,8 @@ router.post(
       await user.save();
 
       // Send verification email
-      const verifyUrl = `${req.protocol}://${req.get('host').includes('localhost') ? 'localhost:5173' : req.get('host')}/verify-email?token=${verificationToken}`;
+      const clientUrl = process.env.CLIENT_URL || (req.get('host').includes('localhost') ? 'http://localhost:5173' : `${req.protocol}://${req.get('host')}`);
+      const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
       const message = `You requested a new verification link for PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
 
       try {

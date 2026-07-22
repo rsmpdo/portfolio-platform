@@ -79,6 +79,7 @@ export default function App() {
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route
           path="/editor"
