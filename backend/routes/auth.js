@@ -7,11 +7,13 @@ const User = require('../models/User');
 const Layout = require('../models/Layout');
 const sendEmail = require('../utils/sendEmail');
 
+const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
+
 // Helper to generate JWT token
 const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign(
     { id: user._id, role: user.role, username: user.username },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || 'secret_key_123',
     { expiresIn: process.env.JWT_EXPIRE || '30d' }
   );
 
@@ -23,34 +25,46 @@ const sendTokenResponse = (user, statusCode, res) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      plan: user.plan || 'free',
       isVerified: user.isVerified
     }
   });
 };
 
 // @route   POST /api/auth/register
-// @desc    Register new user
+// @desc    Register new user (Supports optional Admin Secret Code)
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password, adminSecretCode } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide username, email and password' });
     }
 
     // Check if user exists
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    const existingUser = await User.findOne({ $or: [{ email: email.toLowerCase() }, { username }] });
     if (existingUser) {
       return res.status(400).json({ success: false, message: 'Username or email already exists' });
+    }
+
+    // Verify Admin Secret Code if provided
+    let assignedRole = 'standard';
+    if (adminSecretCode) {
+      if (adminSecretCode.trim() === ADMIN_SECRET) {
+        assignedRole = 'admin';
+      } else {
+        return res.status(400).json({ success: false, message: 'Invalid Administrator Secret Code' });
+      }
     }
 
     // Create user instance
     const user = new User({
       username,
-      email,
+      email: email.toLowerCase(),
       password,
-      role: role === 'admin' ? 'admin' : 'standard'
+      role: assignedRole,
+      plan: 'free'
     });
 
     // Generate email verification token
@@ -124,20 +138,6 @@ router.post('/register', async (req, res) => {
       ]
     });
 
-    // Build verification URL
-    const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
-    const message = `Welcome to Portfolio Platform! Please verify your email by clicking the link: \n\n ${verifyUrl}`;
-
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: 'Portfolio Platform - Verify Email',
-        message
-      });
-    } catch (err) {
-      console.error('Email send failed:', err);
-    }
-
     sendTokenResponse(user, 201, res);
   } catch (error) {
     console.error('Register error:', error);
@@ -150,7 +150,6 @@ router.post('/register', async (req, res) => {
 // @access  Public
 router.get('/verify-email/:verificationToken', async (req, res) => {
   try {
-    // Hash token from param to compare with DB
     const verificationToken = crypto
       .createHash('sha256')
       .update(req.params.verificationToken)
@@ -188,7 +187,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Check user
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { registerUser, clearError } from '../store/authSlice';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { UserPlus, Lock, Mail, User, AlertCircle, Loader2, ArrowRight, CheckCircle } from 'lucide-react';
+import { UserPlus, Lock, Mail, User, AlertCircle, Loader2, ArrowRight, CheckCircle, ShieldAlert, KeyRound } from 'lucide-react';
 
 const perks = [
   'Your portfolio live in under 5 minutes',
@@ -22,6 +22,8 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isAdminRegister, setIsAdminRegister] = useState(false);
+  const [adminSecretCode, setAdminSecretCode] = useState('');
   const [localError, setLocalError] = useState('');
 
   useEffect(() => {
@@ -41,7 +43,18 @@ export default function Register() {
       setLocalError('Passwords do not match.');
       return;
     }
-    dispatch(registerUser({ username, email, password }));
+    if (isAdminRegister && !adminSecretCode) {
+      setLocalError('Please enter the Administrator Secret Code.');
+      return;
+    }
+    dispatch(
+      registerUser({
+        username,
+        email,
+        password,
+        ...(isAdminRegister && { adminSecretCode })
+      })
+    );
   };
 
   const displayError = localError || error;
@@ -162,6 +175,40 @@ export default function Register() {
                     </div>
                   </div>
 
+                  {/* Optional Admin Registration Checkbox */}
+                  <div className="pt-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isAdminRegister}
+                        onChange={(e) => setIsAdminRegister(e.target.checked)}
+                        className="w-4 h-4 rounded bg-slate-900 border-white/10 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                        <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                        Register as Administrator (Requires Secret Code)
+                      </span>
+                    </label>
+                  </div>
+
+                  {isAdminRegister && (
+                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                      <label className="block text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Administrator Secret Code</label>
+                      <div className="relative">
+                        <KeyRound className="w-4 h-4 text-amber-500 absolute left-4 top-3.5" />
+                        <input
+                          type="password"
+                          required={isAdminRegister}
+                          value={adminSecretCode}
+                          onChange={(e) => setAdminSecretCode(e.target.value)}
+                          placeholder="Enter Admin Secret Code"
+                          className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm border-amber-500/30"
+                        />
+                      </div>
+                      <p className="text-[11px] text-amber-500/80 mt-1">Default secret: PORTFOLIO_CRAFT_ADMIN_2026</p>
+                    </div>
+                  )}
+
                   <button
                     type="submit" disabled={loading}
                     className="btn-primary w-full py-3.5 rounded-xl text-white font-bold flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
@@ -170,7 +217,7 @@ export default function Register() {
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <>
-                        <span>Create My Portfolio</span>
+                        <span>{isAdminRegister ? 'Register Administrator Account' : 'Create My Portfolio'}</span>
                         <ArrowRight className="w-4 h-4" />
                       </>
                     )}

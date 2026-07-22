@@ -58,6 +58,7 @@ app.use('/api/layouts', require('./routes/layout'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/payment', require('./routes/payment'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Health Check Route
 app.get('/api/health', (req, res) => {

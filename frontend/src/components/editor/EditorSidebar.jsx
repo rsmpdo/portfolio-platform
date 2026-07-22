@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   selectComponent,
   updateComponentVisibility,
@@ -25,7 +26,10 @@ import {
   Sparkles,
   ExternalLink,
   GripVertical,
-  Loader2
+  Loader2,
+  Crown,
+  Lock,
+  ArrowUpRight
 } from 'lucide-react';
 
 const AVAILABLE_COMPONENTS = [
@@ -44,16 +48,62 @@ export default function EditorSidebar() {
   const { activeLayout, selectedComponentId, isSaving, saveSuccess } = useSelector(
     (state) => state.layout
   );
+  const { user } = useSelector((state) => state.auth);
+
   const [activeTab, setActiveTab] = useState('components');
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   if (!activeLayout) return null;
+
+  const currentPlan = user?.plan || 'free';
+  const isFreePlan = currentPlan === 'free';
+  const componentCount = activeLayout.components?.length || 0;
+
+  const handleAddComponent = (item) => {
+    if (isFreePlan && componentCount >= 5) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    dispatch(addComponent({ type: item.type, title: item.title }));
+  };
 
   const handleSave = () => {
     dispatch(saveUserLayout(activeLayout));
   };
 
   return (
-    <aside className="w-80 h-full glass-dark border-r border-white/[0.06] flex flex-col z-30">
+    <aside className="w-80 h-full glass-dark border-r border-white/[0.06] flex flex-col z-30 relative">
+      {/* Plan Badge Header */}
+      <div className="p-3 bg-white/[0.02] border-b border-white/[0.06] flex items-center justify-between px-4">
+        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider">
+          {currentPlan === 'studio' ? (
+            <span className="badge badge-emerald flex items-center gap-1">
+              <Crown className="w-3 h-3 text-emerald-400" />
+              <span>Studio Plan</span>
+            </span>
+          ) : currentPlan === 'pro' ? (
+            <span className="badge badge-indigo flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-indigo-400" />
+              <span>Pro Plan</span>
+            </span>
+          ) : (
+            <span className="px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-[10px]">
+              Free Plan ({componentCount}/5 Sections)
+            </span>
+          )}
+        </div>
+
+        {isFreePlan && (
+          <Link
+            to="/pricing"
+            className="text-[11px] text-amber-400 font-bold hover:text-amber-300 flex items-center gap-0.5 underline-hover"
+          >
+            <span>Upgrade</span>
+            <ArrowUpRight className="w-3 h-3" />
+          </Link>
+        )}
+      </div>
+
       {/* Top Header & Save Button */}
       <div className="p-4 border-b border-white/[0.06] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -113,9 +163,14 @@ export default function EditorSidebar() {
           <>
             {/* Active Sections */}
             <div>
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
-                Active Sections
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                  Active Sections
+                </h3>
+                {isFreePlan && (
+                  <span className="text-[10px] text-slate-500 font-semibold">{componentCount}/5</span>
+                )}
+              </div>
               <div className="space-y-2">
                 {activeLayout.components?.map((comp, index) => {
                   const isSelected = comp.id === selectedComponentId;
@@ -198,7 +253,7 @@ export default function EditorSidebar() {
                 {AVAILABLE_COMPONENTS.map((item) => (
                   <button
                     key={item.type}
-                    onClick={() => dispatch(addComponent({ type: item.type, title: item.title }))}
+                    onClick={() => handleAddComponent(item)}
                     className="p-3 rounded-xl glass border border-white/[0.06] hover:border-indigo-500/30 flex items-center justify-between text-left transition group"
                   >
                     <span className="text-xs font-semibold text-slate-400 group-hover:text-white transition flex items-center gap-2.5">
@@ -275,6 +330,36 @@ export default function EditorSidebar() {
           </div>
         )}
       </div>
+
+      {/* Free Plan Upgrade Limit Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-6">
+          <div className="glass gradient-border rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl relative">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center mx-auto mb-4 text-amber-400">
+              <Lock className="w-6 h-6" />
+            </div>
+            <h3 className="font-heading font-bold text-xl text-white mb-2">Free Plan Limit Reached</h3>
+            <p className="text-slate-400 text-xs leading-relaxed mb-6">
+              Free plans include up to 5 portfolio sections. Upgrade to Pro or Studio to unlock unlimited sections, video uploads, and custom domains.
+            </p>
+            <div className="space-y-2">
+              <Link
+                to="/pricing"
+                className="btn-primary w-full py-3 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-2"
+              >
+                <span>Upgrade to Pro ($12/mo)</span>
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="btn-ghost w-full py-2.5 rounded-xl text-slate-400 hover:text-white text-xs"
+              >
+                Continue with 5 Sections
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }
