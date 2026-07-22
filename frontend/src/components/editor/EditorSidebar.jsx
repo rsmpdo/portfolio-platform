@@ -269,27 +269,112 @@ export default function EditorSidebar() {
         )}
 
         {activeTab === 'theme' && (
-          <div className="space-y-5">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Theme Colors</h3>
-            {[
-              { label: 'Primary Accent', key: 'primaryColor', default: '#6366f1' },
-              { label: 'Secondary Accent', key: 'secondaryColor', default: '#a855f7' }
-            ].map(({ label, key, default: def }) => (
-              <div key={key}>
-                <label className="block text-xs font-semibold text-slate-400 mb-2">{label}</label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="color"
-                    value={activeLayout.theme?.[key] || def}
-                    onChange={(e) => dispatch(updateTheme({ [key]: e.target.value }))}
-                    className="w-10 h-10 rounded-xl bg-transparent border-2 border-white/10 cursor-pointer"
-                  />
-                  <div className="flex-1 input-field px-3 py-2 rounded-xl text-xs">
-                    {activeLayout.theme?.[key] || def}
+          <div className="space-y-6">
+            {/* Active Template Card */}
+            <div className="p-3.5 rounded-2xl glass border border-indigo-500/30 bg-indigo-500/5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Active Template</span>
+                <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono font-bold">
+                  {activeLayout.theme?.templateId || 'default'}
+                </span>
+              </div>
+              <h4 className="font-heading font-bold text-sm text-white capitalize">
+                {(activeLayout.theme?.templateId || 'custom').replace(/-/g, ' ')}
+              </h4>
+              <div className="pt-1 flex items-center justify-between text-xs">
+                <span className="text-slate-400 text-[11px]">Switch design preset:</span>
+                <select
+                  value={activeLayout.theme?.templateId || 'minimalist-editorial'}
+                  onChange={(e) => dispatch(applyTemplate(e.target.value))}
+                  className="bg-slate-900 text-xs font-semibold text-white border border-white/15 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="minimalist-editorial">Minimalist Editorial</option>
+                  <option value="dark-cyber">Dark Cyberpunk</option>
+                  <option value="creative-director">Creative Director</option>
+                  <option value="interactive-showcase">Interactive Showcase</option>
+                  <option value="luxury-motion-pro">Luxury Motion Pro</option>
+                  <option value="fintech-saas-pro">Fintech SaaS Pro</option>
+                  <option value="ai-neural-labs-pro">AI Neural Labs Pro</option>
+                  <option value="global-agency-studio">Global Agency Studio</option>
+                  <option value="haute-couture-studio">Haute Couture Studio</option>
+                  <option value="spatial-architect-studio">Spatial Architect Studio</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Template-Specific Controls */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Template Styling</h3>
+              
+              {/* Luxury Motion Pro Theme Controls */}
+              {activeLayout.theme?.templateId === 'luxury-motion-pro' && (
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-3">
+                  <div className="flex items-center justify-between text-xs text-amber-300 font-bold">
+                    <span>✨ Luxury Gold Accent</span>
+                    <span className="text-[10px] font-mono">#d97706</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => dispatch(updateTheme({ primaryColor: '#d97706', secondaryColor: '#b45309' }))}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs shadow-md shadow-amber-500/20 hover:scale-105 transition"
+                    >
+                      Obsidian Gold
+                    </button>
+                    <button
+                      onClick={() => dispatch(updateTheme({ primaryColor: '#f59e0b', secondaryColor: '#d97706' }))}
+                      className="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-bold text-xs hover:scale-105 transition"
+                    >
+                      Champagne Gold
+                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              )}
+
+              {/* AI Neural Labs / Cyberpunk Theme Controls */}
+              {(activeLayout.theme?.templateId === 'ai-neural-labs-pro' || activeLayout.theme?.templateId === 'dark-cyber') && (
+                <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 space-y-3">
+                  <div className="flex items-center justify-between text-xs text-indigo-300 font-bold">
+                    <span>⚡ Neon Matrix Glow</span>
+                    <span className="text-[10px] font-mono">Active</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => dispatch(updateTheme({ primaryColor: '#8b5cf6', secondaryColor: '#06b6d4' }))}
+                      className="px-3 py-1.5 rounded-lg bg-violet-600 text-white font-bold text-xs shadow-md shadow-violet-500/20 hover:scale-105 transition"
+                    >
+                      Cyber Cyan
+                    </button>
+                    <button
+                      onClick={() => dispatch(updateTheme({ primaryColor: '#10b981', secondaryColor: '#059669' }))}
+                      className="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs hover:scale-105 transition"
+                    >
+                      Terminal Green
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Standard Primary & Secondary Palette */}
+              {[
+                { label: 'Primary Accent Color', key: 'primaryColor', default: '#6366f1' },
+                { label: 'Secondary Accent Color', key: 'secondaryColor', default: '#a855f7' }
+              ].map(({ label, key, default: def }) => (
+                <div key={key}>
+                  <label className="block text-xs font-semibold text-slate-400 mb-2">{label}</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={activeLayout.theme?.[key] || def}
+                      onChange={(e) => dispatch(updateTheme({ [key]: e.target.value }))}
+                      className="w-10 h-10 rounded-xl bg-transparent border-2 border-white/10 cursor-pointer"
+                    />
+                    <div className="flex-1 input-field px-3 py-2 rounded-xl text-xs font-mono">
+                      {activeLayout.theme?.[key] || def}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

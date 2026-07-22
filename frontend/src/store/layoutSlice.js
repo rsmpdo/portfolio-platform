@@ -136,7 +136,7 @@ const layoutSlice = createSlice({
           title: c.title,
           order: i,
           isVisible: true,
-          props: {}
+          props: c.props ? { ...c.props } : {}
         }));
         if (state.activeLayout.components.length > 0) {
           state.selectedComponentId = state.activeLayout.components[0].id;

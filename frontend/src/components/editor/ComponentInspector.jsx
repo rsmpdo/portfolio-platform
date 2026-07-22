@@ -89,14 +89,26 @@ export default function ComponentInspector() {
     }
   };
 
+  const templateId = activeLayout.theme?.templateId || 'default';
+
   return (
     <aside className="w-80 h-full glass-dark border-l border-white/[0.06] flex flex-col z-30">
       {/* Header */}
-      <div className="p-4 border-b border-white/[0.06] flex items-center gap-2">
-        <Pencil className="w-4 h-4 text-indigo-400" />
-        <h3 className="font-heading font-bold text-xs text-white uppercase tracking-wider">
-          Edit: {selectedComp.title || selectedComp.type}
-        </h3>
+      <div className="p-4 border-b border-white/[0.06] flex flex-col gap-1.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Pencil className="w-4 h-4 text-indigo-400" />
+            <h3 className="font-heading font-bold text-xs text-white uppercase tracking-wider">
+              Edit: {selectedComp.title || selectedComp.type}
+            </h3>
+          </div>
+          <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 text-[10px] font-mono font-bold capitalize">
+            {templateId.split('-')[0]}
+          </span>
+        </div>
+        <p className="text-[11px] text-slate-500 font-medium">
+          Styling under <span className="text-slate-300 font-semibold capitalize">{templateId.replace(/-/g, ' ')}</span> template
+        </p>
       </div>
 
       {/* Properties */}
@@ -105,6 +117,14 @@ export default function ComponentInspector() {
         {/* ─── HeroBanner ────────────────────────── */}
         {selectedComp.type === 'HeroBanner' && (
           <>
+            <Field label="Template Tagline / Badge">
+              <TextInput
+                value={props.badgeText}
+                onChange={(e) => handlePropChange('badgeText', e.target.value)}
+                placeholder={templateId === 'luxury-motion-pro' ? 'Bespoke Motion & Fine Art Direction' : templateId === 'ai-neural-labs-pro' ? 'NEURAL ENGINE V4.2' : 'Full Stack Engineer'}
+              />
+            </Field>
+
             <Field label="Headline">
               <TextInput
                 value={props.headline}
