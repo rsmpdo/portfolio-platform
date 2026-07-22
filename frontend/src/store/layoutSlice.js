@@ -2,15 +2,29 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import API from '../services/api';
 import { templateLayouts } from '../data/templateLayouts';
 
-// Fetch current user's CMS layout for editing
+// Fetch current user's CMS layout for editing (supports optional layoutId)
 export const fetchUserLayout = createAsyncThunk(
   'layout/fetchUserLayout',
-  async (_, { rejectWithValue }) => {
+  async (layoutId, { rejectWithValue }) => {
     try {
-      const res = await API.get('/layouts/me');
+      const url = layoutId ? `/layouts/me?id=${layoutId}` : '/layouts/me';
+      const res = await API.get(url);
       return res.data.layout;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch layout');
+    }
+  }
+);
+
+// Fetch all portfolios created by current user
+export const fetchUserPortfolios = createAsyncThunk(
+  'layout/fetchUserPortfolios',
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await API.get('/layouts/my-portfolios');
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch user portfolios');
     }
   }
 );
@@ -45,6 +59,8 @@ const layoutSlice = createSlice({
   name: 'layout',
   initialState: {
     activeLayout: null,
+    userPortfolios: [],
+    maxAllowedPortfolios: 1,
     publicLayout: null,
     selectedComponentId: null,
     isSaving: false,
@@ -161,6 +177,11 @@ const layoutSlice = createSlice({
       .addCase(fetchUserLayout.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Fetch user portfolios
+      .addCase(fetchUserPortfolios.fulfilled, (state, action) => {
+        state.userPortfolios = action.payload.layouts || [];
+        state.maxAllowedPortfolios = action.payload.maxAllowed || 1;
       })
       // Save user layout
       .addCase(saveUserLayout.pending, (state) => {
