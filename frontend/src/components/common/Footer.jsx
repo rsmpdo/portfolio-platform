@@ -1,39 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, Send, CheckCircle2, AlertCircle, Loader2, Github, Twitter, Linkedin, Dribbble } from 'lucide-react';
-import API from '../../services/api';
+import { Sparkles, MapPin, Phone, Mail, Github, Twitter, Linkedin, Dribbble } from 'lucide-react';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubscribe = async (e) => {
-    e.preventDefault();
-    if (!email) return;
-    setError('');
-
-    try {
-      setLoading(true);
-      await API.post('/newsletter/subscribe', { email });
-      setSubscribed(true);
-      setTimeout(() => {
-        setSubscribed(false);
-        setEmail('');
-      }, 5000);
-    } catch (err) {
-      // Fallback for offline/local simulation
-      setSubscribed(true);
-      setTimeout(() => {
-        setSubscribed(false);
-        setEmail('');
-      }, 5000);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <footer className="border-t border-white/[0.06] bg-slate-950 py-16 px-6">
       <div className="max-w-6xl mx-auto">
@@ -95,44 +64,36 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Weekly Insights Newsletter Widget */}
+          {/* Contact Information Widget */}
           <div className="max-w-xs w-full">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-3">Weekly Portfolio Tips</h4>
-            <p className="text-xs text-slate-500 leading-relaxed mb-4">
-              Get our weekly masterclass guide on design systems, career growth, and inbound clients.
-            </p>
-
-            {subscribed ? (
-              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>Subscribed! Check your email for weekly tips.</span>
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Get In Touch</h4>
+            
+            <div className="space-y-4 mb-6">
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  Galle,<br />
+                  Sri Lanka
+                </p>
               </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <div className="relative">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@company.com"
-                    className="input-field w-full pl-3.5 pr-10 py-2.5 rounded-xl text-xs"
-                  />
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="absolute right-1.5 top-1.5 p-1.5 rounded-lg btn-primary text-white disabled:opacity-60"
-                    title="Subscribe"
-                  >
-                    {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                  </button>
-                </div>
-                <p className="text-[11px] text-slate-600">No spam, ever. Unsubscribe in one click.</p>
-              </form>
-            )}
+              
+              <div className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-indigo-400 shrink-0" />
+                <p className="text-sm text-slate-400 hover:text-white transition cursor-pointer">
+                  +94 123 456 789
+                </p>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-indigo-400 shrink-0" />
+                <p className="text-sm text-slate-400 hover:text-white transition cursor-pointer">
+                  hello@portfoliocraft.com
+                </p>
+              </div>
+            </div>
 
             {/* Social Icons */}
-            <div className="flex items-center gap-2 mt-5 pt-4 border-t border-white/[0.06]">
+            <div className="flex items-center gap-2 pt-4 border-t border-white/[0.06]">
               <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
                 <Twitter className="w-3.5 h-3.5" />
               </a>
@@ -147,7 +108,6 @@ export default function Footer() {
               </a>
             </div>
           </div>
-
         </div>
 
         {/* Sub-footer */}
