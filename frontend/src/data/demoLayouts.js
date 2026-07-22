@@ -360,7 +360,7 @@ export const demoLayouts = {
           headline: "Avant-Garde.",
           subheadline: "Capturing the essence of high fashion through the lens of modern photography.",
           ctaText: "View Gallery",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80",
+          avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=80",
           bgVideoUrl: "https://cdn.coverr.co/videos/coverr-model-walking-down-runway-5077/1080p.mp4"
         } 
       },

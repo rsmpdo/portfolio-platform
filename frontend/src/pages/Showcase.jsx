@@ -10,7 +10,7 @@ const showcases = [
     name: "Alex Morgan",
     role: "Senior Product Designer",
     handle: "alex",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80",
     quote: "Got 3 inbound job offers within 10 days of launching my portfolio here.",
     projects: [
       {

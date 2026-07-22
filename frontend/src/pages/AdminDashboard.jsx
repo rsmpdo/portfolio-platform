@@ -529,50 +529,53 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
-                      {usersList.map((u) => (
-                        <tr key={u._id} className="hover:bg-white/[0.02] transition">
-                          <td className="p-4 font-bold text-white flex items-center gap-2">
-                            <span className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-mono">
-                              {(u.username || u.email || 'U')[0].toUpperCase()}
-                            </span>
-                            <span>{u.username || u.email?.split('@')[0] || 'User'}</span>
-                          </td>
-                          <td className="p-4 text-slate-300 font-mono">{u.email}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
-                              u.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'
-                            }`}>
-                              {u.role}
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            <select
-                              value={u.plan || 'free'}
-                              onChange={(e) => handlePlanChange(u._id, e.target.value)}
-                              className="input-field px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 border-white/10"
-                            >
-                              <option value="free">FREE</option>
-                              <option value="pro">PRO ($12)</option>
-                              <option value="studio">STUDIO ($29)</option>
-                            </select>
-                          </td>
-                          <td className="p-4 text-slate-500">{new Date(u.createdAt).toLocaleDateString()}</td>
-                          <td className="p-4 text-right space-x-2">
-                            <button
-                              onClick={() => setWarnUser(u)}
-                              className="px-3 py-1.5 rounded-lg btn-ghost text-amber-400 hover:text-amber-300 text-xs font-semibold"
-                            >
-                              Warn User
-                            </button>
-                            <button
-                              onClick={() => handleDeleteUser(u._id)}
-                              className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {usersList.map((u) => {
+                        if (!u) return null;
+                        return (
+                          <tr key={u._id || Math.random()} className="hover:bg-white/[0.02] transition">
+                            <td className="p-4 font-bold text-white flex items-center gap-2">
+                              <span className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-mono">
+                                {(u.username || u.email || 'U')[0].toUpperCase()}
+                              </span>
+                              <span>{u.username || u.email?.split('@')[0] || 'User'}</span>
+                            </td>
+                            <td className="p-4 text-slate-300 font-mono">{u.email}</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
+                                u.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'
+                              }`}>
+                                {u.role}
+                              </span>
+                            </td>
+                            <td className="p-4">
+                              <select
+                                value={u.plan || 'free'}
+                                onChange={(e) => handlePlanChange(u._id, e.target.value)}
+                                className="input-field px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 border-white/10"
+                              >
+                                <option value="free">FREE</option>
+                                <option value="pro">PRO ($12)</option>
+                                <option value="studio">STUDIO ($29)</option>
+                              </select>
+                            </td>
+                            <td className="p-4 text-slate-500">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
+                            <td className="p-4 text-right space-x-2">
+                              <button
+                                onClick={() => setWarnUser(u)}
+                                className="px-3 py-1.5 rounded-lg btn-ghost text-amber-400 hover:text-amber-300 text-xs font-semibold"
+                              >
+                                Warn User
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(u._id)}
+                                className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
