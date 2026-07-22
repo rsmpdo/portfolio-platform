@@ -4,8 +4,159 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { User, Mail, ShieldCheck, Crown, Sparkles, LogOut, Trash2, ArrowRight, LayoutTemplate, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { User, Mail, ShieldCheck, Crown, Sparkles, LogOut, Trash2, ArrowRight, LayoutTemplate, CheckCircle2, AlertCircle, Loader2, MessageSquare, Inbox, Eye, Reply } from 'lucide-react';
 import API from '../services/api';
+import { useEffect } from 'react';
+
+function MessagesInbox() {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchMessages = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get('/messages/me');
+      if (res.data.success) {
+        setMessages(res.data.messages || []);
+        setUnreadCount(res.data.unreadCount || 0);
+      }
+    } catch (err) {
+      console.error('Fetch messages error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const toggleReadStatus = async (id) => {
+    try {
+      await API.get(`/messages/${id}/read`);
+      fetchMessages();
+    } catch (err) {
+      console.error('Toggle read error:', err);
+    }
+  };
+
+  const deleteMessage = async (id) => {
+    if (!window.confirm('Delete this contact message?')) return;
+    try {
+      await API.delete(`/messages/${id}`);
+      fetchMessages();
+    } catch (err) {
+      console.error('Delete message error:', err);
+    }
+  };
+
+  return (
+    <div className="glass-card gradient-border rounded-3xl p-8">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/[0.06]">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <Inbox className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+              <span>Received Portfolio Messages</span>
+              {unreadCount > 0 && (
+                <span className="px-2.5 py-0.5 rounded-full bg-indigo-500 text-white font-bold text-xs animate-pulse">
+                  {unreadCount} New
+                </span>
+              )}
+            </h2>
+            <p className="text-slate-400 text-xs">Inquiries sent by visitors via your public portfolio contact form.</p>
+          </div>
+        </div>
+        <button
+          onClick={fetchMessages}
+          className="btn-ghost px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5"
+        >
+          <span>Refresh Inbox</span>
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="py-12 flex flex-col items-center justify-center text-slate-500 gap-2">
+          <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
+          <span className="text-xs">Loading your messages...</span>
+        </div>
+      ) : messages.length === 0 ? (
+        <div className="py-12 glass rounded-2xl border border-white/[0.06] flex flex-col items-center justify-center text-center p-6">
+          <MessageSquare className="w-10 h-10 text-slate-600 mb-3" />
+          <h3 className="font-bold text-slate-300 text-sm mb-1">No Messages Received Yet</h3>
+          <p className="text-xs text-slate-500 max-w-sm">
+            When visitors submit your portfolio's contact form, their inquiries will show up right here!
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {messages.map((msg) => (
+            <div
+              key={msg._id}
+              className={`p-5 rounded-2xl glass border transition-all ${
+                !msg.isRead ? 'border-indigo-500/40 bg-indigo-500/5' : 'border-white/[0.06] opacity-90'
+              }`}
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3 pb-3 border-b border-white/[0.04]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center font-bold text-white text-sm shrink-0">
+                    {msg.senderName?.[0]?.toUpperCase() || 'S'}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white flex items-center gap-2">
+                      <span>{msg.senderName}</span>
+                      {!msg.isRead && (
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 inline-block"></span>
+                      )}
+                    </h4>
+                    <span className="text-xs font-mono text-indigo-300">{msg.senderEmail}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[11px] font-mono text-slate-500 mr-2">
+                    {new Date(msg.createdAt).toLocaleString()}
+                  </span>
+                  <a
+                    href={`mailto:${msg.senderEmail}?subject=Re: ${encodeURIComponent(msg.subject || 'Portfolio Inquiry')}`}
+                    className="p-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 text-xs font-semibold flex items-center gap-1.5 transition"
+                  >
+                    <Reply className="w-3.5 h-3.5" />
+                    <span>Reply</span>
+                  </a>
+                  <button
+                    onClick={() => toggleReadStatus(msg._id)}
+                    className="p-2 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition text-xs flex items-center gap-1"
+                    title={msg.isRead ? 'Mark as Unread' : 'Mark as Read'}
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => deleteMessage(msg._id)}
+                    className="p-2 rounded-xl hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
+                    title="Delete Message"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {msg.subject && (
+                <div className="text-xs font-bold text-slate-300 mb-1.5">Subject: {msg.subject}</div>
+              )}
+              <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap font-sans">
+                {msg.message}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ProfileSettings() {
   const dispatch = useDispatch();
@@ -135,6 +286,9 @@ export default function ProfileSettings() {
               </div>
             </div>
           </div>
+
+          {/* ─── Received Contact Messages Inbox ────────────────────────── */}
+          <MessagesInbox />
 
           {/* Quick Actions */}
           <div className="glass-card gradient-border rounded-3xl p-8">

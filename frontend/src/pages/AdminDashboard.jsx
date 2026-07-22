@@ -3,8 +3,155 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send } from 'lucide-react';
+import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply } from 'lucide-react';
 import API from '../services/api';
+
+function AdminMessagesSection() {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchAdminMessages = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get('/messages/admin');
+      if (res.data.success) {
+        setMessages(res.data.messages || []);
+        setUnreadCount(res.data.unreadCount || 0);
+      }
+    } catch (err) {
+      console.error('Fetch admin messages error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminMessages();
+  }, []);
+
+  const toggleReadStatus = async (id) => {
+    try {
+      await API.get(`/messages/${id}/read`);
+      fetchAdminMessages();
+    } catch (err) {
+      console.error('Toggle read error:', err);
+    }
+  };
+
+  const deleteMessage = async (id) => {
+    if (!window.confirm('Delete this message permanently from platform logs?')) return;
+    try {
+      await API.delete(`/messages/${id}`);
+      fetchAdminMessages();
+    } catch (err) {
+      console.error('Delete message error:', err);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+          <Mail className="w-5 h-5 text-indigo-400" />
+          <span>Platform Contact Messages & Inquiries ({messages.length})</span>
+          {unreadCount > 0 && (
+            <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs animate-pulse">
+              {unreadCount} Unread
+            </span>
+          )}
+        </h2>
+        <button
+          onClick={fetchAdminMessages}
+          className="btn-ghost px-3 py-1 rounded-xl text-xs text-slate-400 hover:text-white font-semibold flex items-center gap-1"
+        >
+          <span>Refresh Messages</span>
+        </button>
+      </div>
+
+      <div className="glass gradient-border rounded-3xl p-6">
+        {loading ? (
+          <div className="py-10 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
+            <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />
+            <span>Fetching site-wide contact messages...</span>
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="py-10 text-center text-slate-500 text-xs">
+            No contact messages recorded on the platform yet.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {messages.map((msg) => (
+              <div
+                key={msg._id}
+                className={`p-4 rounded-2xl glass border transition-all ${
+                  !msg.isRead ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/[0.06]'
+                }`}
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2 pb-2 border-b border-white/[0.04]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs flex items-center justify-center">
+                      {msg.senderName?.[0]?.toUpperCase() || 'S'}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs text-white">{msg.senderName}</span>
+                        <span className="text-xs font-mono text-indigo-300">({msg.senderEmail})</span>
+                        {msg.isSiteAdminMessage ? (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase">
+                            Site Inquiry
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono">
+                            Target: /p/{msg.recipientHandle || 'portfolio'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0 text-xs">
+                    <span className="text-[10px] font-mono text-slate-500 mr-1">
+                      {new Date(msg.createdAt).toLocaleString()}
+                    </span>
+                    <a
+                      href={`mailto:${msg.senderEmail}?subject=Re: ${encodeURIComponent(msg.subject || 'PortfolioCraft Inquiry')}`}
+                      className="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 font-semibold flex items-center gap-1 transition"
+                    >
+                      <Reply className="w-3 h-3" />
+                      <span>Reply</span>
+                    </a>
+                    <button
+                      onClick={() => toggleReadStatus(msg._id)}
+                      className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition"
+                      title={msg.isRead ? 'Mark as Unread' : 'Mark as Read'}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => deleteMessage(msg._id)}
+                      className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
+                      title="Delete Message"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {msg.subject && (
+                  <div className="text-xs font-semibold text-slate-300 mb-1">Subject: {msg.subject}</div>
+                )}
+                <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
+                  {msg.message}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -305,6 +452,9 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
+
+            {/* ─── Contact Messages Moderation Section ────────────────── */}
+            <AdminMessagesSection />
           </div>
         )}
       </main>

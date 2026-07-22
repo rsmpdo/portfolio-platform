@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Send, CheckCircle2, MessageSquare, MapPin, Clock } from 'lucide-react';
+import { Mail, Send, CheckCircle2, MessageSquare, MapPin, Clock, Loader2 } from 'lucide-react';
+import API from '../../services/api';
 
 export default function ContactSection({ props = {} }) {
   const {
@@ -13,14 +14,33 @@ export default function ContactSection({ props = {} }) {
 
   const [form, setForm] = useState({ name: '', userEmail: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setForm({ name: '', userEmail: '', message: '' });
-    }, 4000);
+    setLoading(true);
+    try {
+      const pathname = window.location.pathname;
+      const pathParts = pathname.split('/').filter(Boolean);
+      const recipientHandle = pathParts.length > 0 && pathParts[0] === 'p' ? pathParts[1] : '';
+
+      await API.post('/messages', {
+        recipientHandle,
+        senderName: form.name,
+        senderEmail: form.userEmail,
+        message: form.message
+      });
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setForm({ name: '', userEmail: '', message: '' });
+      }, 4000);
+    } catch (err) {
+      console.error('Submit contact message error:', err);
+      alert('Failed to send message: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
