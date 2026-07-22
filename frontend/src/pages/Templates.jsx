@@ -248,7 +248,7 @@ export default function Templates() {
 
                 <div className="p-8 pt-0 flex gap-3">
                   <Link
-                    to="/p/admin_1"
+                    to={`/preview/${t.id}`}
                     className="btn-ghost flex-1 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white flex items-center justify-center gap-2"
                   >
                     <Eye className="w-4 h-4" />

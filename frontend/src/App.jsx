@@ -20,6 +20,7 @@ import ProfileSettings from './pages/ProfileSettings';
 import VerifyEmail from './pages/VerifyEmail';
 import VerifyPending from './pages/VerifyPending';
 import PaymentSuccess from './pages/PaymentSuccess';
+import TemplatePreview from './pages/TemplatePreview';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, token, user } = useSelector((state) => state.auth);
@@ -70,6 +71,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/features" element={<Features />} />
         <Route path="/templates" element={<Templates />} />
+        <Route path="/preview/:templateId" element={<TemplatePreview />} />
         <Route path="/showcase" element={<Showcase />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/about" element={<About />} />
