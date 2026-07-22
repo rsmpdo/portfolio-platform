@@ -59,6 +59,7 @@ export const templateLayouts = {
     theme: { primaryColor: "#8b5cf6", secondaryColor: "#6d28d9" },
     components: [
       { type: "HeroBanner", title: "Neural Lab Hero", isVisible: true, content: {} },
+      { type: "AdvancedMetrics", title: "Model Metrics", isVisible: true, content: {} },
       { type: "SkillsCloud", title: "ML Frameworks", isVisible: true, content: {} },
       { type: "ProjectsGrid", title: "Research Papers", isVisible: true, content: {} },
       { type: "ExperienceTimeline", title: "Lab Timeline", isVisible: true, content: {} }
@@ -68,6 +69,7 @@ export const templateLayouts = {
     theme: { primaryColor: "#64748b", secondaryColor: "#475569" },
     components: [
       { type: "HeroBanner", title: "Agency Hero", isVisible: true, content: {} },
+      { type: "AdvancedMetrics", title: "Agency Impact", isVisible: true, content: {} },
       { type: "AboutMe", title: "Our Team", isVisible: true, content: {} },
       { type: "MediaGallery", title: "Client Roster", isVisible: true, content: {} },
       { type: "ProjectsGrid", title: "Global Campaigns", isVisible: true, content: {} },
@@ -79,6 +81,7 @@ export const templateLayouts = {
     theme: { primaryColor: "#be185d", secondaryColor: "#9d174d" },
     components: [
       { type: "HeroBanner", title: "Couture Hero", isVisible: true, content: {} },
+      { type: "AdvancedMetrics", title: "Couture Stats", isVisible: true, content: {} },
       { type: "MediaGallery", title: "Runway Gallery", isVisible: true, content: {} },
       { type: "AboutMe", title: "The Designer", isVisible: true, content: {} },
       { type: "ProjectsGrid", title: "Collections", isVisible: true, content: {} },
@@ -89,6 +92,7 @@ export const templateLayouts = {
     theme: { primaryColor: "#059669", secondaryColor: "#047857" },
     components: [
       { type: "HeroBanner", title: "Architectural Hero", isVisible: true, content: {} },
+      { type: "AdvancedMetrics", title: "Firm Stats", isVisible: true, content: {} },
       { type: "ProjectsGrid", title: "Spatial Designs", isVisible: true, content: {} },
       { type: "PremiumEmbed", title: "3D Model Viewer", isVisible: true, content: {} },
       { type: "MediaGallery", title: "CAD Renders", isVisible: true, content: {} },

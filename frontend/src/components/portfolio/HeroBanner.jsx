@@ -9,7 +9,8 @@ export default function HeroBanner({ props = {}, templateId, viewportMode }) {
     avatarUrl = "",
     ctaText = "View My Work",
     githubUrl = "",
-    linkedinUrl = ""
+    linkedinUrl = "",
+    bgVideoUrl = ""
   } = props;
 
   const isMobile = viewportMode === 'mobile';
@@ -237,8 +238,13 @@ export default function HeroBanner({ props = {}, templateId, viewportMode }) {
   // ---------------------------------------------------------
   if (templateId === 'global-agency-studio') {
     return (
-      <section className="min-h-[90vh] flex flex-col md:flex-row bg-slate-900">
-        <div className="flex-1 flex flex-col justify-center px-8 md:px-16 pt-32 pb-16">
+      <section className="min-h-[90vh] flex flex-col md:flex-row bg-slate-900 relative overflow-hidden">
+        {bgVideoUrl && (
+          <div className="absolute inset-0 z-0">
+            <video src={bgVideoUrl} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-30" />
+          </div>
+        )}
+        <div className="flex-1 flex flex-col justify-center px-8 md:px-16 pt-32 pb-16 relative z-10">
           <h1 className="font-heading font-black text-6xl md:text-8xl text-white mb-6 uppercase leading-[0.9]">
             {headline}
           </h1>
@@ -252,7 +258,7 @@ export default function HeroBanner({ props = {}, templateId, viewportMode }) {
           </div>
         </div>
         {avatarUrl && (
-          <div className="flex-1 relative min-h-[40vh] md:min-h-full">
+          <div className="flex-1 relative min-h-[40vh] md:min-h-full z-10">
             <img src={avatarUrl} alt="Agency" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-slate-900/20 mix-blend-multiply" />
           </div>
@@ -266,22 +272,29 @@ export default function HeroBanner({ props = {}, templateId, viewportMode }) {
   // ---------------------------------------------------------
   if (templateId === 'haute-couture-studio') {
     return (
-      <section className="min-h-[100vh] pt-24 pb-16 px-6 bg-[#fdfbf7] flex flex-col items-center text-center">
-        <h2 className="text-[#be185d] font-serif italic text-2xl mb-4">Studio.</h2>
-        <h1 className="font-serif text-6xl md:text-9xl text-slate-900 mb-8 uppercase tracking-widest">
-          {headline}
-        </h1>
-        {avatarUrl && (
-          <div className="w-full max-w-4xl h-[40vh] md:h-[60vh] overflow-hidden mb-12">
-            <img src={avatarUrl} alt="Couture" className="w-full h-full object-cover object-top" />
+      <section className="relative min-h-[100vh] pt-24 pb-16 px-6 bg-[#fdfbf7] flex flex-col items-center text-center overflow-hidden">
+        {bgVideoUrl && (
+          <div className="absolute inset-0 z-0">
+            <video src={bgVideoUrl} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-20 filter grayscale" />
           </div>
         )}
-        <p className="text-slate-600 font-light text-xl md:text-3xl max-w-3xl mx-auto mb-10 leading-relaxed">
-          {subheadline}
-        </p>
-        <a href="#projects" className="text-slate-900 border-b border-slate-900 pb-1 uppercase tracking-widest font-semibold hover:text-[#be185d] hover:border-[#be185d] transition">
-          {ctaText}
-        </a>
+        <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
+          <h2 className="text-[#be185d] font-serif italic text-2xl mb-4">Studio.</h2>
+          <h1 className="font-serif text-6xl md:text-9xl text-slate-900 mb-8 uppercase tracking-widest">
+            {headline}
+          </h1>
+          {avatarUrl && (
+            <div className="w-full max-w-4xl h-[40vh] md:h-[60vh] overflow-hidden mb-12 shadow-2xl">
+              <img src={avatarUrl} alt="Couture" className="w-full h-full object-cover object-top" />
+            </div>
+          )}
+          <p className="text-slate-600 font-light text-xl md:text-3xl max-w-3xl mx-auto mb-10 leading-relaxed">
+            {subheadline}
+          </p>
+          <a href="#projects" className="text-slate-900 border-b border-slate-900 pb-1 uppercase tracking-widest font-semibold hover:text-[#be185d] hover:border-[#be185d] transition">
+            {ctaText}
+          </a>
+        </div>
       </section>
     );
   }

@@ -8,6 +8,7 @@ import ContactSection from './ContactSection';
 import MediaGallery from './MediaGallery';
 import TestimonialsCarousel from './TestimonialsCarousel';
 import PremiumEmbed from './PremiumEmbed';
+import AdvancedMetrics from './AdvancedMetrics';
 
 const COMPONENT_MAP = {
   HeroBanner,
@@ -18,7 +19,8 @@ const COMPONENT_MAP = {
   ContactSection,
   MediaGallery,
   TestimonialsCarousel,
-  PremiumEmbed
+  PremiumEmbed,
+  AdvancedMetrics
 };
 
 export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick, templateId, viewportMode }) {

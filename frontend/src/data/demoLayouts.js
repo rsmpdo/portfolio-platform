@@ -253,8 +253,23 @@ export const demoLayouts = {
           headline: "Training the Future.",
           subheadline: "Machine Learning Researcher optimizing LLMs and computer vision pipelines.",
           ctaText: "Read Papers",
-          avatarUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=500&q=80",
+          bgVideoUrl: "https://cdn.coverr.co/videos/coverr-server-rack-lights-blinking-2673/1080p.mp4"
         } 
+      },
+      {
+        type: "AdvancedMetrics",
+        title: "Model Metrics",
+        isVisible: true,
+        props: {
+          heading: "Global Inference Scale",
+          metrics: [
+            { id: 'm1', label: 'Requests / Sec', value: '1M+', icon: 'zap' },
+            { id: 'm2', label: 'Params Trained', value: '1.5T', icon: 'target' },
+            { id: 'm3', label: 'Cost Reduced', value: '45%', icon: 'trending' }
+          ],
+          isStudioFeature: true
+        }
       },
       { 
         type: "SkillsCloud", 
@@ -290,8 +305,23 @@ export const demoLayouts = {
           headline: "We Are Studio Global.",
           subheadline: "An independent digital product agency partnering with the world's most ambitious brands.",
           ctaText: "Our Capabilities",
-          avatarUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=500&q=80",
+          bgVideoUrl: "https://cdn.coverr.co/videos/coverr-a-man-working-on-a-computer-2121/1080p.mp4"
         } 
+      },
+      {
+        type: "AdvancedMetrics",
+        title: "Agency Impact",
+        isVisible: true,
+        props: {
+          heading: "Scale & Impact",
+          metrics: [
+            { id: 'm1', label: 'Revenue Generated', value: '$250M+', icon: 'trending' },
+            { id: 'm2', label: 'Active Projects', value: '142', icon: 'target' },
+            { id: 'm3', label: 'Global Offices', value: '6', icon: 'users' }
+          ],
+          isStudioFeature: true
+        }
       },
       { 
         type: "MediaGallery", 
@@ -330,8 +360,23 @@ export const demoLayouts = {
           headline: "Avant-Garde.",
           subheadline: "Capturing the essence of high fashion through the lens of modern photography.",
           ctaText: "View Gallery",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80",
+          bgVideoUrl: "https://cdn.coverr.co/videos/coverr-model-walking-down-runway-5077/1080p.mp4"
         } 
+      },
+      {
+        type: "AdvancedMetrics",
+        title: "Couture Stats",
+        isVisible: true,
+        props: {
+          heading: "Global Reach",
+          metrics: [
+            { id: 'm1', label: 'Magazine Covers', value: '45+', icon: 'target' },
+            { id: 'm2', label: 'Fashion Weeks', value: '28', icon: 'trending' },
+            { id: 'm3', label: 'Top Models', value: '150+', icon: 'users' }
+          ],
+          isStudioFeature: true
+        }
       },
       { 
         type: "MediaGallery", 
@@ -360,8 +405,23 @@ export const demoLayouts = {
           headline: "Form & Function.",
           subheadline: "Award-winning architectural firm designing sustainable, modern spaces.",
           ctaText: "Explore Projects",
-          avatarUrl: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=500&q=80",
+          bgVideoUrl: "https://cdn.coverr.co/videos/coverr-architect-working-on-a-blueprint-4123/1080p.mp4"
         } 
+      },
+      {
+        type: "AdvancedMetrics",
+        title: "Firm Stats",
+        isVisible: true,
+        props: {
+          heading: "Architectural Impact",
+          metrics: [
+            { id: 'm1', label: 'Sq Ft Developed', value: '5M+', icon: 'target' },
+            { id: 'm2', label: 'LEED Certified', value: '42', icon: 'trending' },
+            { id: 'm3', label: 'Active Sites', value: '18', icon: 'users' }
+          ],
+          isStudioFeature: true
+        }
       },
       { 
         type: "MediaGallery", 
