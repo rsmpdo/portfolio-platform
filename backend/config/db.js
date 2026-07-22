@@ -5,13 +5,13 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      family: 4,
       serverSelectionTimeoutMS: 5000
     });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (error) {
     console.error(`MongoDB Connection Warning: ${error.message}`);
-    // Disable query buffering so requests fail immediately with a clear error instead of hanging
-    mongoose.set('bufferCommands', false);
     console.log('Server continuing in offline/standalone mode...');
   }
 };
