@@ -141,7 +141,7 @@ export default function Templates() {
       return;
     }
 
-    navigate('/editor');
+    navigate(`/editor?template=${t.id}`);
   };
 
   return (

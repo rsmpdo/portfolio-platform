@@ -11,21 +11,21 @@ export default function TestimonialsCarousel({ props = {} }) {
         quote: "Working together was the best decision we made for our brand. The results exceeded every expectation we had.",
         author: "Sarah Chen",
         role: "CEO, NexGen Solutions",
-        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b1e2?w=80&h=80&fit=crop"
+        avatar: ""
       },
       {
         id: 't2',
         quote: "If you want someone who actually cares about the outcome — not just shipping code — this is your person.",
         author: "Marcus Reid",
         role: "Product Lead, Verve Studios",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop"
+        avatar: ""
       },
       {
         id: 't3',
         quote: "Our conversion rate jumped 40% after the redesign. Simply outstanding quality of work.",
         author: "Amira Patel",
         role: "Head of Growth, FlowBase",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop"
+        avatar: ""
       }
     ]
   } = props;

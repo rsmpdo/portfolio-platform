@@ -11,13 +11,13 @@ export default function MediaGallery({ props = {} }) {
         id: 'm1',
         title: 'System Architecture',
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
+        url: ''
       },
       {
         id: 'm2',
         title: 'Mobile App Design',
         type: 'image',
-        url: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=800&q=80'
+        url: ''
       }
     ]
   } = props;
