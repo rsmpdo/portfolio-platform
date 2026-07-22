@@ -119,25 +119,56 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
   }
 
   // ---------------------------------------------------------
-  // LUXURY & AGENCY (Cinematic Full Bleed, Gold Accents)
+  // LUXURY MOTION PRO (Cinematic Full Bleed, Gold Accents)
   // ---------------------------------------------------------
-  if (templateId === 'luxury-motion-pro' || templateId === 'global-agency-studio') {
+  if (templateId === 'luxury-motion-pro') {
     return (
-      <section className="py-32 px-6 bg-[#1a1816]">
+      <section className="py-32 px-6 bg-[#0a0908] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-24">
+            <h2 className="font-serif italic text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3e5ab] via-[#d4af37] to-[#aa7c11] mb-6 drop-shadow-sm">{heading}</h2>
+            <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto"></div>
+          </div>
+          <div className={`grid gap-12 md:gap-24 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
+            {items.map((item, index) => (
+              <div key={item.id || index} className={`cursor-pointer group ${index % 2 !== 0 && !isMobile ? 'md:mt-32' : ''}`} onClick={() => setLightboxItem(item)}>
+                <div className="relative aspect-[3/4] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#d4af37]/20 rounded-t-full">
+                  <img src={item.url} alt={item.title} className="w-full h-full object-cover filter contrast-125 sepia-[0.2] group-hover:sepia-0 group-hover:scale-110 transition duration-1000" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0908] via-[#0a0908]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-12 text-center">
+                    <h4 className="text-[#f3e5ab] font-serif text-4xl mb-3">{item.title}</h4>
+                    <p className="text-[#d4af37] font-light text-xs tracking-[0.3em] uppercase">{item.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {renderLightbox()}
+      </section>
+    );
+  }
+
+  // ---------------------------------------------------------
+  // GLOBAL AGENCY STUDIO (Cinematic Full Bleed, Dark Slate)
+  // ---------------------------------------------------------
+  if (templateId === 'global-agency-studio') {
+    return (
+      <section className="py-32 px-6 bg-slate-900 border-y border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-24">
-            <h2 className="font-serif italic text-4xl md:text-6xl text-[#d4af37] mb-6">{heading}</h2>
-            <div className="w-24 h-px bg-[#d4af37]/50 mx-auto"></div>
+            <h2 className="font-serif italic text-4xl md:text-6xl text-white mb-6">{heading}</h2>
+            <div className="w-24 h-px bg-white/20 mx-auto"></div>
           </div>
           <div className={`grid gap-12 md:gap-24 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
             {items.map((item, index) => (
               <div key={item.id || index} className={`cursor-pointer group ${index % 2 !== 0 && !isMobile ? 'md:mt-32' : ''}`} onClick={() => setLightboxItem(item)}>
                 <div className="relative aspect-[3/4] overflow-hidden shadow-2xl">
-                  <img src={item.url} alt={item.title} className="w-full h-full object-cover sepia-[0.2] group-hover:sepia-0 group-hover:scale-110 transition duration-1000" />
+                  <img src={item.url} alt={item.title} className="w-full h-full object-cover filter saturate-50 group-hover:saturate-100 group-hover:scale-110 transition duration-1000" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
                     <div>
                       <h4 className="text-white font-serif text-2xl mb-2">{item.title}</h4>
-                      <p className="text-[#a8a29e] font-light text-sm tracking-widest uppercase">{item.description}</p>
+                      <p className="text-slate-400 font-light text-sm tracking-widest uppercase">{item.description}</p>
                     </div>
                   </div>
                 </div>

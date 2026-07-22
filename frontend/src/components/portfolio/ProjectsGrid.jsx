@@ -116,30 +116,69 @@ export default function ProjectsGrid({ props = {}, templateId, viewportMode }) {
   }
 
   // ---------------------------------------------------------
-  // LUXURY & AGENCY (Cinematic, Dark, Gold)
+  // LUXURY MOTION PRO (Cinematic, Dark, Gold)
   // ---------------------------------------------------------
-  if (templateId === 'luxury-motion-pro' || templateId === 'global-agency-studio') {
+  if (templateId === 'luxury-motion-pro') {
+    return (
+      <section className="py-24 px-6 bg-[#0a0908] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-24">
+            <h2 className="font-serif italic text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3e5ab] via-[#d4af37] to-[#aa7c11] drop-shadow-sm tracking-wide mb-6">{heading}</h2>
+            <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto"></div>
+          </div>
+          <div className={`grid gap-16 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            {items.map((project, idx) => (
+              <div key={project.id || idx} className="group cursor-pointer" onClick={() => setSelectedProject(project)}>
+                <div className="relative aspect-video overflow-hidden mb-8 shadow-[0_15px_40px_rgba(0,0,0,0.6)] border border-[#d4af37]/20 rounded-xl">
+                  {project.imageUrl ? (
+                    <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover filter contrast-110 sepia-[0.3] group-hover:sepia-0 transition duration-700 group-hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full bg-[#0a0908] flex items-center justify-center text-[#d4af37]/50 font-serif">No Image</div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0908]/80 to-transparent opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                </div>
+                <h3 className="text-3xl text-[#f3e5ab] font-serif mb-3 group-hover:text-white transition-colors">{project.title}</h3>
+                <p className="text-[#a8a29e] text-base font-light mb-6 line-clamp-2 leading-relaxed">{project.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.tags?.slice(0, 3).map((tag, i) => (
+                    <span key={i} className="text-[10px] text-[#d4af37] uppercase tracking-[0.2em] border border-[#d4af37]/30 px-3 py-1.5 rounded-sm">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+      </section>
+    );
+  }
+
+  // ---------------------------------------------------------
+  // GLOBAL AGENCY STUDIO (Cinematic, Dark Slate)
+  // ---------------------------------------------------------
+  if (templateId === 'global-agency-studio') {
     return (
       <section className="py-24 px-6 bg-[#1a1816] border-t border-white/5">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <h2 className="font-serif italic text-4xl md:text-5xl text-[#d4af37] tracking-wide mb-4">{heading}</h2>
+            <h2 className="font-serif italic text-4xl md:text-5xl text-white tracking-wide mb-4">{heading}</h2>
           </div>
           <div className={`grid gap-12 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
             {items.map((project, idx) => (
               <div key={project.id || idx} className="group cursor-pointer" onClick={() => setSelectedProject(project)}>
                 <div className="relative aspect-video overflow-hidden mb-6 border border-white/10">
                   {project.imageUrl ? (
-                    <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover sepia-[0.3] group-hover:sepia-0 transition duration-700 group-hover:scale-105" />
+                    <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover filter saturate-50 group-hover:saturate-100 transition duration-700 group-hover:scale-105" />
                   ) : (
                     <div className="w-full h-full bg-black flex items-center justify-center text-slate-700 font-serif">No Image</div>
                   )}
                 </div>
                 <h3 className="text-2xl text-white font-serif mb-2">{project.title}</h3>
-                <p className="text-[#a8a29e] text-sm font-light mb-4 line-clamp-2">{project.description}</p>
+                <p className="text-slate-400 text-sm font-light mb-4 line-clamp-2">{project.description}</p>
                 <div className="flex gap-2">
                   {project.tags?.slice(0, 3).map((tag, i) => (
-                    <span key={i} className="text-[10px] text-[#d4af37] uppercase tracking-widest border border-[#d4af37]/30 px-2 py-1">{tag}</span>
+                    <span key={i} className="text-[10px] text-slate-300 uppercase tracking-widest border border-slate-600 px-2 py-1">{tag}</span>
                   ))}
                 </div>
               </div>
