@@ -1,132 +1,187 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Github, Linkedin, Twitter, Download } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, MonitorPlay, Sparkles } from 'lucide-react';
 
-export default function HeroBanner({ props = {} }) {
+export default function HeroBanner({ props = {}, templateId, viewportMode }) {
   const {
-    headline = 'I Design & Build Things People Love to Use',
-    subheadline = 'Creative technologist crafting digital experiences that feel like magic — and convert like crazy.',
-    ctaText = 'See My Work',
-    ctaLink = '#projects',
-    avatarUrl = '',
-    githubUrl = '',
-    linkedinUrl = '',
-    twitterUrl = '',
-    availableForWork = true,
-    resumeUrl = ''
+    headline = "Hi, I'm Priyanath",
+    subheadline = "Full Stack Developer & Creative Innovator",
+    avatarUrl = "",
+    ctaText = "View My Work",
+    githubUrl = "",
+    linkedinUrl = ""
   } = props;
 
-  return (
-    <section className="relative min-h-[90vh] flex items-center py-20 px-6 overflow-hidden">
-      {/* Ambient glow */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[100px]" />
-        <div className="absolute top-1/4 right-1/3 w-[300px] h-[300px] bg-purple-600/8 rounded-full blur-[80px]" />
-      </div>
+  const isMobile = viewportMode === 'mobile';
+  const isCyber = templateId === 'dark-cyber' || templateId === 'ai-neural-labs-pro' || templateId === 'fintech-saas-pro';
+  const isLuxury = templateId === 'haute-couture-studio' || templateId === 'luxury-motion-pro' || templateId === 'minimalist-editorial' || templateId === 'spatial-architect-studio';
 
-      <div className="max-w-6xl mx-auto w-full relative z-10">
-        <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-16">
+  const gridClass = isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2';
 
-          {/* Text Side */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-            className="flex-1 text-center lg:text-left"
-          >
-            {availableForWork && (
-              <div className="inline-flex items-center gap-2 badge badge-emerald mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Open to Work & Collaborations</span>
+  if (isCyber) {
+    return (
+      <section className="relative min-h-[85vh] flex items-center pt-20 pb-16 px-6 overflow-hidden font-mono bg-black">
+        {/* Cyber grid bg */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.05)_1px,transparent_1px)] bg-[size:40px_40px]" />
+        
+        <div className="max-w-6xl mx-auto w-full relative z-10">
+          <div className={`grid ${gridClass} gap-12 items-center`}>
+            <div>
+              <div className="text-emerald-500 mb-6 uppercase tracking-widest text-xs">
+                &gt; INITIALIZING_SYSTEM...
+              </div>
+              <h1 className="text-4xl md:text-6xl text-emerald-400 font-bold mb-6 tracking-tight uppercase">
+                {headline}_
+              </h1>
+              <p className="text-slate-400 text-lg md:text-xl mb-10 leading-relaxed border-l-2 border-emerald-500/50 pl-4">
+                {subheadline}
+              </p>
+              
+              <div className="flex flex-wrap items-center gap-4">
+                <a href="#projects" className="bg-emerald-500 text-black px-6 py-3 font-bold uppercase tracking-wider hover:bg-emerald-400 transition">
+                  [{ctaText}]
+                </a>
+                {(githubUrl || linkedinUrl) && (
+                  <div className="flex gap-4 items-center">
+                    {githubUrl && <a href={githubUrl} target="_blank" rel="noreferrer" className="text-emerald-500 hover:text-emerald-400 border border-emerald-500/30 p-3"><Github className="w-5 h-5" /></a>}
+                    {linkedinUrl && <a href={linkedinUrl} target="_blank" rel="noreferrer" className="text-emerald-500 hover:text-emerald-400 border border-emerald-500/30 p-3"><Linkedin className="w-5 h-5" /></a>}
+                  </div>
+                )}
+              </div>
+            </div>
+            {avatarUrl && (
+              <div className="relative justify-self-center lg:justify-self-end">
+                <div className="w-64 h-64 md:w-80 md:h-80 border-4 border-emerald-500/30 p-2 bg-emerald-950/20 relative">
+                  <div className="absolute -top-2 -left-2 w-4 h-4 bg-emerald-500"></div>
+                  <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-emerald-500"></div>
+                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition duration-500" />
+                </div>
               </div>
             )}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-            <h1 className="font-heading font-black text-4xl md:text-6xl lg:text-[4.5rem] text-white leading-[1.05] tracking-tight mb-6">
+  if (isLuxury) {
+    return (
+      <section className="relative min-h-[90vh] flex items-center pt-24 pb-16 px-6 overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center relative z-10 w-full">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+            <h1 className="font-display font-medium text-5xl md:text-7xl text-white mb-6 leading-tight">
               {headline}
             </h1>
-
-            <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-10 max-w-xl lg:mx-0 mx-auto">
+            <p className="text-slate-300 font-light text-xl md:text-2xl mb-12 max-w-2xl mx-auto">
               {subheadline}
             </p>
-
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              <a
-                href={ctaLink}
-                className="group btn-primary inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-white font-bold"
-              >
-                <span>{ctaText}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
-
-              {resumeUrl && (
-                <a
-                  href={resumeUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn-ghost inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl text-slate-300 font-semibold text-sm"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download CV</span>
-                </a>
-              )}
-            </div>
-
-            {/* Social icons */}
-            {(githubUrl || linkedinUrl || twitterUrl) && (
-              <div className="flex items-center gap-3 mt-8 justify-center lg:justify-start">
-                <span className="text-xs text-slate-600 uppercase tracking-widest">Find me on</span>
-                <div className="h-px flex-1 max-w-[40px] bg-white/10" />
-                <div className="flex items-center gap-2">
-                  {githubUrl && (
-                    <a href={githubUrl} target="_blank" rel="noreferrer"
-                      className="w-9 h-9 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white hover:border-white/20 transition">
-                      <Github className="w-4 h-4" />
-                    </a>
-                  )}
-                  {linkedinUrl && (
-                    <a href={linkedinUrl} target="_blank" rel="noreferrer"
-                      className="w-9 h-9 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition">
-                      <Linkedin className="w-4 h-4" />
-                    </a>
-                  )}
-                  {twitterUrl && (
-                    <a href={twitterUrl} target="_blank" rel="noreferrer"
-                      className="w-9 h-9 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white transition">
-                      <Twitter className="w-4 h-4" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
           </motion.div>
 
-          {/* Avatar Side */}
           {avatarUrl && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="relative flex-shrink-0 animate-float"
-            >
-              {/* Outer glow ring */}
-              <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-indigo-500/30 via-purple-500/20 to-pink-500/10 blur-2xl" />
-              <div className="avatar-ring relative w-52 h-52 md:w-72 md:h-72 glow-indigo rounded-full">
-                <img
-                  src={avatarUrl}
-                  alt="Profile"
-                  className="w-full h-full object-cover rounded-full"
-                />
-              </div>
-              {/* Floating Badge */}
-              <div className="absolute -bottom-2 -right-2 glass rounded-2xl px-4 py-2.5 shadow-2xl border border-white/10">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span className="text-xs font-bold text-white whitespace-nowrap">Available Now</span>
-                </div>
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="mb-12 flex justify-center">
+              <div className="w-48 h-64 md:w-64 md:h-80 overflow-hidden relative border border-white/10">
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               </div>
             </motion.div>
           )}
 
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.4 }} className="flex justify-center items-center gap-6">
+            <a href="#projects" className="border-b border-white text-white hover:text-slate-300 hover:border-slate-300 transition px-2 py-1 uppercase tracking-widest text-sm">
+              {ctaText}
+            </a>
+            {(githubUrl || linkedinUrl) && (
+              <div className="flex gap-4">
+                {githubUrl && <a href={githubUrl} target="_blank" rel="noreferrer" className="text-white hover:text-slate-400"><Github className="w-5 h-5" /></a>}
+                {linkedinUrl && <a href={linkedinUrl} target="_blank" rel="noreferrer" className="text-white hover:text-slate-400"><Linkedin className="w-5 h-5" /></a>}
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="relative min-h-[85vh] flex items-center pt-20 pb-16 px-6 overflow-hidden">
+      {/* Background gradients */}
+      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto w-full relative z-10">
+        <div className={`grid ${gridClass} gap-12 items-center`}>
+          {/* Left Text */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-emerald-500/30 text-emerald-400 text-xs font-semibold mb-6">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Open to Work & Collaborations
+            </div>
+            
+            <h1 className="font-heading font-black text-5xl md:text-7xl text-white mb-6 leading-[1.1] tracking-tight">
+              {headline}
+            </h1>
+            
+            <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-xl leading-relaxed">
+              {subheadline}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <a href="#projects" className="btn-primary text-white px-8 py-3.5 rounded-xl font-semibold flex items-center gap-2 group">
+                {ctaText}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+              
+              {(githubUrl || linkedinUrl) && (
+                <div className="flex items-center gap-2 ml-2">
+                  {githubUrl && (
+                    <a href={githubUrl} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-xl glass flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition">
+                      <Github className="w-5 h-5" />
+                    </a>
+                  )}
+                  {linkedinUrl && (
+                    <a href={linkedinUrl} target="_blank" rel="noreferrer" className="w-12 h-12 rounded-xl glass flex items-center justify-center text-slate-300 hover:text-white hover:bg-white/10 transition">
+                      <Linkedin className="w-5 h-5" />
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Right Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className={`relative justify-self-center ${isMobile ? '' : 'lg:justify-self-end'}`}
+          >
+            <div className="w-[300px] h-[300px] md:w-[450px] md:h-[450px] rounded-full glass-dark border border-white/[0.08] relative p-4 flex items-center justify-center">
+              {/* Spinning border effect */}
+              <div className="absolute inset-0 rounded-full border border-dashed border-indigo-500/30 animate-[spin_20s_linear_infinite]" />
+              
+              {/* Image Container */}
+              <div className="w-full h-full rounded-full overflow-hidden relative z-10 bg-slate-900 flex items-center justify-center">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <MonitorPlay className="w-12 h-12 text-slate-700" />
+                )}
+              </div>
+
+              {/* Floating Badge */}
+              <div className="absolute bottom-6 right-6 z-20 glass px-4 py-2 rounded-xl border border-white/10 flex items-center gap-2 shadow-2xl animate-float">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span className="text-white text-sm font-semibold">Available Now</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -338,6 +338,87 @@ export default function ComponentInspector() {
                 placeholder="Visual Showcase"
               />
             </Field>
+            <div className="pt-2">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Media Tiles</h4>
+              {props.items?.map((item, idx) => (
+                <div key={idx} className="p-3 mb-3 glass rounded-xl border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-400">Tile {idx + 1}</span>
+                    <button
+                      onClick={() => {
+                        const newItems = props.items.filter((_, i) => i !== idx);
+                        handlePropChange('items', newItems);
+                      }}
+                      className="p-1 rounded hover:bg-red-500/10 text-slate-500 hover:text-red-400"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <TextInput
+                    value={item.title}
+                    onChange={(e) => {
+                      const newItems = [...props.items];
+                      newItems[idx] = { ...newItems[idx], title: e.target.value };
+                      handlePropChange('items', newItems);
+                    }}
+                    placeholder="Title (e.g., Brand Guidelines)"
+                  />
+                  <TextArea
+                    rows={2}
+                    value={item.description}
+                    onChange={(e) => {
+                      const newItems = [...props.items];
+                      newItems[idx] = { ...newItems[idx], description: e.target.value };
+                      handlePropChange('items', newItems);
+                    }}
+                    placeholder="Description"
+                  />
+                  <div className="flex items-center gap-2">
+                    <TextInput
+                      value={item.url}
+                      onChange={(e) => {
+                        const newItems = [...props.items];
+                        newItems[idx] = { ...newItems[idx], url: e.target.value };
+                        handlePropChange('items', newItems);
+                      }}
+                      placeholder="Image/Video URL"
+                    />
+                    <label className="p-2.5 rounded-xl btn-primary text-white cursor-pointer shrink-0">
+                      <Upload className="w-4 h-4" />
+                      <input type="file" accept="image/*,video/*" className="hidden" onChange={async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        try {
+                          setUploading(true);
+                          const res = await API.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                          if (res.data.success) {
+                            const newItems = [...props.items];
+                            newItems[idx] = { ...newItems[idx], url: res.data.url };
+                            handlePropChange('items', newItems);
+                          }
+                        } catch (err) {
+                          alert('Upload failed');
+                        } finally {
+                          setUploading(false);
+                        }
+                      }} />
+                    </label>
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() => {
+                  const newItems = [...(props.items || []), { id: `m${Date.now()}`, title: '', description: '', type: 'image', url: '' }];
+                  handlePropChange('items', newItems);
+                }}
+                className="w-full py-2.5 rounded-xl btn-ghost text-xs font-semibold flex items-center justify-center gap-1.5 text-slate-400 hover:text-white"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Media</span>
+              </button>
+            </div>
           </>
         )}
 

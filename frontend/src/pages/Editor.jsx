@@ -134,6 +134,8 @@ export default function Editor() {
                     isEditing={!isPreviewMode}
                     isSelected={comp.id === selectedComponentId}
                     onClick={() => !isPreviewMode && dispatch(selectComponent(comp.id))}
+                    templateId={activeLayout?.theme?.templateId}
+                    viewportMode={viewportMode}
                   />
                 ))
               )}

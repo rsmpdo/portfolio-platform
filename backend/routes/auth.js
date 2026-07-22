@@ -71,6 +71,24 @@ router.post('/register', async (req, res) => {
     const verificationToken = user.getVerificationToken();
     await user.save();
 
+    // Send verification email
+    const verifyUrl = `${req.protocol}://${req.get('host').includes('localhost') ? 'localhost:5173' : req.get('host')}/verify-email?token=${verificationToken}`;
+    const message = `You are receiving this email because you (or someone else) registered a new account on PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Email Verification - PortfolioCraft',
+        message
+      });
+    } catch (error) {
+      console.log(error);
+      user.verificationToken = undefined;
+      user.verificationTokenExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(500).json({ success: false, message: 'Email could not be sent' });
+    }
+
     // Create default initial portfolio layout for user
     await Layout.create({
       userId: user._id,
