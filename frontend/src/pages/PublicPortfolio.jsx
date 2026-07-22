@@ -89,7 +89,7 @@ export default function PublicPortfolio() {
           ?.filter((comp) => comp.isVisible !== false)
           ?.sort((a, b) => (a.order || 0) - (b.order || 0))
           ?.map((comp) => (
-            <ComponentRenderer key={comp.id} component={comp} isEditing={false} />
+            <ComponentRenderer key={comp.id} component={comp} isEditing={false} templateId={layoutToRender.theme?.templateId} />
           ))}
       </main>
 
