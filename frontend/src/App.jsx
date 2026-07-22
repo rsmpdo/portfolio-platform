@@ -7,6 +7,14 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Editor from './pages/Editor';
 import PublicPortfolio from './pages/PublicPortfolio';
+import Features from './pages/Features';
+import Templates from './pages/Templates';
+import Showcase from './pages/Showcase';
+import Pricing from './pages/Pricing';
+import About from './pages/About';
+import Blog from './pages/Blog';
+import Careers from './pages/Careers';
+import ContactPage from './pages/ContactPage';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, token } = useSelector((state) => state.auth);
@@ -32,6 +40,14 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/features" element={<Features />} />
+        <Route path="/templates" element={<Templates />} />
+        <Route path="/showcase" element={<Showcase />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route
           path="/editor"
           element={

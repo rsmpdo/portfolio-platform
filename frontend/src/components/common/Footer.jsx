@@ -8,14 +8,14 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
           <div className="max-w-xs">
-            <div className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-4 group">
               <div className="w-8 h-8 rounded-xl btn-primary flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <span className="font-heading font-bold text-white">PortfolioCraft</span>
-            </div>
+            </Link>
             <p className="text-sm text-slate-500 leading-relaxed">
-              Where talent meets opportunity. Build a portfolio that makes people stop scrolling and start reaching out.
+              Where talent meets opportunity. Build an Adobe Portfolio-grade showcase that makes people stop scrolling and start reaching out.
             </p>
           </div>
 
@@ -23,9 +23,16 @@ export default function Footer() {
             <div>
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Platform</h4>
               <ul className="space-y-2.5">
-                {['Features', 'Templates', 'Showcase', 'Pricing'].map(item => (
-                  <li key={item}>
-                    <span className="text-sm text-slate-500 hover:text-white transition cursor-pointer underline-hover">{item}</span>
+                {[
+                  { name: 'Features', path: '/features' },
+                  { name: 'Templates', path: '/templates' },
+                  { name: 'Showcase', path: '/showcase' },
+                  { name: 'Pricing', path: '/pricing' }
+                ].map((item) => (
+                  <li key={item.name}>
+                    <Link to={item.path} className="text-sm text-slate-500 hover:text-white transition underline-hover">
+                      {item.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -33,9 +40,16 @@ export default function Footer() {
             <div>
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Company</h4>
               <ul className="space-y-2.5">
-                {['About', 'Blog', 'Careers', 'Contact'].map(item => (
-                  <li key={item}>
-                    <span className="text-sm text-slate-500 hover:text-white transition cursor-pointer underline-hover">{item}</span>
+                {[
+                  { name: 'About', path: '/about' },
+                  { name: 'Blog', path: '/blog' },
+                  { name: 'Careers', path: '/careers' },
+                  { name: 'Contact', path: '/contact' }
+                ].map((item) => (
+                  <li key={item.name}>
+                    <Link to={item.path} className="text-sm text-slate-500 hover:text-white transition underline-hover">
+                      {item.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
