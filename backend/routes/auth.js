@@ -1,0 +1,222 @@
+const express = require('express');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const passport = require('passport');
+const User = require('../models/User');
+const Layout = require('../models/Layout');
+const sendEmail = require('../utils/sendEmail');
+
+// Helper to generate JWT token
+const sendTokenResponse = (user, statusCode, res) => {
+  const token = jwt.sign(
+    { id: user._id, role: user.role, username: user.username },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE || '30d' }
+  );
+
+  res.status(statusCode).json({
+    success: true,
+    token,
+    user: {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      isVerified: user.isVerified
+    }
+  });
+};
+
+// @route   POST /api/auth/register
+// @desc    Register new user
+// @access  Public
+router.post('/register', async (req, res) => {
+  try {
+    const { username, email, password, role } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide username, email and password' });
+    }
+
+    // Check if user exists
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'Username or email already exists' });
+    }
+
+    // Create user instance
+    const user = new User({
+      username,
+      email,
+      password,
+      role: role === 'admin' ? 'admin' : 'standard'
+    });
+
+    // Generate email verification token
+    const verificationToken = user.getVerificationToken();
+    await user.save();
+
+    // Create default initial portfolio layout for user
+    await Layout.create({
+      userId: user._id,
+      handle: username.toLowerCase(),
+      title: `${username}'s Portfolio`,
+      components: [
+        {
+          id: 'hero-1',
+          type: 'HeroBanner',
+          title: 'Hero Banner',
+          order: 0,
+          isVisible: true,
+          props: {
+            headline: `Hi, I'm ${username}`,
+            subheadline: 'Full Stack Developer & Creative Innovator',
+            ctaText: 'View My Work',
+            ctaLink: '#projects',
+            avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80'
+          }
+        },
+        {
+          id: 'about-1',
+          type: 'AboutMe',
+          title: 'About Me',
+          order: 1,
+          isVisible: true,
+          props: {
+            heading: 'About Me',
+            bio: 'I build modern, high-performance web applications with clean design and robust architecture.',
+            skills: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS', 'TypeScript']
+          }
+        },
+        {
+          id: 'projects-1',
+          type: 'ProjectsGrid',
+          title: 'Featured Projects',
+          order: 2,
+          isVisible: true,
+          props: {
+            heading: 'Featured Projects',
+            items: [
+              {
+                id: 'p1',
+                title: 'Portfolio Platform',
+                description: 'Dynamic MERN layout engine with real-time preview and custom drag-and-drop components.',
+                tags: ['MongoDB', 'Express', 'React', 'Node.js'],
+                githubUrl: `https://github.com/${username}/portfolio-platform`,
+                liveUrl: 'https://portfolio-platform.dev'
+              }
+            ]
+          }
+        },
+        {
+          id: 'contact-1',
+          type: 'ContactSection',
+          title: 'Get In Touch',
+          order: 3,
+          isVisible: true,
+          props: {
+            heading: 'Let\'s Work Together',
+            email: email,
+            messagePlaceholder: 'Send me a message...'
+          }
+        }
+      ]
+    });
+
+    // Build verification URL
+    const verifyUrl = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+    const message = `Welcome to Portfolio Platform! Please verify your email by clicking the link: \n\n ${verifyUrl}`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Portfolio Platform - Verify Email',
+        message
+      });
+    } catch (err) {
+      console.error('Email send failed:', err);
+    }
+
+    sendTokenResponse(user, 201, res);
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   GET /api/auth/verify-email/:verificationToken
+// @desc    Verify email address token
+// @access  Public
+router.get('/verify-email/:verificationToken', async (req, res) => {
+  try {
+    // Hash token from param to compare with DB
+    const verificationToken = crypto
+      .createHash('sha256')
+      .update(req.params.verificationToken)
+      .digest('hex');
+
+    const user = await User.findOne({
+      verificationToken,
+      verificationTokenExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired verification token' });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpire = undefined;
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Email successfully verified!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   POST /api/auth/login
+// @desc    Login user & get JWT token
+// @access  Public
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide email and password' });
+    }
+
+    // Check user
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    // Check password
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   GET /api/auth/me
+// @desc    Get logged in user profile
+// @access  Private
+router.get(
+  '/me',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    res.status(200).json({
+      success: true,
+      user: req.user
+    });
+  }
+);
+
+module.exports = router;
