@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { fetchCurrentUser } from '../store/authSlice';
@@ -16,6 +16,7 @@ export default function VerifyEmail() {
   const dispatch = useDispatch();
   const [status, setStatus] = useState('loading'); // loading, success, error
   const [message, setMessage] = useState('');
+  const hasCalledRef = useRef(false);
 
   useEffect(() => {
     if (!token) {
@@ -23,6 +24,9 @@ export default function VerifyEmail() {
       setMessage('No verification token provided in link.');
       return;
     }
+
+    if (hasCalledRef.current) return;
+    hasCalledRef.current = true;
 
     const verifyToken = async () => {
       try {
