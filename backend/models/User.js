@@ -32,6 +32,12 @@ const UserSchema = new mongoose.Schema({
     enum: ['standard', 'admin'],
     default: 'standard'
   },
+  plan: {
+    type: String,
+    enum: ['free', 'pro', 'studio'],
+    default: 'free'
+  },
+  planExpiresAt: Date,
   isVerified: {
     type: Boolean,
     default: false
