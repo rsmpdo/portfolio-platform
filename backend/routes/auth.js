@@ -14,12 +14,12 @@ const getClientUrl = (req) => {
   if (process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost')) {
     return process.env.CLIENT_URL.replace(/\/$/, '');
   }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
   const host = req?.headers?.['x-forwarded-host'] || req?.get?.('host') || '';
   const protocol = req?.headers?.['x-forwarded-proto'] || req?.protocol || 'https';
-  if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
+  if (host && !host.includes('localhost') && !host.includes('127.0.0.1') && !host.includes('vercel.com')) {
     return `${protocol}://${host}`;
   }
   return process.env.PUBLIC_CLIENT_URL || 'https://portfolio-platform.vercel.app';
