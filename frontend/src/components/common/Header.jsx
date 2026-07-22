@@ -38,6 +38,7 @@ export default function Header() {
               { name: 'Pricing', path: '/pricing' },
               { name: 'About', path: '/about' },
               { name: 'Blog', path: '/blog' },
+              { name: 'Careers', path: '/careers' },
               { name: 'Contact', path: '/contact' }
             ].map((item) => (
               <Link
