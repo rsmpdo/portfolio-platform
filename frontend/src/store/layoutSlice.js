@@ -125,7 +125,11 @@ const layoutSlice = createSlice({
       const templateId = action.payload;
       const template = templateLayouts[templateId];
       if (template && state.activeLayout) {
-        state.activeLayout.theme = { ...state.activeLayout.theme, ...template.theme };
+        state.activeLayout.theme = { 
+          ...state.activeLayout.theme, 
+          ...template.theme,
+          templateId 
+        };
         state.activeLayout.components = template.components.map((c, i) => ({
           id: `comp_${Date.now()}_${i}`,
           type: c.type,

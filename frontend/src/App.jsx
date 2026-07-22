@@ -17,11 +17,17 @@ import Careers from './pages/Careers';
 import ContactPage from './pages/ContactPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ProfileSettings from './pages/ProfileSettings';
+import VerifyEmail from './pages/VerifyEmail';
+import VerifyPending from './pages/VerifyPending';
+import PaymentSuccess from './pages/PaymentSuccess';
 
 function PrivateRoute({ children }) {
-  const { isAuthenticated, token } = useSelector((state) => state.auth);
+  const { isAuthenticated, token, user } = useSelector((state) => state.auth);
   if (!isAuthenticated && !token) {
     return <Navigate to="/login" replace />;
+  }
+  if (user && !user.isVerified) {
+    return <VerifyPending />;
   }
   return children;
 }
@@ -70,6 +76,8 @@ export default function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/careers" element={<Careers />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route
           path="/editor"
           element={

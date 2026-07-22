@@ -19,7 +19,7 @@ const COMPONENT_MAP = {
   TestimonialsCarousel
 };
 
-export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick }) {
+export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick, templateId, viewportMode }) {
   if (!component || component.isVisible === false) return null;
 
   const ComponentClass = COMPONENT_MAP[component.type];
@@ -50,7 +50,7 @@ export default function ComponentRenderer({ component, isEditing = false, isSele
           {component.title || component.type}
         </div>
       )}
-      <ComponentClass props={component.props} />
+      <ComponentClass props={component.props} templateId={templateId} viewportMode={viewportMode} />
     </div>
   );
 }

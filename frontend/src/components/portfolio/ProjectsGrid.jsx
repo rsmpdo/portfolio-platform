@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github, X, ChevronLeft, ChevronRight, FolderGit2 } from 'lucide-react';
+import { ExternalLink, Github, X, ChevronLeft, ChevronRight, FolderGit2, Sparkles } from 'lucide-react';
 
 function ProjectModal({ project, onClose }) {
   return (
@@ -63,7 +63,7 @@ function ProjectModal({ project, onClose }) {
   );
 }
 
-export default function ProjectsGrid({ props = {} }) {
+export default function ProjectsGrid({ props = {}, templateId, viewportMode }) {
   const {
     heading = 'Work That Speaks for Itself',
     subheading = 'A curated selection of projects that solve real problems and create real impact.',
@@ -92,6 +92,90 @@ export default function ProjectsGrid({ props = {} }) {
 
   const [selectedProject, setSelectedProject] = useState(null);
   const [layout, setLayout] = useState(viewMode);
+  const isMobile = viewportMode === 'mobile';
+  
+  const isCyber = templateId === 'dark-cyber' || templateId === 'ai-neural-labs-pro' || templateId === 'fintech-saas-pro';
+  const isLuxury = templateId === 'haute-couture-studio' || templateId === 'luxury-motion-pro' || templateId === 'minimalist-editorial' || templateId === 'spatial-architect-studio';
+
+  const gridClass = isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2';
+
+  if (isCyber) {
+    return (
+      <section className="py-20 px-6 font-mono border-t border-emerald-500/20 bg-slate-950">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl md:text-3xl text-emerald-400 mb-12 uppercase tracking-widest">
+            // {heading}
+          </h2>
+          <div className={`grid gap-8 ${gridClass}`}>
+            {items.map((project, idx) => (
+              <div key={project.id || idx} className="border border-emerald-500/30 p-6 bg-black hover:border-emerald-400 transition relative group">
+                <div className="absolute top-0 right-0 p-2 text-[10px] text-emerald-500/50 uppercase">Sys.Obj.{idx}</div>
+                <h3 className="text-xl text-emerald-400 font-bold mb-3 uppercase tracking-wider">{project.title}</h3>
+                <p className="text-slate-400 text-sm mb-6">{project.description}</p>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {project.tags?.map((tag, i) => (
+                    <span key={i} className="text-[10px] text-emerald-500 border border-emerald-500/30 px-2 py-0.5">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-4">
+                  {project.liveUrl && (
+                    <a href={project.liveUrl} target="_blank" rel="noreferrer" className="text-xs text-black bg-emerald-500 px-4 py-2 uppercase font-bold hover:bg-emerald-400 transition flex items-center gap-2">
+                      <span>Deploy</span><ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a href={project.githubUrl} target="_blank" rel="noreferrer" className="text-xs text-emerald-500 border border-emerald-500 px-4 py-2 uppercase font-bold hover:bg-emerald-500/10 transition flex items-center gap-2">
+                      <span>Src</span><Github className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isLuxury) {
+    return (
+      <section className="py-24 px-6 border-y border-white/[0.02]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="font-display font-medium text-4xl md:text-5xl text-white tracking-wide mb-4">{heading}</h2>
+            {subheading && <p className="text-slate-400 font-light text-lg">{subheading}</p>}
+          </div>
+          <div className={`grid gap-12 ${gridClass}`}>
+            {items.map((project, idx) => (
+              <div key={project.id || idx} className="group cursor-pointer" onClick={() => setSelectedProject(project)}>
+                <div className="relative aspect-[4/3] overflow-hidden mb-6">
+                  {project.imageUrl ? (
+                    <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover transition duration-700 group-hover:scale-105 group-hover:opacity-80" />
+                  ) : (
+                    <div className="w-full h-full bg-slate-900 border border-white/5 flex items-center justify-center text-slate-700">No Image</div>
+                  )}
+                </div>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-2xl text-white font-display mb-2">{project.title}</h3>
+                    <p className="text-slate-400 text-sm font-light mb-4 line-clamp-2">{project.description}</p>
+                    <div className="flex gap-2">
+                      {project.tags?.slice(0, 3).map((tag, i) => (
+                        <span key={i} className="text-xs text-slate-500 uppercase tracking-widest">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
+      </section>
+    );
+  }
 
   return (
     <section id="projects" className="py-20 px-6">
@@ -120,7 +204,7 @@ export default function ProjectsGrid({ props = {} }) {
         </div>
 
         {/* Grid */}
-        <div className={layout === 'masonry' ? 'masonry-grid' : 'grid grid-cols-1 md:grid-cols-2 gap-8'}>
+        <div className={layout === 'masonry' ? 'columns-1 md:columns-2 gap-8 space-y-8' : `grid gap-8 ${gridClass}`}>
           {items.map((item, index) => (
             <motion.div
               key={item.id || index}
@@ -128,7 +212,7 @@ export default function ProjectsGrid({ props = {} }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="glass-card gradient-border rounded-3xl overflow-hidden group cursor-pointer"
+              className={`glass-card gradient-border rounded-3xl overflow-hidden group cursor-pointer ${layout === 'masonry' ? 'break-inside-avoid' : ''}`}
               onClick={() => setSelectedProject(item)}
             >
               {item.imageUrl && (
