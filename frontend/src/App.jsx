@@ -100,13 +100,28 @@ function AdminUnlockCard() {
 }
 
 function AdminRoute({ children }) {
-  const { isAuthenticated, token, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, token, user, loading } = useSelector((state) => state.auth);
+
+  if (loading || (token && !user)) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 text-center">
+        <Header />
+        <div className="flex flex-col items-center gap-3 mt-20">
+          <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
+          <p className="text-slate-400 text-xs font-mono">Verifying administrator credentials...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated && !token) {
     return <Navigate to="/login" replace />;
   }
-  if (user && user.role !== 'admin') {
+
+  if (!user || user.role !== 'admin') {
     return <AdminUnlockCard />;
   }
+
   return children;
 }
 

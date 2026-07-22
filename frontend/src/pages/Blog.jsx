@@ -12,7 +12,7 @@ const posts = [
     date: "July 20, 2026",
     author: "Alex Morgan",
     authorRole: "Staff Designer & Mentor",
-    authorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    authorAvatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80",
     readTime: "10 min read",
     image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
     excerpt: "Learn the exact section hierarchy, narrative frameworks, and metric positioning top 1% candidates use to land staff roles at Airbnb, Figma, and Stripe.",

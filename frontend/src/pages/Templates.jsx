@@ -53,7 +53,7 @@ const templates = [
     category: "Senior UI/UX Leads",
     planAccess: "pro",
     description: "High-resolution prototype embeds, interactive micro-interaction sliders, and video case studies.",
-    previewImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    previewImage: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=800&q=80",
     tags: ["Interactive", "PRO Exclusive", "Figma Embeds"],
     badge: "PRO Exclusive ⭐"
   },
@@ -93,7 +93,7 @@ const templates = [
     category: "Fashion & Photographers",
     planAccess: "studio",
     description: "Ultra high-definition full-screen masonry lightboxes, client portal access, and raw photo galleries.",
-    previewImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    previewImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
     tags: ["Full HD", "STUDIO Exclusive 👑", "Masonry Gallery"],
     badge: "STUDIO Exclusive 👑"
   },

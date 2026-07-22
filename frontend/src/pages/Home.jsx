@@ -128,7 +128,7 @@ export default function Home() {
             {/* Social Proof */}
             <div className="mt-10 flex items-center justify-center gap-3">
               <div className="flex -space-x-2">
-                {['https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop',
+                {['https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=40&h=40&fit=crop',
                   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop',
                   'https://images.unsplash.com/photo-1494790108755-2616b612b1e2?w=40&h=40&fit=crop',
                   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop'

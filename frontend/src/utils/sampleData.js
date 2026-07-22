@@ -14,7 +14,7 @@ export const ALEX_PORTFOLIO = {
         subheadline: "Senior Product Designer & Creative Technologist with 7+ years transforming complex enterprise software into sleek, accessible user experiences.",
         ctaText: "Explore Selected Work",
         ctaLink: "#projects",
-        avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+        avatarUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80",
         githubUrl: "https://github.com",
         linkedinUrl: "https://linkedin.com",
         twitterUrl: "https://twitter.com",
