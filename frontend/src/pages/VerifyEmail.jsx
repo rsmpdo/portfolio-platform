@@ -1,23 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { fetchCurrentUser } from '../store/authSlice';
 import API from '../services/api';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import Header from '../components/common/Header';
 
 export default function VerifyEmail() {
-  const { token } = useParams();
+  const { token: paramToken } = useParams();
+  const [searchParams] = useSearchParams();
+  const queryToken = searchParams.get('token');
+  const token = paramToken || queryToken;
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [status, setStatus] = useState('loading'); // loading, success, error
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    if (!token) {
+      setStatus('error');
+      setMessage('No verification token provided in link.');
+      return;
+    }
+
     const verifyToken = async () => {
       try {
         const res = await API.get(`/auth/verify-email/${token}`);
         if (res.data.success) {
           setStatus('success');
           setMessage(res.data.message);
-          // Redirect to login after 3 seconds if they want, or just provide a button
+          dispatch(fetchCurrentUser());
         }
       } catch (err) {
         setStatus('error');
@@ -25,7 +38,7 @@ export default function VerifyEmail() {
       }
     };
     verifyToken();
-  }, [token]);
+  }, [token, dispatch]);
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col">
