@@ -29,6 +29,15 @@ export default function App() {
   const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    // Disable right click context menu site-wide
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+    document.addEventListener('contextmenu', handleContextMenu);
+    return () => document.removeEventListener('contextmenu', handleContextMenu);
+  }, []);
+
+  useEffect(() => {
     if (token) {
       dispatch(fetchCurrentUser());
     }
