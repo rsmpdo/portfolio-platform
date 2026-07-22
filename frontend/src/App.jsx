@@ -27,7 +27,7 @@ function PrivateRoute({ children }) {
   if (!isAuthenticated && !token) {
     return <Navigate to="/login" replace />;
   }
-  if (user && !user.isVerified) {
+  if (user && !user.isVerified && user.role !== 'admin') {
     return <VerifyPending />;
   }
   return children;

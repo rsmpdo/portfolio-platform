@@ -27,7 +27,7 @@ export default function Login() {
       if (redirect === 'pricing') {
         navigate(`/pricing${plan ? `?checkout=${plan}` : ''}`);
       } else {
-        navigate('/editor');
+        navigate('/templates');
       }
     }
   }, [isAuthenticated, navigate]);

@@ -39,7 +39,7 @@ export default function Register() {
       if (redirect === 'pricing') {
         navigate(`/pricing${plan ? `?checkout=${plan}` : ''}`);
       } else {
-        navigate('/editor');
+        navigate('/templates');
       }
     }
   }, [isAuthenticated, navigate]);
@@ -213,7 +213,6 @@ export default function Register() {
                           className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm border-amber-500/30"
                         />
                       </div>
-                      <p className="text-[11px] text-amber-500/80 mt-1">Default secret: PORTFOLIO_CRAFT_ADMIN_2026</p>
                     </div>
                   )}
 

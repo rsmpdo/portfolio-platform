@@ -80,30 +80,35 @@ router.post('/register', async (req, res) => {
       email: email.toLowerCase(),
       password,
       role: assignedRole,
-      plan: 'free'
+      plan: 'free',
+      isVerified: assignedRole === 'admin' ? true : false
     });
 
-    // Generate email verification token
-    const verificationToken = user.getVerificationToken();
-    await user.save();
+    if (assignedRole === 'admin') {
+      await user.save();
+    } else {
+      // Generate email verification token for standard users
+      const verificationToken = user.getVerificationToken();
+      await user.save();
 
-    // Send verification email
-    const clientUrl = getClientUrl(req);
-    const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
-    const message = `You are receiving this email because you (or someone else) registered a new account on PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
+      // Send verification email
+      const clientUrl = getClientUrl(req);
+      const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
+      const message = `You are receiving this email because you (or someone else) registered a new account on PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
 
-    try {
-      await sendEmail({
-        email: user.email,
-        subject: 'Email Verification - PortfolioCraft',
-        message
-      });
-    } catch (error) {
-      console.log(error);
-      user.verificationToken = undefined;
-      user.verificationTokenExpire = undefined;
-      await user.save({ validateBeforeSave: false });
-      return res.status(500).json({ success: false, message: 'Email could not be sent' });
+      try {
+        await sendEmail({
+          email: user.email,
+          subject: 'Email Verification - PortfolioCraft',
+          message
+        });
+      } catch (error) {
+        console.log('Email send error:', error);
+        user.verificationToken = undefined;
+        user.verificationTokenExpire = undefined;
+        await user.save({ validateBeforeSave: false });
+        return res.status(500).json({ success: false, message: 'Email could not be sent' });
+      }
     }
 
     // Create default initial portfolio layout for user
