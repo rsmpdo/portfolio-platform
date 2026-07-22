@@ -8,7 +8,7 @@ export default function HeroBanner({ props = {} }) {
     subheadline = 'Creative technologist crafting digital experiences that feel like magic — and convert like crazy.',
     ctaText = 'See My Work',
     ctaLink = '#projects',
-    avatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80',
+    avatarUrl = '',
     githubUrl = '',
     linkedinUrl = '',
     twitterUrl = '',

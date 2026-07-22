@@ -204,7 +204,7 @@ export default function Pricing() {
               ) : (
                 <button
                   onClick={() => {
-                    const token = localStorage.getItem('token');
+                    const token = localStorage.getItem('portfolio_jwt_token');
                     if (!token) {
                       navigate('/register?redirect=pricing&plan=' + p.id);
                       return;

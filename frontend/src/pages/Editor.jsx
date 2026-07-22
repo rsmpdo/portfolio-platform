@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { fetchUserLayout, selectComponent } from '../store/layoutSlice';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { fetchUserLayout, selectComponent, applyTemplate } from '../store/layoutSlice';
 import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
@@ -13,10 +13,23 @@ export default function Editor() {
   const { activeLayout, selectedComponentId, loading, error } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchUserLayout());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (activeLayout && activeLayout.components?.length === 0) {
+      const params = new URLSearchParams(location.search);
+      const templateId = params.get('template');
+      if (templateId) {
+        dispatch(applyTemplate(templateId));
+        navigate('/editor', { replace: true });
+      }
+    }
+  }, [activeLayout, location.search, dispatch, navigate]);
 
   const getViewportWidth = () => {
     if (viewportMode === 'mobile') return 'max-w-sm';

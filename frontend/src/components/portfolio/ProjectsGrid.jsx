@@ -73,7 +73,7 @@ export default function ProjectsGrid({ props = {} }) {
         id: 'p1',
         title: 'Portfolio Platform',
         description: 'A beautiful, customizable portfolio engine that\'s helped hundreds of creators land their dream roles.',
-        imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
+        imageUrl: '',
         tags: ['Full Stack', 'React', 'Node.js', 'MongoDB'],
         githubUrl: 'https://github.com/rsmpdo/portfolio-platform',
         liveUrl: 'https://portfolio-platform-pearl.vercel.app'
@@ -82,7 +82,7 @@ export default function ProjectsGrid({ props = {} }) {
         id: 'p2',
         title: 'Analytics Dashboard',
         description: 'Real-time business intelligence made beautiful — complex data made simple for decision makers.',
-        imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+        imageUrl: '',
         tags: ['React', 'TypeScript', 'Data Viz'],
         githubUrl: 'https://github.com',
         liveUrl: 'https://example.com'

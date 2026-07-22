@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import API from '../services/api';
+import { templateLayouts } from '../data/templateLayouts';
 
 // Fetch current user's CMS layout for editing
 export const fetchUserLayout = createAsyncThunk(
@@ -119,6 +120,24 @@ const layoutSlice = createSlice({
     },
     clearSaveSuccess: (state) => {
       state.saveSuccess = false;
+    },
+    applyTemplate: (state, action) => {
+      const templateId = action.payload;
+      const template = templateLayouts[templateId];
+      if (template && state.activeLayout) {
+        state.activeLayout.theme = { ...state.activeLayout.theme, ...template.theme };
+        state.activeLayout.components = template.components.map((c, i) => ({
+          id: `comp_${Date.now()}_${i}`,
+          type: c.type,
+          title: c.title,
+          order: i,
+          isVisible: true,
+          props: {}
+        }));
+        if (state.activeLayout.components.length > 0) {
+          state.selectedComponentId = state.activeLayout.components[0].id;
+        }
+      }
     }
   },
   extraReducers: (builder) => {
@@ -179,7 +198,8 @@ export const {
   updateTheme,
   updateSeo,
   updateHandle,
-  clearSaveSuccess
+  clearSaveSuccess,
+  applyTemplate
 } = layoutSlice.actions;
 
 export default layoutSlice.reducer;
