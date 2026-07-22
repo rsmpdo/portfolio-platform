@@ -95,3 +95,4 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
 
 module.exports = app;
 
+// Trigger nodemon restart for environment variables
