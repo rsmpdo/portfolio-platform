@@ -32,15 +32,130 @@ router.get('/public/:handle', async (req, res) => {
   }
 });
 
+// Helper function to get max allowed portfolios based on user plan
+const getPlanLimit = (user) => {
+  if (user.role === 'admin') return 100;
+  if (user.plan === 'studio') return 5;
+  if (user.plan === 'pro') return 2;
+  return 1;
+};
+
+// @route   GET /api/layouts/my-portfolios
+// @desc    Get all portfolios belonging to logged in user
+// @access  Private
+router.get(
+  '/my-portfolios',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const layouts = await Layout.find({ userId: req.user._id }).sort({ createdAt: 1 });
+      const maxAllowed = getPlanLimit(req.user);
+
+      res.status(200).json({
+        success: true,
+        count: layouts.length,
+        maxAllowed,
+        plan: req.user.plan,
+        layouts
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   POST /api/layouts/new
+// @desc    Create a new portfolio layout for logged in user
+// @access  Private
+router.post(
+  '/new',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const { title, handle, templateId } = req.body;
+
+      const currentCount = await Layout.countDocuments({ userId: req.user._id });
+      const maxAllowed = getPlanLimit(req.user);
+
+      if (currentCount >= maxAllowed) {
+        return res.status(403).json({
+          success: false,
+          message: `Portfolio limit reached for your ${req.user.plan.toUpperCase()} plan (${currentCount}/${maxAllowed}). ${
+            req.user.plan !== 'studio' ? 'Upgrade to Studio plan to create up to 5 portfolios!' : ''
+          }`
+        });
+      }
+
+      const formattedHandle = (handle || `${req.user.username}-${Date.now().toString(36)}`).toLowerCase().trim();
+
+      // Check handle uniqueness
+      const existingHandle = await Layout.findOne({ handle: formattedHandle });
+      if (existingHandle) {
+        return res.status(400).json({ success: false, message: 'Portfolio handle URL already in use' });
+      }
+
+      const newLayout = await Layout.create({
+        userId: req.user._id,
+        title: title || `${req.user.username}'s Portfolio #${currentCount + 1}`,
+        handle: formattedHandle,
+        theme: { templateId: templateId || 'minimalist-editorial' },
+        components: []
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'New portfolio layout created successfully',
+        layout: newLayout
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   DELETE /api/layouts/id/:layoutId
+// @desc    Delete a specific portfolio layout
+// @access  Private
+router.delete(
+  '/id/:layoutId',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const count = await Layout.countDocuments({ userId: req.user._id });
+      if (count <= 1) {
+        return res.status(400).json({ success: false, message: 'Cannot delete your only portfolio' });
+      }
+
+      const layout = await Layout.findOne({ _id: req.params.layoutId, userId: req.user._id });
+      if (!layout) {
+        return res.status(404).json({ success: false, message: 'Portfolio layout not found' });
+      }
+
+      await layout.deleteOne();
+
+      res.status(200).json({ success: true, message: 'Portfolio layout deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
 // @route   GET /api/layouts/me
-// @desc    Get current logged in user layout for editing
+// @desc    Get current logged in user layout for editing (supports ?id=xxx)
 // @access  Private
 router.get(
   '/me',
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
-      let layout = await Layout.findOne({ userId: req.user._id });
+      const { id } = req.query;
+      let layout;
+
+      if (id) {
+        layout = await Layout.findOne({ _id: id, userId: req.user._id });
+      } else {
+        layout = await Layout.findOne({ userId: req.user._id }).sort({ createdAt: 1 });
+      }
 
       if (!layout) {
         // Create default layout if none exists
@@ -70,9 +185,15 @@ router.put(
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
-      const { title, handle, theme, seo, components, isPublished } = req.body;
+      const { _id, id, title, handle, theme, seo, components, isPublished } = req.body;
+      const targetId = _id || id || req.query.id;
 
-      let layout = await Layout.findOne({ userId: req.user._id });
+      let layout;
+      if (targetId) {
+        layout = await Layout.findOne({ _id: targetId, userId: req.user._id });
+      } else {
+        layout = await Layout.findOne({ userId: req.user._id }).sort({ createdAt: 1 });
+      }
 
       if (!layout) {
         layout = new Layout({ userId: req.user._id });

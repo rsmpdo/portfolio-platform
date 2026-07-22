@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { fetchUserLayout, selectComponent, applyTemplate } from '../store/layoutSlice';
+import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios } from '../store/layoutSlice';
 import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Header from '../components/common/Header';
-import { Monitor, Tablet, Smartphone, Eye, Loader2, ExternalLink, Sparkles } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, Loader2, ExternalLink, Sparkles, Layers } from 'lucide-react';
 
 export default function Editor() {
   const dispatch = useDispatch();
-  const { activeLayout, selectedComponentId, loading, error } = useSelector((state) => state.layout);
+  const { activeLayout, userPortfolios, selectedComponentId, loading, error } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchUserLayout());
-  }, [dispatch]);
+    const params = new URLSearchParams(location.search);
+    const layoutId = params.get('id');
+    dispatch(fetchUserLayout(layoutId));
+    dispatch(fetchUserPortfolios());
+  }, [dispatch, location.search]);
 
   useEffect(() => {
     if (activeLayout && activeLayout.components?.length === 0) {
@@ -48,6 +51,30 @@ export default function Editor() {
             <Sparkles className="w-4 h-4 text-indigo-400" />
             <span className="font-heading font-bold text-sm text-white">Portfolio Editor</span>
           </div>
+
+          {userPortfolios?.length > 1 && (
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-px bg-white/10" />
+              <div className="flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl px-2.5 py-1 text-xs font-bold text-indigo-300">
+                <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                <select
+                  value={activeLayout?._id || ''}
+                  onChange={(e) => {
+                    dispatch(fetchUserLayout(e.target.value));
+                    navigate(`/editor?id=${e.target.value}`, { replace: true });
+                  }}
+                  className="bg-transparent text-indigo-300 font-bold text-xs border-none cursor-pointer focus:outline-none"
+                >
+                  {userPortfolios.map((p) => (
+                    <option key={p._id} value={p._id} className="bg-slate-900 text-white font-medium">
+                      {p.title} (/p/{p.handle})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
           <div className="h-5 w-px bg-white/10" />
           {/* Viewport Switcher */}
           <div className="flex items-center glass p-1 rounded-xl">
