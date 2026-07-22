@@ -7,6 +7,7 @@ import SkillsCloud from './SkillsCloud';
 import ContactSection from './ContactSection';
 import MediaGallery from './MediaGallery';
 import TestimonialsCarousel from './TestimonialsCarousel';
+import PremiumEmbed from './PremiumEmbed';
 
 const COMPONENT_MAP = {
   HeroBanner,
@@ -16,7 +17,8 @@ const COMPONENT_MAP = {
   SkillsCloud,
   ContactSection,
   MediaGallery,
-  TestimonialsCarousel
+  TestimonialsCarousel,
+  PremiumEmbed
 };
 
 export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick, templateId, viewportMode }) {

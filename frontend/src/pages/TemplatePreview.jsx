@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { templateLayouts } from '../data/templateLayouts';
+import { demoLayouts } from '../data/demoLayouts';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import { Sparkles, ArrowLeft, Crown } from 'lucide-react';
 
@@ -10,7 +10,7 @@ export default function TemplatePreview() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   
-  const template = templateLayouts[templateId];
+  const template = demoLayouts[templateId];
 
   useEffect(() => {
     window.scrollTo(0, 0);
