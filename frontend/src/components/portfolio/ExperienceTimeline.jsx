@@ -1,81 +1,98 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Calendar, Building2 } from 'lucide-react';
+import { Briefcase, Calendar, Building2, ArrowUpRight } from 'lucide-react';
 
 export default function ExperienceTimeline({ props = {} }) {
   const {
-    heading = 'Work Experience',
+    heading = 'Where I\'ve Made an Impact',
+    subheading = 'A track record of shipping great work at companies that push boundaries.',
     items = [
       {
         id: 'exp-1',
         role: 'Senior Full Stack Engineer',
         company: 'TechCorp Solutions',
-        period: '2023 - Present',
-        description: 'Architected high-throughput microservices using Node.js, Express, and MongoDB. Led frontend team building React web apps.'
+        period: '2023 — Present',
+        description: 'Led the architecture of a high-traffic platform serving 2M+ users. Mentored a team of 5 engineers and reduced deployment time by 60%.',
+        highlights: ['Platform Architecture', 'Team Leadership', 'CI/CD Pipelines']
       },
       {
         id: 'exp-2',
         role: 'Frontend Developer',
         company: 'Creative Agency Inc',
-        period: '2021 - 2023',
-        description: 'Designed and deployed responsive web interfaces with React, Tailwind CSS, and Framer Motion for global enterprise clients.'
+        period: '2021 — 2023',
+        description: 'Designed and shipped responsive web experiences for Fortune 500 clients, achieving a 94% client satisfaction rating across 20+ projects.',
+        highlights: ['Client Projects', 'UI/UX Design', 'Performance Optimization']
       }
     ]
   } = props;
 
   return (
-    <section className="py-16 px-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-3 mb-12 justify-center">
-          <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400">
-            <Briefcase className="w-6 h-6" />
+    <section className="py-20 px-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Section header */}
+        <div className="text-center mb-16">
+          <div className="badge badge-indigo inline-flex mb-4">
+            <Briefcase className="w-3 h-3" />
+            <span>Experience</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white">{heading}</h2>
+          <h2 className="font-heading font-black text-3xl md:text-5xl text-white mb-3">{heading}</h2>
+          {subheading && <p className="text-slate-400 text-base max-w-lg mx-auto">{subheading}</p>}
         </div>
 
-        <div className="relative border-l-2 border-slate-800 ml-4 md:ml-32 space-y-12">
-          {items.map((item, index) => (
-            <motion.div
-              key={item.id || index}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="relative pl-8 md:pl-10"
-            >
-              {/* Timeline Dot */}
-              <div className="absolute -left-[17px] top-1.5 w-8 h-8 rounded-full bg-slate-900 border-2 border-indigo-500 flex items-center justify-center text-indigo-400 shadow-md">
-                <div className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
-              </div>
+        {/* Timeline */}
+        <div className="relative">
+          {/* Center line */}
+          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500/50 via-purple-500/30 to-transparent" />
 
-              {/* Period Pill for Large Screens */}
-              <div className="hidden md:block absolute -left-36 top-1.5 text-xs font-semibold text-slate-400 text-right w-28">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800">
-                  <Calendar className="w-3 h-3 text-indigo-400" />
-                  <span>{item.period}</span>
+          <div className="space-y-8">
+            {items.map((item, index) => (
+              <motion.div
+                key={item.id || index}
+                initial={{ opacity: 0, x: -24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.12 }}
+                className="relative pl-20"
+              >
+                {/* Timeline Dot */}
+                <div className="absolute left-[22px] top-6 z-10">
+                  <div className="w-[13px] h-[13px] rounded-full border-[3px] border-indigo-500 bg-slate-950 shadow-lg shadow-indigo-500/30" />
                 </div>
-              </div>
 
-              <div className="glass-card p-6 rounded-2xl border border-slate-800">
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                  <h3 className="text-xl font-bold text-white">{item.role}</h3>
-                  <div className="md:hidden inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-400">
-                    <Calendar className="w-3 h-3 text-indigo-400" />
-                    <span>{item.period}</span>
+                {/* Card */}
+                <div className="glass-card gradient-border rounded-2xl p-7 group hover:bg-white/[0.04] transition-all">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="font-heading font-bold text-xl text-white group-hover:text-indigo-400 transition-colors mb-1">
+                        {item.role}
+                      </h3>
+                      <div className="flex items-center gap-2 text-indigo-400 text-sm font-medium">
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span>{item.company}</span>
+                      </div>
+                    </div>
+
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass border border-white/[0.07] text-xs font-semibold text-slate-400 shrink-0">
+                      <Calendar className="w-3 h-3 text-indigo-400" />
+                      <span>{item.period}</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="inline-flex items-center gap-2 text-indigo-400 text-sm font-medium mb-4">
-                  <Building2 className="w-4 h-4" />
-                  <span>{item.company}</span>
-                </div>
+                  <p className="text-slate-300 text-sm leading-relaxed mb-5">{item.description}</p>
 
-                <p className="text-slate-300 text-sm leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                  {item.highlights?.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {item.highlights.map((h, i) => (
+                        <span key={i} className="px-3 py-1 rounded-lg bg-indigo-500/8 border border-indigo-500/15 text-indigo-300 text-xs font-medium">
+                          {h}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

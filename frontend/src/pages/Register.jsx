@@ -4,7 +4,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import { registerUser, clearError } from '../store/authSlice';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { UserPlus, User, Lock, Mail, AlertCircle, Loader2, ShieldCheck } from 'lucide-react';
+import { UserPlus, Lock, Mail, User, AlertCircle, Loader2, ArrowRight, CheckCircle } from 'lucide-react';
+
+const perks = [
+  'Your portfolio live in under 5 minutes',
+  'Beautiful templates — no design skills needed',
+  'Custom domain support',
+  'Unlimited projects and updates'
+];
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -14,122 +21,177 @@ export default function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('standard');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [localError, setLocalError] = useState('');
 
   useEffect(() => {
     dispatch(clearError());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       navigate('/editor');
     }
-  }, [isAuthenticated, navigate, dispatch]);
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(registerUser({ username, email, password, role }));
+    setLocalError('');
+    if (password !== confirmPassword) {
+      setLocalError('Passwords do not match.');
+      return;
+    }
+    dispatch(registerUser({ username, email, password }));
   };
 
+  const displayError = localError || error;
+
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
 
-      <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md glass-panel p-8 rounded-3xl border border-slate-800 shadow-2xl">
-          <div className="text-center mb-8">
-            <div className="inline-flex p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 mb-3">
-              <UserPlus className="w-6 h-6" />
-            </div>
-            <h1 className="text-2xl font-extrabold text-white">Create Account</h1>
-            <p className="text-xs text-slate-400 mt-1">Get started with your dynamic portfolio</p>
-          </div>
+      <main className="flex-1 flex items-center justify-center px-6 pt-28 pb-16">
+        <div className="w-full max-w-5xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-          {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+            {/* Left — Value Pitch */}
+            <div className="hidden lg:block">
+              <h1 className="font-heading font-black text-5xl text-white leading-tight mb-6">
+                Start building<br />
+                <span className="gradient-text">your future today.</span>
+              </h1>
+              <p className="text-slate-400 text-lg mb-10 leading-relaxed">
+                Join thousands of creators who turned their passion into opportunities — with a portfolio that actually gets them noticed.
+              </p>
+              <div className="space-y-4">
+                {perks.map((perk, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                    </div>
+                    <span className="text-slate-300 text-sm">{perk}</span>
+                  </div>
+                ))}
+              </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Username</label>
-              <div className="relative">
-                <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-                <input
-                  type="text"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                  placeholder="alex_dev"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-indigo-500"
-                />
+              {/* Social proof */}
+              <div className="mt-12 glass rounded-2xl p-5 border border-white/[0.06]">
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-2">
+                    {[
+                      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop',
+                      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop',
+                      'https://images.unsplash.com/photo-1494790108755-2616b612b1e2?w=40&h=40&fit=crop'
+                    ].map((src, i) => (
+                      <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-slate-950 object-cover" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-slate-400">
+                    <span className="text-white font-semibold">10,000+</span> creators already building
+                  </p>
+                </div>
               </div>
             </div>
 
+            {/* Right — Form */}
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Email Address</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="alex@example.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-indigo-500"
-                />
+              <div className="text-center mb-8 lg:text-left">
+                <h2 className="font-heading font-black text-3xl text-white mb-2 lg:hidden">Create Your Portfolio</h2>
+                <p className="text-slate-400 text-sm">Free forever. No credit card needed.</p>
+              </div>
+
+              <div className="glass gradient-border rounded-3xl p-8 shadow-2xl">
+                {displayError && (
+                  <div className="mb-5 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{displayError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Username</label>
+                    <div className="relative">
+                      <User className="w-4 h-4 text-slate-600 absolute left-4 top-3.5" />
+                      <input
+                        type="text" required value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="yourname"
+                        className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm"
+                      />
+                    </div>
+                    <p className="text-xs text-slate-600 mt-1.5">Your portfolio will be at /p/{username || 'yourname'}</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
+                    <div className="relative">
+                      <Mail className="w-4 h-4 text-slate-600 absolute left-4 top-3.5" />
+                      <input
+                        type="email" required value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Password</label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-slate-600 absolute left-4 top-3.5" />
+                      <input
+                        type="password" required minLength="6" value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Min. 6 characters"
+                        className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Confirm Password</label>
+                    <div className="relative">
+                      <Lock className="w-4 h-4 text-slate-600 absolute left-4 top-3.5" />
+                      <input
+                        type="password" required value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Repeat your password"
+                        className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit" disabled={loading}
+                    className="btn-primary w-full py-3.5 rounded-xl text-white font-bold flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <>
+                        <span>Create My Portfolio</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-center text-xs text-slate-600 pt-1">
+                    By signing up, you agree to our Terms & Privacy Policy.
+                  </p>
+                </form>
+
+                <div className="mt-6 pt-6 border-t border-white/[0.06] text-center">
+                  <p className="text-sm text-slate-500">
+                    Already have an account?{' '}
+                    <Link to="/login" className="text-indigo-400 font-semibold hover:text-indigo-300 transition underline-hover">
+                      Sign in →
+                    </Link>
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Password</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 6 characters"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Account Role</label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-indigo-500"
-              >
-                <option value="standard">Standard Developer</option>
-                <option value="admin">System Administrator</option>
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 transition disabled:opacity-50"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <span>Create Account & Layout</span>
-                  <ShieldCheck className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="text-center mt-6 pt-6 border-t border-slate-800">
-            <p className="text-xs text-slate-400">
-              Already have an account?{' '}
-              <Link to="/login" className="text-indigo-400 hover:underline font-semibold">
-                Sign in
-              </Link>
-            </p>
           </div>
         </div>
       </main>

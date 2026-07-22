@@ -2,7 +2,41 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateComponentProps } from '../../store/layoutSlice';
 import API from '../../services/api';
-import { Upload, Image as ImageIcon, Sliders, Loader2 } from 'lucide-react';
+import { Upload, Image as ImageIcon, Sliders, Loader2, Pencil, X, Plus, Trash2 } from 'lucide-react';
+
+function Field({ label, children }) {
+  return (
+    <div>
+      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+function TextInput({ value, onChange, placeholder, ...rest }) {
+  return (
+    <input
+      type="text"
+      value={value || ''}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="input-field w-full px-3 py-2.5 rounded-xl text-xs"
+      {...rest}
+    />
+  );
+}
+
+function TextArea({ value, onChange, placeholder, rows = 3 }) {
+  return (
+    <textarea
+      rows={rows}
+      value={value || ''}
+      onChange={onChange}
+      placeholder={placeholder}
+      className="input-field w-full px-3 py-2.5 rounded-xl text-xs resize-none"
+    />
+  );
+}
 
 export default function ComponentInspector() {
   const dispatch = useDispatch();
@@ -11,10 +45,14 @@ export default function ComponentInspector() {
 
   if (!activeLayout || !selectedComponentId) {
     return (
-      <aside className="w-80 h-full bg-slate-900 border-l border-slate-800 p-6 flex flex-col items-center justify-center text-center">
-        <Sliders className="w-8 h-8 text-slate-600 mb-2" />
-        <h3 className="text-sm font-semibold text-slate-300">No Section Selected</h3>
-        <p className="text-xs text-slate-500 mt-1">Click any section on the canvas or sidebar to customize its properties.</p>
+      <aside className="w-80 h-full glass-dark border-l border-white/[0.06] p-6 flex flex-col items-center justify-center text-center">
+        <div className="w-14 h-14 rounded-2xl glass flex items-center justify-center mb-4">
+          <Sliders className="w-6 h-6 text-slate-600" />
+        </div>
+        <h3 className="font-heading font-bold text-sm text-slate-300 mb-1">No Section Selected</h3>
+        <p className="text-xs text-slate-500 leading-relaxed">
+          Click any section on the canvas to customize its content, images, and settings.
+        </p>
       </aside>
     );
   }
@@ -25,12 +63,7 @@ export default function ComponentInspector() {
   const props = selectedComp.props || {};
 
   const handlePropChange = (key, value) => {
-    dispatch(
-      updateComponentProps({
-        id: selectedComp.id,
-        props: { [key]: value }
-      })
-    );
+    dispatch(updateComponentProps({ id: selectedComp.id, props: { [key]: value } }));
   };
 
   const handleFileUpload = async (e, targetPropKey) => {
@@ -57,161 +90,257 @@ export default function ComponentInspector() {
   };
 
   return (
-    <aside className="w-80 h-full bg-slate-900 border-l border-slate-800 flex flex-col z-30">
-      <div className="p-4 border-b border-slate-800 flex items-center gap-2">
-        <Sliders className="w-4 h-4 text-indigo-400" />
-        <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-          Edit {selectedComp.title || selectedComp.type}
+    <aside className="w-80 h-full glass-dark border-l border-white/[0.06] flex flex-col z-30">
+      {/* Header */}
+      <div className="p-4 border-b border-white/[0.06] flex items-center gap-2">
+        <Pencil className="w-4 h-4 text-indigo-400" />
+        <h3 className="font-heading font-bold text-xs text-white uppercase tracking-wider">
+          Edit: {selectedComp.title || selectedComp.type}
         </h3>
       </div>
 
+      {/* Properties */}
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
+
+        {/* ─── HeroBanner ────────────────────────── */}
         {selectedComp.type === 'HeroBanner' && (
           <>
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Headline</label>
-              <input
-                type="text"
-                value={props.headline || ''}
+            <Field label="Headline">
+              <TextInput
+                value={props.headline}
                 onChange={(e) => handlePropChange('headline', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500"
+                placeholder="I Design & Build Things People Love"
               />
-            </div>
+            </Field>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Subheadline</label>
-              <textarea
-                rows={3}
-                value={props.subheadline || ''}
+            <Field label="Subheadline">
+              <TextArea
+                value={props.subheadline}
                 onChange={(e) => handlePropChange('subheadline', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500 resize-none"
+                placeholder="A compelling description of what you do..."
               />
-            </div>
+            </Field>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Avatar Image (Cloudinary CDN)</label>
+            <Field label="Avatar Image">
               <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={props.avatarUrl || ''}
+                <TextInput
+                  value={props.avatarUrl}
                   onChange={(e) => handlePropChange('avatarUrl', e.target.value)}
-                  className="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500"
                   placeholder="https://..."
                 />
-                <label className="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer transition">
+                <label className="p-2.5 rounded-xl btn-primary text-white cursor-pointer shrink-0">
                   {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleFileUpload(e, 'avatarUrl')}
-                  />
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'avatarUrl')} />
                 </label>
               </div>
-            </div>
+            </Field>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">CTA Button Text</label>
-              <input
-                type="text"
-                value={props.ctaText || ''}
+            <Field label="CTA Button Text">
+              <TextInput
+                value={props.ctaText}
                 onChange={(e) => handlePropChange('ctaText', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500"
+                placeholder="See My Work"
               />
-            </div>
+            </Field>
+
+            <Field label="GitHub URL">
+              <TextInput
+                value={props.githubUrl}
+                onChange={(e) => handlePropChange('githubUrl', e.target.value)}
+                placeholder="https://github.com/..."
+              />
+            </Field>
+
+            <Field label="LinkedIn URL">
+              <TextInput
+                value={props.linkedinUrl}
+                onChange={(e) => handlePropChange('linkedinUrl', e.target.value)}
+                placeholder="https://linkedin.com/in/..."
+              />
+            </Field>
           </>
         )}
 
+        {/* ─── AboutMe ────────────────────────────── */}
         {selectedComp.type === 'AboutMe' && (
           <>
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Section Heading</label>
-              <input
-                type="text"
-                value={props.heading || ''}
+            <Field label="Section Heading">
+              <TextInput
+                value={props.heading}
                 onChange={(e) => handlePropChange('heading', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500"
+                placeholder="The Story Behind the Work"
               />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Bio Text</label>
-              <textarea
-                rows={5}
-                value={props.bio || ''}
+            </Field>
+            <Field label="Bio">
+              <TextArea
+                rows={6}
+                value={props.bio}
                 onChange={(e) => handlePropChange('bio', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500 resize-none"
+                placeholder="Write your story in a way that connects with visitors..."
               />
-            </div>
+            </Field>
           </>
         )}
 
+        {/* ─── ProjectsGrid ──────────────────────── */}
         {selectedComp.type === 'ProjectsGrid' && (
           <>
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Section Title</label>
-              <input
-                type="text"
-                value={props.heading || ''}
+            <Field label="Section Title">
+              <TextInput
+                value={props.heading}
                 onChange={(e) => handlePropChange('heading', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500"
+                placeholder="Work That Speaks for Itself"
               />
-            </div>
-
+            </Field>
             <div className="pt-2">
-              <h4 className="text-xs font-bold text-slate-400 uppercase mb-2">Projects List</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Projects</h4>
               {props.items?.map((item, idx) => (
-                <div key={idx} className="p-3 mb-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-                  <input
-                    type="text"
-                    value={item.title || ''}
+                <div key={idx} className="p-3 mb-3 glass rounded-xl border border-white/[0.06] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-400">Project {idx + 1}</span>
+                    <button
+                      onClick={() => {
+                        const newItems = props.items.filter((_, i) => i !== idx);
+                        handlePropChange('items', newItems);
+                      }}
+                      className="p-1 rounded hover:bg-red-500/10 text-slate-500 hover:text-red-400"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <TextInput
+                    value={item.title}
                     onChange={(e) => {
                       const newItems = [...props.items];
                       newItems[idx] = { ...newItems[idx], title: e.target.value };
                       handlePropChange('items', newItems);
                     }}
                     placeholder="Project Title"
-                    className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 text-xs text-white rounded focus:outline-none"
                   />
-                  <textarea
+                  <TextArea
                     rows={2}
-                    value={item.description || ''}
+                    value={item.description}
                     onChange={(e) => {
                       const newItems = [...props.items];
                       newItems[idx] = { ...newItems[idx], description: e.target.value };
                       handlePropChange('items', newItems);
                     }}
-                    placeholder="Project Description"
-                    className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 text-xs text-white rounded focus:outline-none resize-none"
+                    placeholder="What makes this project special?"
+                  />
+                  <TextInput
+                    value={item.imageUrl}
+                    onChange={(e) => {
+                      const newItems = [...props.items];
+                      newItems[idx] = { ...newItems[idx], imageUrl: e.target.value };
+                      handlePropChange('items', newItems);
+                    }}
+                    placeholder="Image URL"
+                  />
+                  <TextInput
+                    value={item.liveUrl}
+                    onChange={(e) => {
+                      const newItems = [...props.items];
+                      newItems[idx] = { ...newItems[idx], liveUrl: e.target.value };
+                      handlePropChange('items', newItems);
+                    }}
+                    placeholder="Live Demo URL"
                   />
                 </div>
               ))}
+              <button
+                onClick={() => {
+                  const newItems = [...(props.items || []), { id: `p${Date.now()}`, title: '', description: '', imageUrl: '', tags: [] }];
+                  handlePropChange('items', newItems);
+                }}
+                className="w-full py-2.5 rounded-xl btn-ghost text-xs font-semibold flex items-center justify-center gap-1.5 text-slate-400 hover:text-white"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Project</span>
+              </button>
             </div>
           </>
         )}
 
+        {/* ─── ContactSection ────────────────────── */}
         {selectedComp.type === 'ContactSection' && (
           <>
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Heading</label>
-              <input
-                type="text"
-                value={props.heading || ''}
+            <Field label="Heading">
+              <TextInput
+                value={props.heading}
                 onChange={(e) => handlePropChange('heading', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500"
+                placeholder="Ready to Create Something Great?"
               />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1">Display Email</label>
-              <input
+            </Field>
+            <Field label="Display Email">
+              <TextInput
                 type="email"
-                value={props.email || ''}
+                value={props.email}
                 onChange={(e) => handlePropChange('email', e.target.value)}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-lg focus:outline-none focus:border-indigo-500"
+                placeholder="hello@yoursite.com"
               />
-            </div>
+            </Field>
+            <Field label="Location">
+              <TextInput
+                value={props.location}
+                onChange={(e) => handlePropChange('location', e.target.value)}
+                placeholder="Available Worldwide"
+              />
+            </Field>
           </>
         )}
+
+        {/* ─── ExperienceTimeline ────────────────── */}
+        {selectedComp.type === 'ExperienceTimeline' && (
+          <>
+            <Field label="Section Heading">
+              <TextInput
+                value={props.heading}
+                onChange={(e) => handlePropChange('heading', e.target.value)}
+                placeholder="Where I've Made an Impact"
+              />
+            </Field>
+          </>
+        )}
+
+        {/* ─── SkillsCloud ───────────────────────── */}
+        {selectedComp.type === 'SkillsCloud' && (
+          <>
+            <Field label="Section Heading">
+              <TextInput
+                value={props.heading}
+                onChange={(e) => handlePropChange('heading', e.target.value)}
+                placeholder="Tools of the Trade"
+              />
+            </Field>
+          </>
+        )}
+
+        {/* ─── TestimonialsCarousel ───────────────── */}
+        {selectedComp.type === 'TestimonialsCarousel' && (
+          <>
+            <Field label="Section Heading">
+              <TextInput
+                value={props.heading}
+                onChange={(e) => handlePropChange('heading', e.target.value)}
+                placeholder="Don't Take My Word For It"
+              />
+            </Field>
+          </>
+        )}
+
+        {/* ─── MediaGallery ──────────────────────── */}
+        {selectedComp.type === 'MediaGallery' && (
+          <>
+            <Field label="Section Heading">
+              <TextInput
+                value={props.heading}
+                onChange={(e) => handlePropChange('heading', e.target.value)}
+                placeholder="Visual Showcase"
+              />
+            </Field>
+          </>
+        )}
+
       </div>
     </aside>
   );

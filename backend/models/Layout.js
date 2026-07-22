@@ -48,6 +48,7 @@ const LayoutSchema = new mongoose.Schema(
             'SkillsCloud',
             'ContactSection',
             'MediaGallery',
+            'TestimonialsCarousel',
             'CustomHTML'
           ]
         },

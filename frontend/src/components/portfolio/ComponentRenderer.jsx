@@ -6,6 +6,7 @@ import ExperienceTimeline from './ExperienceTimeline';
 import SkillsCloud from './SkillsCloud';
 import ContactSection from './ContactSection';
 import MediaGallery from './MediaGallery';
+import TestimonialsCarousel from './TestimonialsCarousel';
 
 const COMPONENT_MAP = {
   HeroBanner,
@@ -14,7 +15,8 @@ const COMPONENT_MAP = {
   ExperienceTimeline,
   SkillsCloud,
   ContactSection,
-  MediaGallery
+  MediaGallery,
+  TestimonialsCarousel
 };
 
 export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick }) {
@@ -24,8 +26,8 @@ export default function ComponentRenderer({ component, isEditing = false, isSele
 
   if (!ComponentClass) {
     return (
-      <div className="p-6 my-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-center">
-        Unknown component type: {component.type}
+      <div className="p-6 my-4 rounded-xl glass border border-white/[0.07] text-slate-500 text-center text-sm">
+        Unknown component type: <code className="text-indigo-400">{component.type}</code>
       </div>
     );
   }
@@ -35,16 +37,16 @@ export default function ComponentRenderer({ component, isEditing = false, isSele
       onClick={onClick}
       className={`relative transition-all duration-200 ${
         isEditing
-          ? `cursor-pointer rounded-2xl border-2 my-4 ${
+          ? `cursor-pointer rounded-2xl border-2 my-2 ${
               isSelected
-                ? 'border-indigo-500 ring-4 ring-indigo-500/20 bg-indigo-950/10'
-                : 'border-transparent hover:border-slate-700'
+                ? 'border-indigo-500 ring-4 ring-indigo-500/15 bg-indigo-950/5'
+                : 'border-transparent hover:border-white/10'
             }`
           : ''
       }`}
     >
       {isEditing && (
-        <div className="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-700 text-xs font-semibold text-indigo-400 backdrop-blur-md">
+        <div className="absolute top-3 left-3 z-20 px-3 py-1 rounded-full glass border border-white/10 text-xs font-semibold text-indigo-400 backdrop-blur-md">
           {component.title || component.type}
         </div>
       )}

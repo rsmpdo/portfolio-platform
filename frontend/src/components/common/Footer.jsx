@@ -1,23 +1,62 @@
 import React from 'react';
-import { Sparkles, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Sparkles, ArrowUpRight } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-800/80 bg-slate-950 py-12 px-6">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-indigo-600 text-white">
-            <Sparkles className="w-4 h-4" />
+    <footer className="border-t border-white/[0.06] bg-slate-950 py-16 px-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
+          <div className="max-w-xs">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-xl btn-primary flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-heading font-bold text-white">PortfolioCraft</span>
+            </div>
+            <p className="text-sm text-slate-500 leading-relaxed">
+              Where talent meets opportunity. Build a portfolio that makes people stop scrolling and start reaching out.
+            </p>
           </div>
-          <span className="font-bold text-sm text-white">PortfolioCraft MERN Platform</span>
+
+          <div className="grid grid-cols-2 gap-x-16 gap-y-4">
+            <div>
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Platform</h4>
+              <ul className="space-y-2.5">
+                {['Features', 'Templates', 'Showcase', 'Pricing'].map(item => (
+                  <li key={item}>
+                    <span className="text-sm text-slate-500 hover:text-white transition cursor-pointer underline-hover">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Company</h4>
+              <ul className="space-y-2.5">
+                {['About', 'Blog', 'Careers', 'Contact'].map(item => (
+                  <li key={item}>
+                    <span className="text-sm text-slate-500 hover:text-white transition cursor-pointer underline-hover">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Start Creating</h4>
+            <Link
+              to="/register"
+              className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold"
+            >
+              <span>Create Free Portfolio</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
 
-        <p className="text-xs text-slate-500 flex items-center gap-1">
-          Built with <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" /> using React, Node.js, Express & MongoDB Atlas.
-        </p>
-
-        <div className="text-xs text-slate-500">
-          &copy; {new Date().getFullYear()} All rights reserved.
+        <div className="pt-8 border-t border-white/[0.06] flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} PortfolioCraft. All rights reserved.</p>
+          <p className="text-xs text-slate-600">Designed for creators who mean business.</p>
         </div>
       </div>
     </footer>
