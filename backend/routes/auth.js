@@ -11,14 +11,18 @@ const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_202
 
 // Helper to get client frontend URL dynamically
 const getClientUrl = (req) => {
-  if (process.env.CLIENT_URL) return process.env.CLIENT_URL.replace(/\/$/, '');
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  const host = req.headers['x-forwarded-host'] || req.get('host') || '';
-  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
-  if (host.includes('localhost') || host.includes('127.0.0.1')) {
-    return 'http://localhost:5173';
+  if (process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost')) {
+    return process.env.CLIENT_URL.replace(/\/$/, '');
   }
-  return `${protocol}://${host}`;
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  const host = req?.headers?.['x-forwarded-host'] || req?.get?.('host') || '';
+  const protocol = req?.headers?.['x-forwarded-proto'] || req?.protocol || 'https';
+  if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
+    return `${protocol}://${host}`;
+  }
+  return process.env.PUBLIC_CLIENT_URL || 'https://portfolio-platform.vercel.app';
 };
 
 // Helper to generate JWT token
