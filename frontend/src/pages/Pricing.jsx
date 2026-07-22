@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
@@ -70,6 +70,7 @@ export default function Pricing() {
   const [checkoutPlan, setCheckoutPlan] = useState(null);
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -205,7 +206,7 @@ export default function Pricing() {
                   onClick={() => {
                     const token = localStorage.getItem('token');
                     if (!token) {
-                      window.location.href = '/register?redirect=pricing&plan=' + p.id;
+                      navigate('/register?redirect=pricing&plan=' + p.id);
                       return;
                     }
                     setCheckoutPlan(p);

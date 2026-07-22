@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { registerUser, clearError } from '../store/authSlice';
 import Header from '../components/common/Header';
@@ -16,6 +16,7 @@ const perks = [
 export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
 
   const [username, setUsername] = useState('');
@@ -238,7 +239,7 @@ export default function Register() {
                 <div className="mt-6 pt-6 border-t border-white/[0.06] text-center">
                   <p className="text-sm text-slate-500">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-indigo-400 font-semibold hover:text-indigo-300 transition underline-hover">
+                    <Link to={`/login${location.search}`} className="text-indigo-400 font-semibold hover:text-indigo-300 transition underline-hover">
                       Sign in →
                     </Link>
                   </p>

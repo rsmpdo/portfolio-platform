@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginUser, clearError } from '../store/authSlice';
 import Header from '../components/common/Header';
@@ -9,6 +9,7 @@ import { LogIn, Lock, Mail, AlertCircle, Loader2, ArrowRight } from 'lucide-reac
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState('');
@@ -101,7 +102,7 @@ export default function Login() {
             <div className="mt-6 pt-6 border-t border-white/[0.06] text-center">
               <p className="text-sm text-slate-500">
                 New here?{' '}
-                <Link to="/register" className="text-indigo-400 font-semibold hover:text-indigo-300 transition underline-hover">
+                <Link to={`/register${location.search}`} className="text-indigo-400 font-semibold hover:text-indigo-300 transition underline-hover">
                   Create your portfolio free →
                 </Link>
               </p>
