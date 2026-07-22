@@ -44,10 +44,10 @@ export default function Header() {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`text-xs font-semibold transition flex items-center h-14 ${
+                className={`text-xs font-semibold transition flex items-center h-14 border-b-2 ${
                   location.pathname === item.path
-                    ? 'text-indigo-400 border-b-2 border-indigo-500'
-                    : 'text-slate-400 hover:text-white underline-hover'
+                    ? 'text-indigo-400 border-indigo-500'
+                    : 'text-slate-400 border-transparent hover:text-white'
                 }`}
               >
                 {item.name}
