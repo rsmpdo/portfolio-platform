@@ -16,6 +16,7 @@ import Blog from './pages/Blog';
 import Careers from './pages/Careers';
 import ContactPage from './pages/ContactPage';
 import AdminDashboard from './pages/AdminDashboard';
+import ProfileSettings from './pages/ProfileSettings';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, token } = useSelector((state) => state.auth);
@@ -74,6 +75,14 @@ export default function App() {
           element={
             <PrivateRoute>
               <Editor />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfileSettings />
             </PrivateRoute>
           }
         />

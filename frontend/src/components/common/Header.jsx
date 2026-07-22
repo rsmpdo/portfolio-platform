@@ -64,20 +64,22 @@ export default function Header() {
                   <LayoutTemplate className="w-3.5 h-3.5" />
                   <span>My Portfolio</span>
                 </Link>
-                <div className="flex items-center gap-3 pl-3 border-l border-white/10">
-                  <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
-                    <span className="text-xs font-bold text-indigo-400 uppercase">
-                      {user?.username?.[0] || 'U'}
-                    </span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="p-1.5 rounded-lg btn-ghost text-slate-400 hover:text-white"
-                    title="Sign Out"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                <Link
+                  to="/profile"
+                  className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center hover:border-indigo-400 transition"
+                  title="Profile & Settings"
+                >
+                  <span className="text-xs font-bold text-indigo-400 uppercase">
+                    {user?.username?.[0] || 'U'}
+                  </span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-1.5 rounded-lg btn-ghost text-slate-400 hover:text-white"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
               </>
             ) : (
               <>

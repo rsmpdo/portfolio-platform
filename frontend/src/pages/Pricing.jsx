@@ -71,6 +71,17 @@ export default function Pricing() {
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(null);
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const checkout = searchParams.get('checkout');
+    if (checkout) {
+      const selected = plans.find((p) => p.id === checkout);
+      if (selected) {
+        setCheckoutPlan(selected);
+      }
+    }
+  }, []);
+
   // Form State
   const [email, setEmail] = useState('');
   const [nameOnCard, setNameOnCard] = useState('');

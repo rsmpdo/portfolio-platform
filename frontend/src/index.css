@@ -27,7 +27,26 @@
     cursor: default;
   }
 
-  input, textarea {
+  /* Interactive Pointer Cursors */
+  button,
+  a,
+  label,
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="color"],
+  input[type="submit"],
+  input[type="button"],
+  [role="button"],
+  .cursor-pointer {
+    cursor: pointer !important;
+  }
+
+  /* Text Inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
     user-select: text !important;
     cursor: text !important;
   }

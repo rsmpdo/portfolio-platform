@@ -20,7 +20,14 @@ export default function Login() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/editor');
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirect = searchParams.get('redirect');
+      const plan = searchParams.get('plan');
+      if (redirect === 'pricing') {
+        navigate(`/pricing${plan ? `?checkout=${plan}` : ''}`);
+      } else {
+        navigate('/editor');
+      }
     }
   }, [isAuthenticated, navigate]);
 
