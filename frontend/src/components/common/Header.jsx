@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/authSlice';
-import { Sparkles, LayoutTemplate, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Sparkles, LayoutTemplate, LogOut, LogIn, UserPlus, ShieldAlert } from 'lucide-react';
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -48,6 +48,15 @@ export default function Header() {
           <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
+                {user?.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-bold flex items-center gap-1.5 hover:bg-amber-500/30 transition"
+                  >
+                    <ShieldAlert className="w-3.5 h-3.5" />
+                    <span>Admin</span>
+                  </Link>
+                )}
                 <Link
                   to="/editor"
                   className="btn-primary px-4 py-2 rounded-xl text-white text-xs font-bold flex items-center gap-2"

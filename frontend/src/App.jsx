@@ -15,11 +15,23 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import Careers from './pages/Careers';
 import ContactPage from './pages/ContactPage';
+import AdminDashboard from './pages/AdminDashboard';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, token } = useSelector((state) => state.auth);
   if (!isAuthenticated && !token) {
     return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
+function AdminRoute({ children }) {
+  const { isAuthenticated, token, user } = useSelector((state) => state.auth);
+  if (!isAuthenticated && !token) {
+    return <Navigate to="/login" replace />;
+  }
+  if (user && user.role !== 'admin') {
+    return <Navigate to="/editor" replace />;
   }
   return children;
 }
@@ -63,6 +75,14 @@ export default function App() {
             <PrivateRoute>
               <Editor />
             </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
           }
         />
         <Route path="/p/:handle" element={<PublicPortfolio />} />

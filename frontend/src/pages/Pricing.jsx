@@ -191,7 +191,14 @@ export default function Pricing() {
                 </Link>
               ) : (
                 <button
-                  onClick={() => setCheckoutPlan(p)}
+                  onClick={() => {
+                    const token = localStorage.getItem('token');
+                    if (!token) {
+                      window.location.href = '/register?redirect=pricing&plan=' + p.id;
+                      return;
+                    }
+                    setCheckoutPlan(p);
+                  }}
                   className={`w-full py-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 ${
                     p.popular ? 'btn-primary text-white' : 'btn-ghost text-slate-300 hover:text-white'
                   }`}
