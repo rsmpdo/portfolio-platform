@@ -4,12 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchPublicLayout } from '../store/layoutSlice';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Footer from '../components/common/Footer';
-import { Loader2, AlertCircle, ArrowLeft, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, UserCheck } from 'lucide-react';
+import { SAMPLE_PORTFOLIO } from '../utils/sampleData';
 
 export default function PublicPortfolio() {
   const { handle } = useParams();
   const dispatch = useDispatch();
-  const { publicLayout, loading, error } = useSelector((state) => state.layout);
+  const { publicLayout, loading } = useSelector((state) => state.layout);
 
   useEffect(() => {
     if (handle) {
@@ -29,34 +30,19 @@ export default function PublicPortfolio() {
     );
   }
 
-  if (error || !publicLayout) {
-    return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-6">
-        <div className="glass gradient-border rounded-3xl p-10 max-w-md text-center">
-          <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-8 h-8 text-red-400" />
-          </div>
-          <h1 className="font-heading font-bold text-2xl text-white mb-3">Portfolio Not Found</h1>
-          <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-            The portfolio at <span className="text-indigo-400 font-mono">/p/{handle}</span> doesn't exist yet or has been set to private.
-          </p>
-          <Link
-            to="/"
-            className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // Use fetched public layout if available; otherwise display high-quality sample portfolio
+  const layoutToRender = publicLayout || {
+    ...SAMPLE_PORTFOLIO,
+    handle: handle || 'demo',
+    title: `${handle ? handle.replace('_', ' ') : 'Sample'}'s Portfolio`
+  };
 
-  const { title, components, theme } = publicLayout;
+  const { title, components } = layoutToRender;
+  const isSample = !publicLayout;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Minimal top bar for public portfolio */}
+      {/* Top Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-4 md:mx-8 mt-4">
           <div className="glass-dark rounded-2xl px-6 h-12 flex items-center justify-between shadow-xl shadow-black/20">
@@ -68,14 +54,24 @@ export default function PublicPortfolio() {
                 Portfolio<span className="gradient-text">Craft</span>
               </span>
             </Link>
-            {title && (
-              <span className="text-xs text-slate-500 font-semibold tracking-wide uppercase">
-                {title}
-              </span>
-            )}
+
+            <div className="flex items-center gap-3">
+              {isSample && (
+                <div className="hidden sm:inline-flex items-center gap-1.5 badge badge-indigo text-xs">
+                  <UserCheck className="w-3 h-3" />
+                  <span>Sample Demo View</span>
+                </div>
+              )}
+              {title && (
+                <span className="text-xs text-slate-400 font-semibold tracking-wide uppercase truncate max-w-[150px] sm:max-w-none">
+                  {title}
+                </span>
+              )}
+            </div>
+
             <Link
               to="/register"
-              className="btn-primary px-3 py-1.5 rounded-lg text-white text-xs font-bold"
+              className="btn-primary px-3 py-1.5 rounded-xl text-white text-xs font-bold"
             >
               Create Yours Free
             </Link>
@@ -83,6 +79,7 @@ export default function PublicPortfolio() {
         </div>
       </nav>
 
+      {/* Components Stream */}
       <main className="flex-1 pt-20">
         {components
           ?.filter((comp) => comp.isVisible !== false)

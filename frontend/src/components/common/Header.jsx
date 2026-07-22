@@ -28,8 +28,24 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Nav */}
-          <nav className="flex items-center gap-3">
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link to="/features" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
+              Features
+            </Link>
+            <Link to="/templates" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
+              Templates
+            </Link>
+            <Link to="/showcase" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
+              Showcase
+            </Link>
+            <Link to="/pricing" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
+              Pricing
+            </Link>
+          </nav>
+
+          {/* Auth Actions */}
+          <div className="flex items-center gap-3">
             {isAuthenticated ? (
               <>
                 <Link
@@ -72,7 +88,7 @@ export default function Header() {
                 </Link>
               </>
             )}
-          </nav>
+          </div>
         </div>
       </div>
     </header>
