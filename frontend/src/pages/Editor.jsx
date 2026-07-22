@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios } from '../store/layoutSlice';
+import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios, saveUserLayout } from '../store/layoutSlice';
 import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Header from '../components/common/Header';
-import { Monitor, Tablet, Smartphone, Eye, Loader2, ExternalLink, Sparkles, Layers } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Sparkles, Layers, Save, Globe, CheckCircle2 } from 'lucide-react';
 
 export default function Editor() {
   const dispatch = useDispatch();
-  const { activeLayout, userPortfolios, selectedComponentId, loading, error } = useSelector((state) => state.layout);
+  const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const location = useLocation();
@@ -33,6 +33,19 @@ export default function Editor() {
       }
     }
   }, [activeLayout, location.search, dispatch, navigate]);
+
+  const handleSaveDraft = () => {
+    if (!activeLayout) return;
+    dispatch(saveUserLayout({ ...activeLayout, isPublished: false }));
+    dispatch(fetchUserPortfolios());
+  };
+
+  const handleTogglePublish = () => {
+    if (!activeLayout) return;
+    const newPublishState = !activeLayout.isPublished;
+    dispatch(saveUserLayout({ ...activeLayout, isPublished: newPublishState }));
+    dispatch(fetchUserPortfolios());
+  };
 
   const getViewportWidth = () => {
     if (viewportMode === 'mobile') return 'max-w-sm';
@@ -75,6 +88,21 @@ export default function Editor() {
             </div>
           )}
 
+          {/* Publication Status Badge */}
+          {activeLayout && (
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-px bg-white/10" />
+              <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+                activeLayout.isPublished 
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                  : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${activeLayout.isPublished ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                <span>{activeLayout.isPublished ? 'Live Published' : 'Draft Mode'}</span>
+              </span>
+            </div>
+          )}
+
           <div className="h-5 w-px bg-white/10" />
           {/* Viewport Switcher */}
           <div className="flex items-center glass p-1 rounded-xl">
@@ -99,6 +127,7 @@ export default function Editor() {
           </div>
         </div>
 
+        {/* Action Controls */}
         <div className="flex items-center gap-3">
           {activeLayout?.handle && (
             <a
@@ -111,9 +140,46 @@ export default function Editor() {
               <span>View Live</span>
             </a>
           )}
+
+          {/* Save Draft Button */}
+          <button
+            onClick={handleSaveDraft}
+            disabled={isSaving}
+            className="px-3.5 py-1.5 rounded-xl glass border border-white/10 hover:border-white/20 text-xs font-semibold text-slate-200 hover:text-white flex items-center gap-1.5 transition disabled:opacity-60"
+            title="Save changes as unpublished draft"
+          >
+            {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5 text-indigo-400" />}
+            <span>Save Draft</span>
+          </button>
+
+          {/* Publish / Unpublish Toggle */}
+          <button
+            onClick={handleTogglePublish}
+            disabled={isSaving}
+            className={`px-4 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-lg ${
+              activeLayout?.isPublished
+                ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-amber-500/10'
+                : 'btn-primary text-white shadow-indigo-500/20'
+            }`}
+          >
+            {isSaving ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : activeLayout?.isPublished ? (
+              <>
+                <EyeOff className="w-3.5 h-3.5" />
+                <span>Unpublish</span>
+              </>
+            ) : (
+              <>
+                <Globe className="w-3.5 h-3.5" />
+                <span>Publish Live</span>
+              </>
+            )}
+          </button>
+
           <button
             onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+            className={`px-4 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
               isPreviewMode
                 ? 'btn-primary text-white'
                 : 'btn-ghost text-slate-300 hover:text-white'
