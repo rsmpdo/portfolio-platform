@@ -42,6 +42,19 @@ export const fetchCurrentUser = createAsyncThunk(
   }
 );
 
+export const elevateToAdmin = createAsyncThunk(
+  'auth/elevateToAdmin',
+  async (adminSecretCode, { rejectWithValue }) => {
+    try {
+      const res = await API.post('/auth/elevate-admin', { adminSecretCode });
+      localStorage.setItem('portfolio_jwt_token', res.data.token);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Elevation failed');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -109,6 +122,21 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.token = null;
         state.user = null;
+      })
+      // Elevate to Admin
+      .addCase(elevateToAdmin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(elevateToAdmin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+      })
+      .addCase(elevateToAdmin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   }
 });

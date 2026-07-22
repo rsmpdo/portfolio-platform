@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCurrentUser } from './store/authSlice';
+import { fetchCurrentUser, elevateToAdmin } from './store/authSlice';
+import Header from './components/common/Header';
+import { KeyRound, ShieldAlert, AlertCircle, Loader2 } from 'lucide-react';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -33,13 +35,77 @@ function PrivateRoute({ children }) {
   return children;
 }
 
+function AdminUnlockCard() {
+  const dispatch = useDispatch();
+  const { user, loading, error } = useSelector((state) => state.auth);
+  const [secretCode, setSecretCode] = useState('');
+  const [localError, setLocalError] = useState('');
+
+  const handleElevate = (e) => {
+    e.preventDefault();
+    setLocalError('');
+    if (!secretCode) {
+      setLocalError('Please enter the Administrator Secret Code');
+      return;
+    }
+    dispatch(elevateToAdmin(secretCode));
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6">
+      <Header />
+      <div className="w-full max-w-md glass gradient-border rounded-3xl p-8 shadow-2xl mt-20 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-4 text-amber-400">
+          <ShieldAlert className="w-7 h-7" />
+        </div>
+        <h2 className="font-heading font-black text-2xl text-white mb-2">Admin Access Required</h2>
+        <p className="text-slate-400 text-xs leading-relaxed mb-6">
+          Logged in as <span className="text-indigo-400 font-mono font-bold">{user?.email}</span>. Enter the Administrator Secret Code to unlock full site control & contact messages.
+        </p>
+
+        {(localError || error) && (
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center justify-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{localError || error}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleElevate} className="space-y-4">
+          <div>
+            <div className="relative">
+              <KeyRound className="w-4 h-4 text-amber-500 absolute left-4 top-3.5" />
+              <input
+                type="password"
+                required
+                value={secretCode}
+                onChange={(e) => setSecretCode(e.target.value)}
+                placeholder="Enter Admin Secret Code"
+                className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-xs border-amber-500/30 font-mono"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full py-3 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-60 shadow-lg shadow-indigo-500/20"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldAlert className="w-4 h-4 text-amber-400" />}
+            <span>Elevate Account to Administrator</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function AdminRoute({ children }) {
   const { isAuthenticated, token, user } = useSelector((state) => state.auth);
   if (!isAuthenticated && !token) {
     return <Navigate to="/login" replace />;
   }
   if (user && user.role !== 'admin') {
-    return <Navigate to="/editor" replace />;
+    return <AdminUnlockCard />;
   }
   return children;
 }
