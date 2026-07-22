@@ -11,7 +11,7 @@ export const templateLayouts = {
           headline: "Crafting Timeless Digital Products & Minimalist Experiences",
           subheadline: "Focusing on typography, spatial grid harmony, and essential interaction design.",
           ctaText: "Explore Portfolio",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -63,7 +63,7 @@ export const templateLayouts = {
           headline: "Full Stack Cyber Security & Systems Architect",
           subheadline: "Deploying high-throughput distributed systems, zero-trust infrastructure, and low-latency APIs.",
           ctaText: "Initialize Terminal",
-          avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -129,7 +129,7 @@ export const templateLayouts = {
           headline: "Crafting Cinematic Campaigns & Visionary Visual Worlds",
           subheadline: "Leading brand narratives, high-fashion films, and global creative direction.",
           ctaText: "View Showreel",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -184,7 +184,7 @@ export const templateLayouts = {
           headline: "Pushing the Boundaries of Interactive Motion Design",
           subheadline: "Creating immersive WebGL visualizer tools and micro-animated digital products.",
           ctaText: "Launch Experience",
-          avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -219,7 +219,7 @@ export const templateLayouts = {
           headline: "Exquisite Digital Craftsmanship for Ultra-Luxury Brands",
           subheadline: "Specializing in high-end editorial aesthetics, metallic gold motion accents, and cinematic brand presence.",
           ctaText: "Discover Collection",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -285,7 +285,7 @@ export const templateLayouts = {
           headline: "Scaling Next-Generation Financial Infrastructure",
           subheadline: "Architecting microservices handling $2.5B+ in automated transaction flow with zero downtime.",
           ctaText: "Explore Architecture",
-          avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -319,7 +319,7 @@ export const templateLayouts = {
           headline: "Deep Learning Research & Autonomous Intelligence",
           subheadline: "Building multi-modal transformer architectures, synthetic dataset generation, and LLM optimization.",
           ctaText: "Read AI Research",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -360,7 +360,7 @@ export const templateLayouts = {
           headline: "We Partner With Industry Leaders To Build Iconic Digital Brands",
           subheadline: "Full-service strategy, motion graphics, and software engineering for Fortune 500 companies.",
           ctaText: "Start Project",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -392,7 +392,7 @@ export const templateLayouts = {
           headline: "Redefining Runway Elegance and Digital Craftsmanship",
           subheadline: "Private fashion collections, bespoke tailoring, and luxury editorial showcases.",
           ctaText: "View Runway Collection",
-          avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=80"
         }
       },
       {
@@ -426,7 +426,7 @@ export const templateLayouts = {
           headline: "Designing Sustainable Physical Spaces & 3D Spatial Environments",
           subheadline: "Merging modern Scandinavian architecture, structural engineering, and spatial VR visualizers.",
           ctaText: "Explore 3D Models",
-          avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80"
+          avatarUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80"
         }
       },
       {

@@ -599,38 +599,54 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
-                      {layoutsList.map((l) => (
-                        <tr key={l._id} className="hover:bg-white/[0.02] transition">
-                          <td className="p-4 font-bold text-white">{l.title || 'Untitled Portfolio'}</td>
-                          <td className="p-4 text-indigo-400 font-mono">/p/{l.handle}</td>
-                          <td className="p-4 text-slate-300">{l.userId?.username || 'User'}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                              l.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-                            }`}>
-                              {l.isPublished ? 'Published' : 'Hidden / Banned'}
-                            </span>
-                          </td>
-                          <td className="p-4 text-right space-x-2">
-                            <a
-                              href={`/p/${l.handle}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="px-3 py-1.5 rounded-lg btn-ghost text-slate-300 hover:text-white inline-flex items-center gap-1"
-                            >
-                              <Eye className="w-3.5 h-3.5" /> View
-                            </a>
-                            <button
-                              onClick={() => handleTogglePublish(l._id)}
-                              className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                                l.isPublished ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
-                              }`}
-                            >
-                              {l.isPublished ? 'Ban Portfolio' : 'Unban Portfolio'}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                      {layoutsList.map((l) => {
+                        const isProtectedShowcase = ['alex', 'marcus', 'elena', 'demo', 'sample'].includes((l.handle || '').toLowerCase());
+                        return (
+                          <tr key={l._id} className="hover:bg-white/[0.02] transition">
+                            <td className="p-4 font-bold text-white flex items-center gap-2">
+                              <span>{l.title || 'Untitled Portfolio'}</span>
+                              {isProtectedShowcase && (
+                                <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono font-bold shrink-0">
+                                  System Showcase
+                                </span>
+                              )}
+                            </td>
+                            <td className="p-4 text-indigo-400 font-mono">/p/{l.handle}</td>
+                            <td className="p-4 text-slate-300">{l.userId?.username || 'User'}</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
+                                l.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                              }`}>
+                                {l.isPublished ? 'Published' : 'Hidden / Banned'}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right space-x-2 whitespace-nowrap">
+                              <a
+                                href={`/p/${l.handle}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1.5 rounded-lg btn-ghost text-slate-300 hover:text-white inline-flex items-center gap-1"
+                              >
+                                <Eye className="w-3.5 h-3.5" /> View
+                              </a>
+                              {isProtectedShowcase ? (
+                                <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 text-xs font-bold border border-white/5 cursor-not-allowed inline-flex items-center gap-1" title="System showcase portfolio cannot be unpublished">
+                                  Protected
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => handleTogglePublish(l._id)}
+                                  className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                                    l.isPublished ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                  }`}
+                                >
+                                  {l.isPublished ? 'Ban Portfolio' : 'Unban Portfolio'}
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -638,7 +654,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* ─── Platform Contact Messages Inbox ────────────────────────── */}
-            <AdminMessagesInbox />
+            <AdminMessagesSection />
 
             {/* ─── Careers Job Applications Management ────────────────────────── */}
             <JobApplicationsSection />
