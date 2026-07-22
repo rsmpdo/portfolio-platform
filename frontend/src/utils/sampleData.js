@@ -312,7 +312,7 @@ export const ELENA_PORTFOLIO = {
             quote: "Elena transformed our visual narrative. The brand direction she crafted instantly elevated our market presence worldwide.",
             author: "Sophia Laurent",
             role: "Chief Marketing Officer, Maison Luxe",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop"
+            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&q=80"
           }
         ]
       }
