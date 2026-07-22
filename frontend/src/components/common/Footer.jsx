@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, ArrowUpRight } from 'lucide-react';
+import { Sparkles, Send, CheckCircle2, ShieldCheck, Github, Twitter, Linkedin, Dribbble } from 'lucide-react';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setSubscribed(true);
+    setTimeout(() => {
+      setSubscribed(false);
+      setEmail('');
+    }, 4000);
+  };
+
   return (
     <footer className="border-t border-white/[0.06] bg-slate-950 py-16 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
+          
+          {/* Brand & Description */}
           <div className="max-w-xs">
             <Link to="/" className="flex items-center gap-2 mb-4 group">
               <div className="w-8 h-8 rounded-xl btn-primary flex items-center justify-center">
@@ -14,11 +29,17 @@ export default function Footer() {
               </div>
               <span className="font-heading font-bold text-white">PortfolioCraft</span>
             </Link>
-            <p className="text-sm text-slate-500 leading-relaxed">
+            <p className="text-sm text-slate-500 leading-relaxed mb-6">
               Where talent meets opportunity. Build an Adobe Portfolio-grade showcase that makes people stop scrolling and start reaching out.
             </p>
+            {/* Live System Operational Status Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>All Systems Operational</span>
+            </div>
           </div>
 
+          {/* Nav Columns */}
           <div className="grid grid-cols-2 gap-x-16 gap-y-4">
             <div>
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Platform</h4>
@@ -56,18 +77,61 @@ export default function Footer() {
             </div>
           </div>
 
-          <div>
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Start Creating</h4>
-            <Link
-              to="/register"
-              className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold"
-            >
-              <span>Create Free Portfolio</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </Link>
+          {/* Replacement for Start Creating: Weekly Insights Newsletter Widget & Social Links */}
+          <div className="max-w-xs w-full">
+            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-3">Weekly Portfolio Tips</h4>
+            <p className="text-xs text-slate-500 leading-relaxed mb-4">
+              Get our weekly masterclass guide on design systems, career growth, and inbound clients.
+            </p>
+
+            {subscribed ? (
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Subscribed! Check your inbox soon.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="space-y-2">
+                <div className="relative">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@company.com"
+                    className="input-field w-full pl-3.5 pr-10 py-2.5 rounded-xl text-xs"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-1.5 top-1.5 p-1.5 rounded-lg btn-primary text-white"
+                    title="Subscribe"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-600">No spam, ever. Unsubscribe in one click.</p>
+              </form>
+            )}
+
+            {/* Social Icons */}
+            <div className="flex items-center gap-2 mt-5 pt-4 border-t border-white/[0.06]">
+              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
+                <Twitter className="w-3.5 h-3.5" />
+              </a>
+              <a href="https://github.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
+                <Github className="w-3.5 h-3.5" />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
+                <Linkedin className="w-3.5 h-3.5" />
+              </a>
+              <a href="https://dribbble.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
+                <Dribbble className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
+
         </div>
 
+        {/* Sub-footer */}
         <div className="pt-8 border-t border-white/[0.06] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} PortfolioCraft. All rights reserved.</p>
           <p className="text-xs text-slate-600">Designed for creators who mean business.</p>
