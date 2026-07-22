@@ -65,6 +65,8 @@ export default function PublicPortfolio() {
     fallbackData = MARCUS_PORTFOLIO;
   } else if (lowerHandle === 'sample' || lowerHandle === 'elena') {
     fallbackData = ELENA_PORTFOLIO;
+  } else if (lowerHandle === 'alex') {
+    fallbackData = ALEX_PORTFOLIO;
   }
 
   const layoutToRender = publicLayout || fallbackData;
