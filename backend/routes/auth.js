@@ -9,6 +9,18 @@ const sendEmail = require('../utils/sendEmail');
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
 
+// Helper to get client frontend URL dynamically
+const getClientUrl = (req) => {
+  if (process.env.CLIENT_URL) return process.env.CLIENT_URL.replace(/\/$/, '');
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  const host = req.headers['x-forwarded-host'] || req.get('host') || '';
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+  if (host.includes('localhost') || host.includes('127.0.0.1')) {
+    return 'http://localhost:5173';
+  }
+  return `${protocol}://${host}`;
+};
+
 // Helper to generate JWT token
 const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign(
@@ -72,7 +84,7 @@ router.post('/register', async (req, res) => {
     await user.save();
 
     // Send verification email
-    const clientUrl = process.env.CLIENT_URL || (req.get('host').includes('localhost') ? 'http://localhost:5173' : `${req.protocol}://${req.get('host')}`);
+    const clientUrl = getClientUrl(req);
     const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
     const message = `You are receiving this email because you (or someone else) registered a new account on PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
 
@@ -260,7 +272,7 @@ router.post(
       await user.save();
 
       // Send verification email
-      const clientUrl = process.env.CLIENT_URL || (req.get('host').includes('localhost') ? 'http://localhost:5173' : `${req.protocol}://${req.get('host')}`);
+      const clientUrl = getClientUrl(req);
       const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
       const message = `You requested a new verification link for PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
 
