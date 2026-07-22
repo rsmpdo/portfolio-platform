@@ -1,10 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Cpu } from 'lucide-react';
+import { Cpu, Sparkles } from 'lucide-react';
+
+const ICONS = {
+  Frontend: '🎨',
+  Backend: '⚙️',
+  'Database & Cloud': '☁️',
+  Design: '✏️',
+  Tools: '🔧',
+  Languages: '💬'
+};
 
 export default function SkillsCloud({ props = {} }) {
   const {
-    heading = 'Skills & Technologies',
+    heading = 'Tools of the Trade',
+    subheading = 'Technologies I use daily to turn ideas into products people love.',
     categories = [
       {
         name: 'Frontend',
@@ -22,37 +32,44 @@ export default function SkillsCloud({ props = {} }) {
   } = props;
 
   return (
-    <section className="py-16 px-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-3">
-            <Cpu className="w-4 h-4" />
-            <span>Tech Stack & Expertise</span>
+    <section className="py-20 px-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Section header */}
+        <div className="text-center mb-16">
+          <div className="badge badge-indigo inline-flex mb-4">
+            <Cpu className="w-3 h-3" />
+            <span>Tech Stack</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white">{heading}</h2>
+          <h2 className="font-heading font-black text-3xl md:text-5xl text-white mb-3">{heading}</h2>
+          {subheading && <p className="text-slate-400 text-base max-w-lg mx-auto">{subheading}</p>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((cat, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="glass-panel p-6 rounded-2xl border border-slate-800"
+              className="glass-card gradient-border rounded-3xl p-7"
             >
-              <h3 className="text-lg font-bold text-indigo-400 mb-4 pb-2 border-b border-slate-800">
-                {cat.name}
-              </h3>
+              {/* Category header */}
+              <div className="flex items-center gap-3 mb-6 pb-5 border-b border-white/[0.06]">
+                <span className="text-2xl">{ICONS[cat.name] || '📦'}</span>
+                <h3 className="font-heading font-bold text-lg text-white">{cat.name}</h3>
+              </div>
+
+              {/* Skills */}
               <div className="flex flex-wrap gap-2">
-                {cat.skills && cat.skills.map((skill, sIdx) => (
-                  <span
+                {cat.skills?.map((skill, sIdx) => (
+                  <motion.span
                     key={sIdx}
-                    className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-sm font-medium hover:border-indigo-500/40 hover:text-white transition"
+                    whileHover={{ scale: 1.05 }}
+                    className="px-4 py-2 rounded-xl glass border border-white/[0.07] text-slate-200 text-sm font-medium hover:border-indigo-500/40 hover:text-white hover:bg-indigo-500/[0.06] transition-all cursor-default"
                   >
                     {skill}
-                  </span>
+                  </motion.span>
                 ))}
               </div>
             </motion.div>

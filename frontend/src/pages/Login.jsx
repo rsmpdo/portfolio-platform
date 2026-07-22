@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { loginUser, clearError } from '../store/authSlice';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { LogIn, Lock, Mail, AlertCircle, Loader2 } from 'lucide-react';
+import { LogIn, Lock, Mail, AlertCircle, Loader2, ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -16,10 +16,13 @@ export default function Login() {
 
   useEffect(() => {
     dispatch(clearError());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       navigate('/editor');
     }
-  }, [isAuthenticated, navigate, dispatch]);
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,80 +30,75 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
 
-      <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md glass-panel p-8 rounded-3xl border border-slate-800 shadow-2xl">
-          <div className="text-center mb-8">
-            <div className="inline-flex p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 mb-3">
-              <LogIn className="w-6 h-6" />
-            </div>
-            <h1 className="text-2xl font-extrabold text-white">Welcome Back</h1>
-            <p className="text-xs text-slate-400 mt-1">Sign in to manage your CMS portfolio layout</p>
+      <main className="flex-1 flex items-center justify-center px-6 pt-28 pb-16">
+        <div className="w-full max-w-md">
+          {/* Header text */}
+          <div className="text-center mb-10">
+            <h1 className="font-heading font-black text-4xl text-white mb-3">Welcome back.</h1>
+            <p className="text-slate-400">Your portfolio is waiting for you.</p>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Email Address</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-indigo-500"
-                />
+          <div className="glass gradient-border rounded-3xl p-8 shadow-2xl">
+            {error && (
+              <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
               </div>
-            </div>
+            )}
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase mb-1.5">Password</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-indigo-500"
-                />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-slate-600 absolute left-4 top-3.5" />
+                  <input
+                    type="email" required value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm"
+                  />
+                </div>
               </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-600 absolute left-4 top-3.5" />
+                  <input
+                    type="password" required value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="input-field w-full pl-11 pr-4 py-3 rounded-xl text-sm"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit" disabled={loading}
+                className="btn-primary w-full py-3.5 rounded-xl text-white font-bold flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
+              >
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <span>Sign In</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-white/[0.06] text-center">
+              <p className="text-sm text-slate-500">
+                New here?{' '}
+                <Link to="/register" className="text-indigo-400 font-semibold hover:text-indigo-300 transition underline-hover">
+                  Create your portfolio free →
+                </Link>
+              </p>
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 transition disabled:opacity-50"
-            >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <LogIn className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          <div className="text-center mt-6 pt-6 border-t border-slate-800">
-            <p className="text-xs text-slate-400">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-indigo-400 hover:underline font-semibold">
-                Create one now
-              </Link>
-            </p>
           </div>
         </div>
       </main>
