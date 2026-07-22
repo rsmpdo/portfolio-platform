@@ -110,29 +110,30 @@ export default function EditorSidebar() {
           <Sparkles className="w-4 h-4 text-indigo-400" />
           <span className="font-heading font-bold text-sm text-white">Sections</span>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
-            saveSuccess
-              ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400'
-              : 'btn-primary text-white'
-          } disabled:opacity-60`}
-        >
-          {saveSuccess ? (
-            <>
-              <Check className="w-3.5 h-3.5" /> Saved!
-            </>
-          ) : isSaving ? (
-            <>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving...
-            </>
+        {/* Read-Only Status Indicator Badge */}
+        <div className="flex items-center gap-1.5 select-none">
+          {isSaving ? (
+            <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold flex items-center gap-1.5">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+              <span>Saving...</span>
+            </span>
+          ) : saveSuccess ? (
+            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 animate-fadeIn">
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Saved!</span>
+            </span>
+          ) : activeLayout?.isPublished ? (
+            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5">
+              <Globe className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Published</span>
+            </span>
           ) : (
-            <>
-              <Save className="w-3.5 h-3.5" /> Publish
-            </>
+            <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5">
+              <EyeOff className="w-3.5 h-3.5 text-amber-400" />
+              <span>Draft</span>
+            </span>
           )}
-        </button>
+        </div>
       </div>
 
       {/* Tabs */}

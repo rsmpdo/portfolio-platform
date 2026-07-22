@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchPublicLayout } from '../store/layoutSlice';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Footer from '../components/common/Footer';
-import { Loader2, Sparkles, UserCheck } from 'lucide-react';
+import Header from '../components/common/Header';
+import { Loader2, Sparkles, UserCheck, Lock, Home } from 'lucide-react';
 import { ALEX_PORTFOLIO, MARCUS_PORTFOLIO, ELENA_PORTFOLIO } from '../utils/sampleData';
 
 export default function PublicPortfolio() {
@@ -30,10 +31,36 @@ export default function PublicPortfolio() {
     );
   }
 
-  // Determine appropriate sample portfolio fallback based on handle requested
   const lowerHandle = (handle || '').toLowerCase();
-  let fallbackData = ALEX_PORTFOLIO;
+  const SYSTEM_SAMPLE_HANDLES = ['alex', 'marcus', 'elena', 'demo', 'sample'];
+  const isSystemSample = SYSTEM_SAMPLE_HANDLES.includes(lowerHandle);
 
+  // If portfolio is not found / unpublished AND it is not a built-in demo handle -> show Private lock screen!
+  if (!publicLayout && !isSystemSample) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 text-center">
+        <Header />
+        <div className="max-w-md w-full glass gradient-border rounded-3xl p-8 relative shadow-2xl mt-20">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto mb-4">
+            <Lock className="w-8 h-8" />
+          </div>
+          <h2 className="font-heading font-bold text-2xl text-white mb-2">Portfolio Unpublished</h2>
+          <p className="text-sm text-slate-400 mb-6">
+            The portfolio URL <span className="text-indigo-400 font-mono font-bold">/p/{handle}</span> is currently set to private / draft mode by its owner.
+          </p>
+          <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/5 text-xs text-slate-400 mb-6 leading-relaxed">
+            If you are the owner, open your <span className="text-white font-bold">Portfolio Editor</span> or <span className="text-white font-bold">Profile Settings</span> and click <span className="text-indigo-400 font-bold">"Publish Live"</span> to make this link publicly accessible.
+          </div>
+          <Link to="/" className="btn-primary w-full py-3 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-2">
+            <Home className="w-4 h-4" />
+            <span>Return to Home</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  let fallbackData = ALEX_PORTFOLIO;
   if (lowerHandle === 'demo' || lowerHandle === 'marcus') {
     fallbackData = MARCUS_PORTFOLIO;
   } else if (lowerHandle === 'sample' || lowerHandle === 'elena') {

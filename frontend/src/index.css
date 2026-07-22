@@ -25,6 +25,14 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Remove text carets on general UI text elements */
+  h1, h2, h3, h4, h5, h6,
+  span, label, p, header, nav, footer, aside,
+  .badge, .font-heading, .glass, .glass-card {
+    cursor: default;
+    user-select: none;
+  }
+
   /* Interactive Pointer Cursors */
   button,
   a,
@@ -40,11 +48,14 @@
     cursor: pointer !important;
   }
 
-  /* Text Inputs */
+  /* Explicit Text Inputs only */
   input[type="text"],
   input[type="email"],
   input[type="password"],
-  textarea {
+  input[type="number"],
+  input[type="url"],
+  textarea,
+  [contenteditable="true"] {
     user-select: text !important;
     cursor: text !important;
   }
