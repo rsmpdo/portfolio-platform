@@ -305,4 +305,47 @@ router.post(
   }
 );
 
+// @route   POST /api/auth/elevate-admin
+// @desc    Elevate logged-in user account to Administrator using secret code
+// @access  Private
+router.post(
+  '/elevate-admin',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const { adminSecretCode } = req.body;
+      if (!adminSecretCode || adminSecretCode.trim() !== ADMIN_SECRET) {
+        return res.status(400).json({ success: false, message: 'Invalid Administrator Secret Code' });
+      }
+
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      user.role = 'admin';
+      user.isVerified = true;
+      await user.save();
+
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+
+      res.status(200).json({
+        success: true,
+        message: 'Account elevated to Administrator successfully',
+        token,
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          plan: user.plan,
+          isVerified: user.isVerified
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
 module.exports = router;

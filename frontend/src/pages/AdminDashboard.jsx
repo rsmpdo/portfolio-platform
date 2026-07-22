@@ -171,22 +171,31 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const fetchAdminData = async () => {
-      try {
-        setLoading(true);
-        const [statsRes, usersRes, layoutsRes] = await Promise.all([
-          API.get('/admin/stats'),
-          API.get('/admin/users'),
-          API.get('/admin/layouts')
-        ]);
+      setLoading(true);
+      let hasErrors = false;
 
+      try {
+        const statsRes = await API.get('/admin/stats');
         if (statsRes.data.success) setStats(statsRes.data.stats);
+      } catch (err) {
+        console.error('Fetch stats error:', err);
+      }
+
+      try {
+        const usersRes = await API.get('/admin/users');
         if (usersRes.data.success) setUsersList(usersRes.data.users);
+      } catch (err) {
+        console.error('Fetch users error:', err);
+      }
+
+      try {
+        const layoutsRes = await API.get('/admin/layouts');
         if (layoutsRes.data.success) setLayoutsList(layoutsRes.data.layouts);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch admin dashboard data');
-      } finally {
-        setLoading(false);
+        console.error('Fetch layouts error:', err);
       }
+
+      setLoading(false);
     };
 
     fetchAdminData();
