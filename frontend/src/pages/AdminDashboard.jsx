@@ -533,9 +533,9 @@ export default function AdminDashboard() {
                         <tr key={u._id} className="hover:bg-white/[0.02] transition">
                           <td className="p-4 font-bold text-white flex items-center gap-2">
                             <span className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-mono">
-                              {u.username[0].toUpperCase()}
+                              {(u.username || u.email || 'U')[0].toUpperCase()}
                             </span>
-                            <span>{u.username}</span>
+                            <span>{u.username || u.email?.split('@')[0] || 'User'}</span>
                           </td>
                           <td className="p-4 text-slate-300 font-mono">{u.email}</td>
                           <td className="p-4">

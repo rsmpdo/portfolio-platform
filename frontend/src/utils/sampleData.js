@@ -1,6 +1,6 @@
 export const ALEX_PORTFOLIO = {
   title: "Alex Morgan — Senior Product Designer & Creative Technologist",
-  handle: "admin_1",
+  handle: "alex",
   theme: { primaryColor: "#6366f1", secondaryColor: "#a855f7" },
   components: [
     {

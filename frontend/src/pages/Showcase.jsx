@@ -9,7 +9,7 @@ const showcases = [
   {
     name: "Alex Morgan",
     role: "Senior Product Designer",
-    handle: "admin_1",
+    handle: "alex",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
     quote: "Got 3 inbound job offers within 10 days of launching my portfolio here.",
     projects: [
@@ -30,7 +30,7 @@ const showcases = [
   {
     name: "Marcus Vance",
     role: "Full Stack Engineer",
-    handle: "demo",
+    handle: "marcus",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
     quote: "The visual editor saved me weeks of coding my site from scratch.",
     projects: [
@@ -51,7 +51,7 @@ const showcases = [
   {
     name: "Elena Rostova",
     role: "Creative Director",
-    handle: "sample",
+    handle: "elena",
     avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
     quote: "Clients constantly compliment the smooth micro-animations and typography.",
     projects: [

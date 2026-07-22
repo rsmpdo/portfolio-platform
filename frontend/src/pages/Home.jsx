@@ -117,7 +117,7 @@ export default function Home() {
               </Link>
 
               <Link
-                to="/p/admin_1"
+                to="/p/alex"
                 className="btn-ghost inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-slate-300 font-semibold text-base"
               >
                 <Eye className="w-4 h-4" />
