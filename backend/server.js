@@ -56,6 +56,8 @@ require('./config/passport')(passport);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/layouts', require('./routes/layout'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/newsletter', require('./routes/newsletter'));
+app.use('/api/payment', require('./routes/payment'));
 
 // Health Check Route
 app.get('/api/health', (req, res) => {
