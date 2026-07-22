@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply } from 'lucide-react';
+import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply, Briefcase, RefreshCw, ExternalLink } from 'lucide-react';
 import API from '../services/api';
 
 function AdminMessagesSection() {
