@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import API from '../services/api';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import Header from '../components/common/Header';
 
 export default function VerifyEmail() {
   const { token } = useParams();
@@ -29,7 +29,7 @@ export default function VerifyEmail() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col">
-      <Navbar />
+      <Header />
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="glass max-w-md w-full p-8 rounded-3xl text-center">
           {status === 'loading' && (
