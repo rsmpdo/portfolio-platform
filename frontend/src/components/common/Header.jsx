@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/authSlice';
 import { Sparkles, LayoutTemplate, LogOut, LogIn, UserPlus, ShieldAlert } from 'lucide-react';
@@ -7,6 +7,7 @@ import { Sparkles, LayoutTemplate, LogOut, LogIn, UserPlus, ShieldAlert } from '
 export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
@@ -30,18 +31,27 @@ export default function Header() {
 
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/features" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
-              Features
-            </Link>
-            <Link to="/templates" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
-              Templates
-            </Link>
-            <Link to="/showcase" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
-              Showcase
-            </Link>
-            <Link to="/pricing" className="text-xs font-semibold text-slate-400 hover:text-white transition underline-hover">
-              Pricing
-            </Link>
+            {[
+              { name: 'Features', path: '/features' },
+              { name: 'Templates', path: '/templates' },
+              { name: 'Showcase', path: '/showcase' },
+              { name: 'Pricing', path: '/pricing' },
+              { name: 'About', path: '/about' },
+              { name: 'Blog', path: '/blog' },
+              { name: 'Contact', path: '/contact' }
+            ].map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`text-xs font-semibold transition flex items-center h-14 ${
+                  location.pathname === item.path
+                    ? 'text-indigo-400 border-b-2 border-indigo-500'
+                    : 'text-slate-400 hover:text-white underline-hover'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
 
           {/* Auth Actions */}
