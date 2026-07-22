@@ -5,7 +5,7 @@ import { fetchPublicLayout } from '../store/layoutSlice';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Footer from '../components/common/Footer';
 import { Loader2, Sparkles, UserCheck } from 'lucide-react';
-import { SAMPLE_PORTFOLIO } from '../utils/sampleData';
+import { ALEX_PORTFOLIO, MARCUS_PORTFOLIO, ELENA_PORTFOLIO } from '../utils/sampleData';
 
 export default function PublicPortfolio() {
   const { handle } = useParams();
@@ -30,13 +30,17 @@ export default function PublicPortfolio() {
     );
   }
 
-  // Use fetched public layout if available; otherwise display high-quality sample portfolio
-  const layoutToRender = publicLayout || {
-    ...SAMPLE_PORTFOLIO,
-    handle: handle || 'demo',
-    title: `${handle ? handle.replace('_', ' ') : 'Sample'}'s Portfolio`
-  };
+  // Determine appropriate sample portfolio fallback based on handle requested
+  const lowerHandle = (handle || '').toLowerCase();
+  let fallbackData = ALEX_PORTFOLIO;
 
+  if (lowerHandle === 'demo' || lowerHandle === 'marcus') {
+    fallbackData = MARCUS_PORTFOLIO;
+  } else if (lowerHandle === 'sample' || lowerHandle === 'elena') {
+    fallbackData = ELENA_PORTFOLIO;
+  }
+
+  const layoutToRender = publicLayout || fallbackData;
   const { title, components } = layoutToRender;
   const isSample = !publicLayout;
 
@@ -59,7 +63,7 @@ export default function PublicPortfolio() {
               {isSample && (
                 <div className="hidden sm:inline-flex items-center gap-1.5 badge badge-indigo text-xs">
                   <UserCheck className="w-3 h-3" />
-                  <span>Sample Demo View</span>
+                  <span>Sample Portfolio Demo</span>
                 </div>
               )}
               {title && (

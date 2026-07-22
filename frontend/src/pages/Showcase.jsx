@@ -18,7 +18,7 @@ const showcases = [
         image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=500&q=80"
       },
       {
-        title: "AI Creative Engine UX",
+        title: "AI Canvas Creative Engine",
         image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80"
       },
       {
@@ -52,11 +52,11 @@ const showcases = [
     name: "Elena Rostova",
     role: "Creative Director",
     handle: "sample",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b1e2?auto=format&fit=crop&w=400&q=80",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
     quote: "Clients constantly compliment the smooth micro-animations and typography.",
     projects: [
       {
-        title: "Brand Identity System",
+        title: "Global Brand Identity System",
         image: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=500&q=80"
       },
       {
@@ -64,7 +64,7 @@ const showcases = [
         image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=500&q=80"
       },
       {
-        title: "Interactive 3D Exhibition",
+        title: "Interactive 3D Art Exhibition",
         image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=500&q=80"
       }
     ]
@@ -103,9 +103,9 @@ export default function Showcase() {
               className="glass-card gradient-border rounded-3xl p-6 flex flex-col justify-between group"
             >
               <div>
-                {/* Creator Header */}
+                {/* Creator Header with real face portrait image */}
                 <div className="flex items-center gap-3 mb-5 pb-4 border-b border-white/[0.06]">
-                  <div className="w-12 h-12 rounded-full border-2 border-indigo-500 overflow-hidden flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full border-2 border-indigo-500 overflow-hidden flex-shrink-0 bg-slate-900">
                     <img src={s.avatar} alt={s.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
@@ -124,7 +124,7 @@ export default function Showcase() {
                     {s.projects.map((proj, pIdx) => (
                       <div key={pIdx} className="group/proj relative aspect-square rounded-xl overflow-hidden glass border border-white/10" title={proj.title}>
                         <img src={proj.image} alt={proj.title} className="w-full h-full object-cover group-hover/proj:scale-110 transition-transform duration-500" />
-                        <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover/proj:opacity-100 transition-opacity flex items-center justify-center p-1 text-center">
+                        <div className="absolute inset-0 bg-slate-950/70 opacity-0 group-hover/proj:opacity-100 transition-opacity flex items-center justify-center p-1 text-center">
                           <span className="text-[10px] text-white font-medium line-clamp-2">{proj.title}</span>
                         </div>
                       </div>
