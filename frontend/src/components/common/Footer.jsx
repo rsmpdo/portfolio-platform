@@ -78,17 +78,17 @@ export default function Footer() {
               </div>
               
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-indigo-400 shrink-0" />
-                <p className="text-sm text-slate-400 hover:text-white transition cursor-pointer">
-                  +94 123 456 789
-                </p>
+                <Phone className="w-4 h-4 text-indigo-400 shrink-0" />
+                <a href="tel:+94912234567" className="text-sm text-slate-400 hover:text-white transition">
+                  +94 91 223 4567
+                </a>
               </div>
               
               <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-indigo-400 shrink-0" />
-                <p className="text-sm text-slate-400 hover:text-white transition cursor-pointer">
-                  hello@portfoliocraft.com
-                </p>
+                <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
+                <a href="mailto:rsmpdots@gmail.com" className="text-sm text-slate-400 hover:text-white transition">
+                  rsmpdots@gmail.com
+                </a>
               </div>
             </div>
 
