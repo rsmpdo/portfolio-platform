@@ -153,6 +153,181 @@ function AdminMessagesSection() {
   );
 }
 
+function JobApplicationsSection() {
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null);
+
+  const fetchApplications = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get('/careers/admin');
+      if (res.data.success) {
+        setApplications(res.data.applications || []);
+      }
+    } catch (err) {
+      console.error('Fetch job applications error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const handleUpdateStatus = async (appId, newStatus) => {
+    try {
+      setUpdatingId(appId);
+      await API.put(`/careers/admin/${appId}/status`, { status: newStatus });
+      fetchApplications();
+    } catch (err) {
+      alert('Failed to update status: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteApp = async (appId) => {
+    if (!window.confirm('Delete this job application record?')) return;
+    try {
+      await API.delete(`/careers/admin/${appId}`);
+      fetchApplications();
+    } catch (err) {
+      alert('Failed to delete application: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
+  return (
+    <div className="glass-card gradient-border rounded-3xl p-8 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <Briefcase className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+              <span>Careers Job Applications</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold font-mono border border-indigo-500/30">
+                {applications.length} Received
+              </span>
+            </h2>
+            <p className="text-slate-400 text-xs">Review and manage candidate applications submitted via the Careers page</p>
+          </div>
+        </div>
+
+        <button
+          onClick={fetchApplications}
+          className="px-3.5 py-1.5 rounded-xl glass border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 self-start sm:self-auto"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          <span>Refresh List</span>
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="py-12 flex flex-col items-center justify-center text-slate-500 gap-2">
+          <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
+          <span className="text-xs">Loading job applications...</span>
+        </div>
+      ) : applications.length === 0 ? (
+        <div className="py-12 text-center text-slate-500 glass rounded-2xl border border-white/5">
+          <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-40 text-indigo-400" />
+          <p className="text-sm font-semibold text-slate-400 mb-1">No Job Applications Received Yet</p>
+          <p className="text-xs text-slate-500">Applications submitted by candidates on the /careers page will appear here instantly.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="text-slate-500 uppercase font-mono tracking-wider border-b border-white/5 pb-3">
+                <th className="pb-3 px-3">Ref ID</th>
+                <th className="pb-3 px-3">Candidate</th>
+                <th className="pb-3 px-3">Position</th>
+                <th className="pb-3 px-3">Links</th>
+                <th className="pb-3 px-3">Status</th>
+                <th className="pb-3 px-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {applications.map((app) => (
+                <tr key={app._id} className="hover:bg-white/[0.02] transition">
+                  <td className="py-3.5 px-3 font-mono text-indigo-300 font-bold whitespace-nowrap">
+                    {app.referenceId}
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <div className="font-bold text-white text-sm">{app.fullName}</div>
+                    <div className="text-slate-400 text-xs flex items-center gap-1 font-mono">
+                      <Mail className="w-3 h-3 text-slate-500" />
+                      <span>{app.email}</span>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <div className="font-semibold text-slate-200">{app.jobTitle}</div>
+                    <div className="text-slate-500 text-[10px] uppercase tracking-widest font-mono">{app.department}</div>
+                  </td>
+                  <td className="py-3.5 px-3">
+                    <div className="flex flex-col gap-1">
+                      <a
+                        href={app.portfolioUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-indigo-400 hover:underline text-xs flex items-center gap-1 font-mono"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Portfolio / GitHub</span>
+                      </a>
+                      <a
+                        href={app.resumeUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-slate-400 hover:text-white text-xs flex items-center gap-1 font-mono"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>Resume / CV</span>
+                      </a>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-3 whitespace-nowrap">
+                    <select
+                      value={app.status}
+                      disabled={updatingId === app._id}
+                      onChange={(e) => handleUpdateStatus(app._id, e.target.value)}
+                      className={`px-2.5 py-1 rounded-xl text-xs font-bold font-mono border cursor-pointer focus:outline-none ${
+                        app.status === 'shortlisted'
+                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                          : app.status === 'reviewed'
+                          ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                          : app.status === 'rejected'
+                          ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                          : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                      }`}
+                    >
+                      <option value="pending" className="bg-slate-900 text-amber-300 font-bold">Pending</option>
+                      <option value="reviewed" className="bg-slate-900 text-indigo-300 font-bold">Reviewed</option>
+                      <option value="shortlisted" className="bg-slate-900 text-emerald-300 font-bold">Shortlisted</option>
+                      <option value="rejected" className="bg-slate-900 text-red-300 font-bold">Rejected</option>
+                    </select>
+                  </td>
+                  <td className="py-3.5 px-3 text-right whitespace-nowrap">
+                    <button
+                      onClick={() => handleDeleteApp(app._id)}
+                      className="p-1.5 rounded-xl hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
+                      title="Delete Application"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -462,8 +637,11 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* ─── Contact Messages Moderation Section ────────────────── */}
-            <AdminMessagesSection />
+            {/* ─── Platform Contact Messages Inbox ────────────────────────── */}
+            <AdminMessagesInbox />
+
+            {/* ─── Careers Job Applications Management ────────────────────────── */}
+            <JobApplicationsSection />
           </div>
         )}
       </main>

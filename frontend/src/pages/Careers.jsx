@@ -57,21 +57,41 @@ export default function Careers() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [appId, setAppId] = useState('');
+  const [error, setError] = useState('');
 
   const handleOpenModal = (job) => {
     setSelectedJob(job);
     setSubmitted(false);
+    setError('');
     setForm({ fullName: '', email: '', portfolioUrl: '', resumeUrl: '', coverNote: '' });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    setError('');
+    try {
+      const res = await API.post('/careers/apply', {
+        jobId: selectedJob?.id,
+        jobTitle: selectedJob?.title,
+        department: selectedJob?.department,
+        fullName: form.fullName,
+        email: form.email,
+        portfolioUrl: form.portfolioUrl,
+        resumeUrl: form.resumeUrl,
+        coverNote: form.coverNote
+      });
+
+      if (res.data.success) {
+        setSubmitted(true);
+        setAppId(res.data.referenceId || `APP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+      }
+    } catch (err) {
+      console.error('Career application error:', err);
+      setError(err.response?.data?.message || 'Failed to submit application');
+    } finally {
       setLoading(false);
-      setSubmitted(true);
-      setAppId(`APP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
-    }, 1200);
+    }
   };
 
   return (
