@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Send, CheckCircle2, MessageSquare, MapPin, Clock, Loader2 } from 'lucide-react';
+import { Mail, Send, CheckCircle2, MessageSquare, MapPin, Clock, Phone, Loader2 } from 'lucide-react';
 import API from '../../services/api';
 
 export default function ContactSection({ props = {} }) {
   const {
     heading = "Ready to Create Something Great?",
     subheading = "Whether you have a project in mind or just want to explore possibilities — let's start a conversation.",
-    email = 'hello@example.com',
-    location = 'Available Worldwide · Remote Friendly',
+    email = 'rsmpdots@gmail.com',
+    location = 'Galle, Sri Lanka',
+    phone = '+94 91 223 4567',
     responseTime = 'Usually responds within 24 hours'
   } = props;
 
@@ -73,12 +74,21 @@ export default function ContactSection({ props = {} }) {
                     <p className="text-sm text-white font-medium group-hover:text-indigo-400 transition underline-hover">{email}</p>
                   </div>
                 </a>
+                <a href={`tel:${phone}`} className="flex items-center gap-3 group">
+                  <div className="w-10 h-10 rounded-xl glass flex items-center justify-center text-indigo-400">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500 mb-0.5">Call / WhatsApp</p>
+                    <p className="text-sm text-white font-medium group-hover:text-indigo-400 transition underline-hover">{phone}</p>
+                  </div>
+                </a>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl glass flex items-center justify-center text-indigo-400">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500 mb-0.5">Location</p>
+                    <p className="text-xs text-slate-500 mb-0.5 font-sans">Location</p>
                     <p className="text-sm text-white font-medium">{location}</p>
                   </div>
                 </div>
