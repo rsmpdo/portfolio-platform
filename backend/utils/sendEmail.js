@@ -10,6 +10,9 @@ const sendEmail = async (options) => {
         auth: {
           user: process.env.GMAIL_USER,
           pass: process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, '') // remove spaces
+        },
+        tls: {
+          rejectUnauthorized: false
         }
       });
 
