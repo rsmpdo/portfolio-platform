@@ -72,7 +72,7 @@ export default function AdvancedMetrics({ props = {}, templateId, viewportMode }
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-16 border-b border-emerald-500/30 pb-6">
           <h2 className="text-3xl text-emerald-400 uppercase tracking-widest">{heading}_</h2>
-          {isStudioFeature && <span className="text-xs uppercase bg-emerald-950 px-3 py-1 border border-emerald-500/50">Studio.Tier</span>}
+          {isStudioFeature && <span className="text-xs uppercase bg-emerald-950 px-3 py-1 border border-emerald-500/50">{templateId.includes('pro') ? 'Pro.Tier' : 'Studio.Tier'}</span>}
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

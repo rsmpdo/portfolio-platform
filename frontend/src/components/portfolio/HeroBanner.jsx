@@ -135,24 +135,29 @@ export default function HeroBanner({ props = {}, templateId, viewportMode }) {
   // ---------------------------------------------------------
   if (templateId === 'luxury-motion-pro') {
     return (
-      <section className="relative min-h-[100vh] flex items-center pt-32 pb-16 px-6 overflow-hidden bg-[#1a1816]">
-        <div className="max-w-5xl mx-auto text-center relative z-10 w-full">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeOut" }}>
-            <h1 className="font-serif italic text-6xl md:text-8xl text-[#d4af37] mb-8 leading-tight">
+      <section className="relative min-h-[100vh] flex items-center pt-32 pb-16 px-6 overflow-hidden bg-[#0a0908]">
+        {/* Subtle noise grain and radial glow */}
+        <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#d4af37]/5 rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10 w-full flex flex-col items-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeOut" }} className="w-full">
+            <h1 className="font-serif text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3e5ab] via-[#d4af37] to-[#aa7c11] mb-8 leading-[1.1] tracking-tight drop-shadow-sm">
               {headline}
             </h1>
-            <p className="text-[#a8a29e] font-light text-xl md:text-2xl mb-16 max-w-2xl mx-auto tracking-wide">
+            <p className="text-[#a8a29e] font-light text-xl md:text-3xl mb-16 max-w-3xl mx-auto tracking-wide">
               {subheadline}
             </p>
           </motion.div>
           {avatarUrl && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, delay: 0.3 }} className="mb-16 flex justify-center">
-              <div className="w-64 h-80 md:w-80 md:h-[28rem] overflow-hidden relative border-4 border-[#3f3b36] shadow-2xl">
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover sepia-[0.3]" />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.5, delay: 0.3 }} className="mb-16">
+              <div className="w-[300px] h-[400px] md:w-[400px] md:h-[500px] overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#d4af37]/20 rounded-t-full">
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover filter contrast-125 sepia-[0.2]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0908] via-transparent to-transparent opacity-80" />
               </div>
             </motion.div>
           )}
-          <a href="#projects" className="border-b-2 border-[#d4af37] text-[#d4af37] hover:text-white transition-colors pb-2 uppercase tracking-[0.3em] text-sm font-semibold">
+          <a href="#projects" className="border border-[#d4af37]/40 px-10 py-4 text-[#e5c059] hover:bg-[#d4af37] hover:text-black transition-all duration-500 uppercase tracking-[0.3em] text-sm font-light">
             {ctaText}
           </a>
         </div>
