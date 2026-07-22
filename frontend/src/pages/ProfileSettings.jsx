@@ -73,6 +73,15 @@ function PortfoliosManager() {
     }
   };
 
+  const handleTogglePublishPortfolio = async (layoutId, currentStatus) => {
+    try {
+      await API.put('/layouts/me', { _id: layoutId, isPublished: !currentStatus });
+      fetchPortfolios();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update publication status');
+    }
+  };
+
   const isLimitReached = portfolios.length >= maxAllowed;
 
   return (
@@ -135,34 +144,51 @@ function PortfoliosManager() {
                   <span className="px-2.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 text-[10px] font-mono font-bold capitalize">
                     {item.theme?.templateId || 'minimalist-editorial'}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    item.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'
+                  {/* Status Badge */}
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider flex items-center gap-1.5 ${
+                    item.isPublished 
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                      : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                   }`}>
-                    {item.isPublished ? 'Live Published' : 'Draft'}
+                    <span className={`w-1.5 h-1.5 rounded-full ${item.isPublished ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                    <span>{item.isPublished ? '🟢 Live Published' : '🟠 Draft (Unpublished)'}</span>
                   </span>
                 </div>
                 <h3 className="font-heading font-bold text-base text-white mb-1">{item.title || 'Untitled Portfolio'}</h3>
                 <p className="text-xs font-mono text-indigo-300">/p/{item.handle}</p>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-white/[0.04]">
                 <a
                   href={`/p/${item.handle}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn-ghost px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1"
+                  className="btn-ghost px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>View Live</span>
                 </a>
 
                 <div className="flex items-center gap-2">
+                  {/* Inline Publish / Unpublish Toggle */}
+                  <button
+                    onClick={() => handleTogglePublishPortfolio(item._id, item.isPublished)}
+                    className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+                      item.isPublished
+                        ? 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                        : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    }`}
+                  >
+                    <Eye className="w-3 h-3" />
+                    <span>{item.isPublished ? 'Unpublish' : 'Publish'}</span>
+                  </button>
+
                   <button
                     onClick={() => navigate(`/editor?id=${item._id}`)}
                     className="btn-primary px-3 py-1.5 rounded-xl text-xs font-bold text-white flex items-center gap-1.5"
                   >
                     <LayoutTemplate className="w-3.5 h-3.5" />
-                    <span>Edit Portfolio</span>
+                    <span>Edit</span>
                   </button>
                   {portfolios.length > 1 && (
                     <button
