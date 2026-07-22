@@ -236,4 +236,50 @@ router.get(
   }
 );
 
+// @route   POST /api/auth/resend-verification
+// @desc    Resend verification email
+// @access  Private
+router.post(
+  '/resend-verification',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id);
+      
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      if (user.isVerified) {
+        return res.status(400).json({ success: false, message: 'Email is already verified' });
+      }
+
+      // Generate email verification token
+      const verificationToken = user.getVerificationToken();
+      await user.save();
+
+      // Send verification email
+      const verifyUrl = `${req.protocol}://${req.get('host').includes('localhost') ? 'localhost:5173' : req.get('host')}/verify-email?token=${verificationToken}`;
+      const message = `You requested a new verification link for PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
+
+      try {
+        await sendEmail({
+          email: user.email,
+          subject: 'Resend: Email Verification - PortfolioCraft',
+          message
+        });
+        res.status(200).json({ success: true, message: 'Verification email sent' });
+      } catch (error) {
+        console.error(error);
+        user.verificationToken = undefined;
+        user.verificationTokenExpire = undefined;
+        await user.save({ validateBeforeSave: false });
+        return res.status(500).json({ success: false, message: 'Email could not be sent' });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
 module.exports = router;
