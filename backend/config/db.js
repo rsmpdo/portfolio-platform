@@ -10,6 +10,8 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`MongoDB Connection Warning: ${error.message}`);
+    // Disable query buffering so requests fail immediately with a clear error instead of hanging
+    mongoose.set('bufferCommands', false);
     console.log('Server continuing in offline/standalone mode...');
   }
 };
