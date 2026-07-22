@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Mail, ArrowRight, LogOut } from 'lucide-react';
 import { logout } from '../store/authSlice';
-import Navbar from '../components/Navbar';
+import Header from '../components/common/Header';
 
 export default function VerifyPending() {
   const { user } = useSelector((state) => state.auth);
@@ -14,7 +14,7 @@ export default function VerifyPending() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col">
-      <Navbar />
+      <Header />
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="glass max-w-md w-full p-8 rounded-3xl text-center">
           <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
