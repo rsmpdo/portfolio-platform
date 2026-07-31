@@ -12,7 +12,7 @@ export default function ContactPage() {
           props={{
             heading: "Get in Touch with PortfolioCraft",
             subheading: "Have questions, feature requests, or partnership inquiries? We're here to help.",
-            email: "rsmpdots@gmail.com",
+            email: "support@portfoliocraft.io",
             location: "Galle, Sri Lanka",
             phone: "+94 91 223 4567",
             responseTime: "Responds within 12 hours"

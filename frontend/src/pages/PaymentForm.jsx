@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Header from "../components/common/Header";
@@ -118,6 +118,17 @@ export default function PaymentForm() {
             </h1>
             <p className="text-slate-400 text-sm">One-time payment · No recurring charges · Lifetime access</p>
           </div>
+
+          {/* Active Plan Banner Alert */}
+          {(user?.plan === planId || (user?.plan === 'studio' && planId === 'pro')) && (
+            <div className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-semibold flex items-center gap-3 max-w-2xl mx-auto shadow-xl">
+              <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
+              <div>
+                <p className="font-bold text-amber-200">You are already using this plan!</p>
+                <p className="text-xs text-slate-400 font-normal">Your account already has {user?.plan === 'studio' ? 'Studio & Team' : plan.name} active. You do not need to submit another payment.</p>
+              </div>
+            </div>
+          )}
 
           {/* Step Indicator */}
           {step < 3 && (

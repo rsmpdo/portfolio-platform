@@ -86,8 +86,8 @@ export default function Footer() {
               
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
-                <a href="mailto:rsmpdots@gmail.com" className="text-sm text-slate-400 hover:text-white transition">
-                  rsmpdots@gmail.com
+                <a href="mailto:support@portfoliocraft.io" className="text-sm text-slate-400 hover:text-white transition">
+                  support@portfoliocraft.io
                 </a>
               </div>
             </div>
