@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, MapPin, Phone, Mail, Github, Twitter, Linkedin, Dribbble } from 'lucide-react';
+import LogoIcon from './LogoIcon';
 
 export default function Footer() {
   return (
@@ -10,11 +11,11 @@ export default function Footer() {
           
           {/* Brand & Description */}
           <div className="max-w-xs">
-            <Link to="/" className="flex items-center gap-2 mb-4 group">
-              <div className="w-8 h-8 rounded-xl btn-primary flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+            <Link to="/" className="flex items-center gap-2.5 mb-4 group">
+              <div className="w-9 h-9 rounded-xl glass border border-indigo-500/30 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <LogoIcon className="w-5 h-5" />
               </div>
-              <span className="font-heading font-bold text-white">PortfolioCraft</span>
+              <span className="font-heading font-bold text-white tracking-tight">Portfolio<span className="gradient-text">Craft</span></span>
             </Link>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
               Where talent meets opportunity. Build an Adobe Portfolio-grade showcase that makes people stop scrolling and start reaching out.
