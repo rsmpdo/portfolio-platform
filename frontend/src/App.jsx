@@ -23,6 +23,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import VerifyPending from './pages/VerifyPending';
 import PaymentSuccess from './pages/PaymentSuccess';
 import TemplatePreview from './pages/TemplatePreview';
+import PaymentForm from './pages/PaymentForm';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, token, user } = useSelector((state) => state.auth);
@@ -162,6 +163,7 @@ export default function App() {
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment/:planId" element={<PaymentForm />} />
         <Route
           path="/editor"
           element={
