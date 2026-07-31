@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { Sparkles, Check, HelpCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Sparkles, Check, HelpCircle, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2, X } from 'lucide-react';
 
 const plans = [
   {
@@ -67,7 +68,9 @@ const faqs = [
 
 export default function Pricing() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [bannerNotice, setBannerNotice] = useState(null);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   const handleBuyPlan = (planId) => {
     const token = localStorage.getItem('portfolio_jwt_token');
@@ -75,6 +78,21 @@ export default function Pricing() {
       navigate('/register?redirect=pricing&plan=' + planId);
       return;
     }
+
+    const currentPlan = (user?.plan || 'free').toLowerCase();
+
+    if (currentPlan === planId) {
+      const planObj = plans.find((p) => p.id === planId);
+      setBannerNotice(`You are already using the ${planObj?.name || planId.toUpperCase()} plan! Your account is active and fully unlocked.`);
+      return;
+    }
+
+    if (currentPlan === 'studio' && planId === 'pro') {
+      setBannerNotice(`You are already using the Studio & Team plan, which includes all Pro Creator features and higher limits!`);
+      return;
+    }
+
+    setBannerNotice(null);
     navigate('/payment/' + planId);
   };
 
@@ -83,6 +101,27 @@ export default function Pricing() {
       <Header />
 
       <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full">
+        {/* Banner Notice when user already has plan */}
+        {bannerNotice && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-semibold flex items-center justify-between gap-4 max-w-3xl mx-auto shadow-xl backdrop-blur-md"
+          >
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
+              <span>{bannerNotice}</span>
+            </div>
+            <button
+              onClick={() => setBannerNotice(null)}
+              className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition shrink-0"
+              title="Close notification"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
             <Sparkles className="w-3.5 h-3.5" />

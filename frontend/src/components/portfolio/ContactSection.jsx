@@ -7,7 +7,7 @@ export default function ContactSection({ props = {} }) {
   const {
     heading = "Ready to Create Something Great?",
     subheading = "Whether you have a project in mind or just want to explore possibilities — let's start a conversation.",
-    email = 'rsmpdots@gmail.com',
+    email = 'support@portfoliocraft.io',
     location = 'Galle, Sri Lanka',
     phone = '+94 91 223 4567',
     responseTime = 'Usually responds within 24 hours'
