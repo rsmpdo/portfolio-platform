@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { Sparkles, Check, HelpCircle, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
-import API from '../services/api';
+import { Sparkles, Check, HelpCircle, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const plans = [
   {
@@ -27,7 +26,7 @@ const plans = [
     id: "pro",
     name: "Pro Creator",
     price: "$12",
-    period: "per month",
+    period: "one-time",
     description: "For professionals who want unique portfolio URLs, analytics, and premium themes.",
     features: [
       "Everything in Free",
@@ -44,7 +43,7 @@ const plans = [
     id: "studio",
     name: "Studio & Team",
     price: "$29",
-    period: "per month",
+    period: "one-time",
     description: "Designed for small agencies, design teams, and multiple portfolio sites.",
     features: [
       "Everything in Pro",
@@ -68,21 +67,15 @@ const faqs = [
 
 export default function Pricing() {
   const [openFaq, setOpenFaq] = useState(null);
-  const [loading, setLoading] = useState(null);
   const navigate = useNavigate();
 
-  const handleCheckout = async (planId) => {
-    try {
-      setLoading(planId);
-      const res = await API.post('/payment/create-checkout-session', { plan: planId });
-      if (res.data.success && res.data.url) {
-        window.location.href = res.data.url;
-      }
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to initialize checkout');
-    } finally {
-      setLoading(null);
+  const handleBuyPlan = (planId) => {
+    const token = localStorage.getItem('portfolio_jwt_token');
+    if (!token) {
+      navigate('/register?redirect=pricing&plan=' + planId);
+      return;
     }
+    navigate('/payment/' + planId);
   };
 
   return (
@@ -138,6 +131,12 @@ export default function Pricing() {
                 </ul>
               </div>
 
+              {p.id !== 'free' && (
+                <div className="mb-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider">
+                  <ShieldCheck className="w-3 h-3" /> One-Time Purchase · No Subscription
+                </div>
+              )}
+
               {p.id === 'free' ? (
                 <Link
                   to="/register"
@@ -148,27 +147,13 @@ export default function Pricing() {
                 </Link>
               ) : (
                 <button
-                  onClick={() => {
-                    const token = localStorage.getItem('portfolio_jwt_token');
-                    if (!token) {
-                      navigate('/register?redirect=pricing&plan=' + p.id);
-                      return;
-                    }
-                    handleCheckout(p.id);
-                  }}
-                  disabled={loading === p.id}
-                  className={`w-full py-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-50 ${
+                  onClick={() => handleBuyPlan(p.id)}
+                  className={`w-full py-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 ${
                     p.popular ? 'btn-primary text-white' : 'btn-ghost text-slate-300 hover:text-white'
                   }`}
                 >
-                  {loading === p.id ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <span>{p.cta}</span>
-                      <ShieldCheck className="w-4 h-4" />
-                    </>
-                  )}
+                  <span>{p.cta}</span>
+                  <ShieldCheck className="w-4 h-4" />
                 </button>
               )}
             </motion.div>

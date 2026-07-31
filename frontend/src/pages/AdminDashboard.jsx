@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply, Briefcase, RefreshCw, ExternalLink } from 'lucide-react';
+import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply, Briefcase, RefreshCw, ExternalLink, FileText, XCircle, Clock } from 'lucide-react';
 import API from '../services/api';
 
 function AdminMessagesSection() {
@@ -344,6 +344,12 @@ export default function AdminDashboard() {
   const [warningMessage, setWarningMessage] = useState('');
   const [sendingWarn, setSendingWarn] = useState(false);
 
+  // Payment Requests State
+  const [paymentRequests, setPaymentRequests] = useState([]);
+  const [reviewingRequest, setReviewingRequest] = useState(null); // { id, action: 'approve'|'reject' }
+  const [reviewNote, setReviewNote] = useState('');
+  const [reviewLoading, setReviewLoading] = useState(false);
+
   useEffect(() => {
     const fetchAdminData = async () => {
       setLoading(true);
@@ -368,6 +374,13 @@ export default function AdminDashboard() {
         if (layoutsRes.data.success) setLayoutsList(layoutsRes.data.layouts);
       } catch (err) {
         console.error('Fetch layouts error:', err);
+      }
+
+      try {
+        const prRes = await API.get('/admin/payment-requests');
+        if (prRes.data.success) setPaymentRequests(prRes.data.requests);
+      } catch (err) {
+        console.error('Fetch payment requests error:', err);
       }
 
       setLoading(false);
@@ -447,6 +460,30 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update ban status');
+    }
+  };
+
+  const handleReviewRequest = async () => {
+    if (!reviewingRequest) return;
+    setReviewLoading(true);
+    try {
+      const endpoint = reviewingRequest.action === 'approve'
+        ? `/admin/payment-request/${reviewingRequest.id}/approve`
+        : `/admin/payment-request/${reviewingRequest.id}/reject`;
+      const res = await API.put(endpoint, { adminNote: reviewNote });
+      if (res.data.success) {
+        setPaymentRequests(paymentRequests.map(r =>
+          r._id === reviewingRequest.id ? { ...r, status: reviewingRequest.action === 'approve' ? 'approved' : 'rejected', adminNote: reviewNote } : r
+        ));
+        setActionMessage(res.data.message);
+        setTimeout(() => setActionMessage(''), 4000);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Review action failed');
+    } finally {
+      setReviewLoading(false);
+      setReviewingRequest(null);
+      setReviewNote('');
     }
   };
 
@@ -700,11 +737,181 @@ export default function AdminDashboard() {
             {/* ─── Platform Contact Messages Inbox ────────────────────────── */}
             <AdminMessagesSection />
 
+            {/* ─── Manual Payment Requests ─────────────────────────────────── */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-amber-400" />
+                  <span>Manual Payment Requests ({paymentRequests.length})</span>
+                  {paymentRequests.filter(r => r.status === 'pending').length > 0 && (
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs animate-pulse">
+                      {paymentRequests.filter(r => r.status === 'pending').length} Pending
+                    </span>
+                  )}
+                </h2>
+              </div>
+
+              <div className="glass gradient-border rounded-3xl overflow-hidden">
+                {paymentRequests.length === 0 ? (
+                  <div className="py-12 text-center text-slate-500 text-xs">No payment requests submitted yet.</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
+                        <tr>
+                          <th className="p-4">Submitted</th>
+                          <th className="p-4">User</th>
+                          <th className="p-4">Full Name</th>
+                          <th className="p-4">Plan</th>
+                          <th className="p-4">Amount</th>
+                          <th className="p-4">Country</th>
+                          <th className="p-4">Documents</th>
+                          <th className="p-4">Status</th>
+                          <th className="p-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/[0.06]">
+                        {paymentRequests.map((r) => (
+                          <tr key={r._id} className={`hover:bg-white/[0.02] transition ${r.status === 'pending' ? 'border-l-2 border-amber-500/40' : ''}`}>
+                            <td className="p-4 text-slate-500 font-mono">{new Date(r.createdAt).toLocaleDateString()}</td>
+                            <td className="p-4">
+                              <div className="font-bold text-white">{r.userId?.username || 'Unknown'}</div>
+                              <div className="text-slate-500 font-mono">{r.email}</div>
+                            </td>
+                            <td className="p-4 text-slate-300 font-semibold">{r.fullName}</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
+                                r.plan === 'studio' ? 'bg-purple-500/20 text-purple-400' : 'bg-indigo-500/20 text-indigo-400'
+                              }`}>{r.plan}</span>
+                            </td>
+                            <td className="p-4 font-mono font-bold text-white">${r.amount} USD</td>
+                            <td className="p-4 text-slate-400">{r.country}</td>
+                            <td className="p-4">
+                              <div className="flex flex-col gap-1.5">
+                                <a href={r.nationalIdUrl} target="_blank" rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 text-[10px] font-semibold underline underline-offset-2">
+                                  <Eye className="w-3 h-3" /> National ID
+                                </a>
+                                <a href={r.paymentSlipUrl} target="_blank" rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 text-[10px] font-semibold underline underline-offset-2">
+                                  <Eye className="w-3 h-3" /> Payment Slip
+                                </a>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              {r.status === 'pending' && (
+                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1 w-fit">
+                                  <Clock className="w-3 h-3" /> Pending
+                                </span>
+                              )}
+                              {r.status === 'approved' && (
+                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-emerald-500/20 text-emerald-400 flex items-center gap-1 w-fit">
+                                  <CheckCircle2 className="w-3 h-3" /> Approved
+                                </span>
+                              )}
+                              {r.status === 'rejected' && (
+                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-red-500/20 text-red-400 flex items-center gap-1 w-fit">
+                                  <XCircle className="w-3 h-3" /> Rejected
+                                </span>
+                              )}
+                              {r.adminNote && r.status !== 'pending' && (
+                                <p className="text-[10px] text-slate-500 mt-1 max-w-[160px] truncate" title={r.adminNote}>{r.adminNote}</p>
+                              )}
+                            </td>
+                            <td className="p-4 text-right whitespace-nowrap">
+                              {r.status === 'pending' ? (
+                                <div className="flex items-center gap-2 justify-end">
+                                  <button
+                                    onClick={() => { setReviewingRequest({ id: r._id, action: 'approve', user: r.userId?.username || r.email, plan: r.plan }); setReviewNote(''); }}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                                  >
+                                    ✓ Approve
+                                  </button>
+                                  <button
+                                    onClick={() => { setReviewingRequest({ id: r._id, action: 'reject', user: r.userId?.username || r.email, plan: r.plan }); setReviewNote(''); }}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20"
+                                  >
+                                    ✕ Reject
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-slate-600 text-[10px] font-mono">Reviewed</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* ─── Careers Job Applications Management ────────────────────────── */}
             <JobApplicationsSection />
           </div>
         )}
       </main>
+      {/* Payment Request Review Modal */}
+      {reviewingRequest && (
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6">
+          <div className="glass gradient-border rounded-3xl max-w-md w-full p-8 shadow-2xl">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
+              reviewingRequest.action === 'approve' ? 'bg-emerald-500/20' : 'bg-red-500/20'
+            }`}>
+              {reviewingRequest.action === 'approve'
+                ? <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                : <XCircle className="w-6 h-6 text-red-400" />
+              }
+            </div>
+            <h3 className="font-heading font-bold text-xl text-white mb-1 text-center">
+              {reviewingRequest.action === 'approve' ? 'Approve Payment Request' : 'Reject Payment Request'}
+            </h3>
+            <p className="text-slate-400 text-xs mb-6 text-center">
+              {reviewingRequest.action === 'approve'
+                ? <>This will upgrade <span className="text-indigo-400 font-mono">{reviewingRequest.user}</span> to the <span className="text-amber-400 font-bold uppercase">{reviewingRequest.plan}</span> plan and notify them by email.</>
+                : <>This will reject the request and send a notification email to <span className="text-indigo-400 font-mono">{reviewingRequest.user}</span>.</>
+              }
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-2">
+                  Admin Note <span className="text-slate-600">(optional — included in email)</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={reviewNote}
+                  onChange={e => setReviewNote(e.target.value)}
+                  placeholder={reviewingRequest.action === 'approve'
+                    ? 'Your payment has been verified and your plan has been upgraded.'
+                    : 'Payment slip was unclear. Please resubmit with a clearer image showing the amount and date.'
+                  }
+                  className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs resize-none"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setReviewingRequest(null); setReviewNote(''); }}
+                  className="btn-ghost px-4 py-2.5 rounded-xl text-xs text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleReviewRequest}
+                  disabled={reviewLoading}
+                  className={`px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 text-white ${
+                    reviewingRequest.action === 'approve' ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-red-600 hover:bg-red-500'
+                  } disabled:opacity-60`}
+                >
+                  {reviewLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                  {reviewingRequest.action === 'approve' ? '✓ Confirm Approve' : '✕ Confirm Reject'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Moderation Warning Modal */}
       {warnUser && (
