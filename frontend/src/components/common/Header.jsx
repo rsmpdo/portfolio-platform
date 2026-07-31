@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/authSlice';
 import { Sparkles, LayoutTemplate, LogOut, LogIn, UserPlus, ShieldAlert } from 'lucide-react';
+import LogoIcon from './LogoIcon';
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -21,8 +22,8 @@ export default function Header() {
         <div className="glass-dark rounded-2xl px-6 h-14 flex items-center justify-between shadow-xl shadow-black/20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl btn-primary flex items-center justify-center shadow-lg">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className="w-9 h-9 rounded-xl glass border border-indigo-500/30 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+              <LogoIcon className="w-5 h-5" />
             </div>
             <span className="font-heading font-bold text-base text-white tracking-tight">
               Portfolio<span className="gradient-text">Craft</span>
