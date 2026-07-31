@@ -280,10 +280,11 @@ router.put(
 
       // Send approval email
       try {
+        const noteMsg = req.body.adminNote ? `\n\nNote from Admin: "${req.body.adminNote}"` : '';
         await sendEmail({
           email: user.email,
           subject: `✅ PortfolioCraft ${request.plan.toUpperCase()} Plan — Payment Approved!`,
-          message: `Hi ${user.username || user.email},\n\nGreat news! Your payment of $${request.amount} USD for the PortfolioCraft ${request.plan.toUpperCase()} Plan has been verified and approved.\n\nYour account has been upgraded to ${request.plan.toUpperCase()}. You can now log in and enjoy all the premium features.\n\nThis is a one-time purchase — no recurring charges.\n\nThank you for joining PortfolioCraft!\n\n— The PortfolioCraft Team`
+          message: `Hi ${user.username || user.email},\n\nGreat news! Your payment of $${request.amount} USD for the PortfolioCraft ${request.plan.toUpperCase()} Plan has been verified and approved.${noteMsg}\n\nYour account has been upgraded to ${request.plan.toUpperCase()}. You can now log in and enjoy all the premium features.\n\nThis is a one-time purchase — no recurring charges.\n\nThank you for joining PortfolioCraft!\n\n— The PortfolioCraft Team`
         });
       } catch (emailErr) {
         console.error('Approval email error:', emailErr.message);
