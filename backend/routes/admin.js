@@ -166,7 +166,7 @@ router.get(
 );
 
 // @route   PUT /api/admin/layout/:id/toggle-publish
-// @desc    Toggle layout publication / ban inappropriate portfolio
+// @desc    Admin toggle layout publication status (does NOT ban)
 // @access  Private (Admin only)
 router.put(
   '/layout/:id/toggle-publish',
@@ -185,6 +185,34 @@ router.put(
       res.status(200).json({
         success: true,
         message: `Layout publication set to ${layout.isPublished}`,
+        layout
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   PUT /api/admin/layout/:id/toggle-ban
+// @desc    Admin ban/unban an inappropriate portfolio (independent of publish status)
+// @access  Private (Admin only)
+router.put(
+  '/layout/:id/toggle-ban',
+  passport.authenticate('jwt', { session: false }),
+  checkAdmin,
+  async (req, res) => {
+    try {
+      const layout = await Layout.findById(req.params.id);
+      if (!layout) {
+        return res.status(404).json({ success: false, message: 'Layout not found' });
+      }
+
+      layout.isBanned = !layout.isBanned;
+      await layout.save();
+
+      res.status(200).json({
+        success: true,
+        message: `Portfolio ban status set to ${layout.isBanned}`,
         layout
       });
     } catch (error) {

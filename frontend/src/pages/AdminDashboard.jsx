@@ -437,6 +437,19 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleToggleBan = async (layoutId) => {
+    try {
+      const res = await API.put(`/admin/layout/${layoutId}/toggle-ban`);
+      if (res.data.success) {
+        setLayoutsList(layoutsList.map((l) => (l._id === layoutId ? { ...l, isBanned: res.data.layout.isBanned } : l)));
+        setActionMessage(res.data.layout.isBanned ? 'Portfolio banned — it is now hidden from public.' : 'Portfolio unbanned.');
+        setTimeout(() => setActionMessage(''), 3000);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update ban status');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
@@ -617,11 +630,19 @@ export default function AdminDashboard() {
                             <td className="p-4 text-indigo-400 font-mono">/p/{l.handle}</td>
                             <td className="p-4 text-slate-300">{l.userId?.username || 'User'}</td>
                             <td className="p-4">
-                              <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                                l.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-                              }`}>
-                                {l.isPublished ? 'Published' : 'Hidden / Banned'}
-                              </span>
+                              {l.isBanned ? (
+                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-red-500/20 text-red-400 border border-red-500/30">
+                                  🚫 Banned
+                                </span>
+                              ) : l.isPublished ? (
+                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-emerald-500/20 text-emerald-400">
+                                  Published
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-slate-500/20 text-slate-400">
+                                  Unpublished
+                                </span>
+                              )}
                             </td>
                             <td className="p-4 text-right space-x-2 whitespace-nowrap">
                               <a
@@ -633,18 +654,38 @@ export default function AdminDashboard() {
                                 <Eye className="w-3.5 h-3.5" /> View
                               </a>
                               {isProtectedShowcase ? (
-                                <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 text-xs font-bold border border-white/5 cursor-not-allowed inline-flex items-center gap-1" title="System showcase portfolio cannot be unpublished">
+                                <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 text-xs font-bold border border-white/5 cursor-not-allowed inline-flex items-center gap-1" title="System showcase portfolio cannot be modified">
                                   Protected
                                 </span>
                               ) : (
-                                <button
-                                  onClick={() => handleTogglePublish(l._id)}
-                                  className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                                    l.isPublished ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
-                                  }`}
-                                >
-                                  {l.isPublished ? 'Ban Portfolio' : 'Unban Portfolio'}
-                                </button>
+                                <>
+                                  <button
+                                    onClick={() => handleTogglePublish(l._id)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                                      l.isPublished
+                                        ? 'bg-slate-500/10 text-slate-400 hover:bg-slate-500/20'
+                                        : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                    }`}
+                                    title={l.isPublished ? 'Unpublish this portfolio' : 'Publish this portfolio'}
+                                  >
+                                    {l.isPublished ? (
+                                      <><EyeOff className="w-3 h-3 inline mr-1" />Unpublish</>
+                                    ) : (
+                                      <><Eye className="w-3 h-3 inline mr-1" />Publish</>  
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() => handleToggleBan(l._id)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                                      l.isBanned
+                                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                        : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                                    }`}
+                                    title={l.isBanned ? 'Unban this portfolio' : 'Ban this portfolio (hides from public regardless of publish status)'}
+                                  >
+                                    {l.isBanned ? '✓ Unban' : '🚫 Ban'}
+                                  </button>
+                                </>
                               )}
                             </td>
                           </tr>

@@ -64,7 +64,12 @@ const LayoutSchema = new mongoose.Schema(
     ],
     isPublished: {
       type: Boolean,
-      default: true,
+      default: false, // Users must explicitly publish their portfolio
+      index: true
+    },
+    isBanned: {
+      type: Boolean,
+      default: false, // Admin can ban a portfolio independently of publish status
       index: true
     }
   },
@@ -74,8 +79,8 @@ const LayoutSchema = new mongoose.Schema(
   }
 );
 
-// Compound index for fast handle lookup and publishing filter
-LayoutSchema.index({ handle: 1, isPublished: 1 });
+// Compound index for fast handle lookup and publishing/ban filter
+LayoutSchema.index({ handle: 1, isPublished: 1, isBanned: 1 });
 LayoutSchema.index({ userId: 1, updatedAt: -1 });
 
 module.exports = mongoose.model('Layout', LayoutSchema);

@@ -17,7 +17,7 @@ const checkAdmin = (req, res, next) => {
 router.get('/public/:handle', async (req, res) => {
   try {
     const handle = req.params.handle.toLowerCase();
-    const layout = await Layout.findOne({ handle, isPublished: true }).populate('userId', 'username email');
+    const layout = await Layout.findOne({ handle, isPublished: true, isBanned: { $ne: true } }).populate('userId', 'username email');
 
     if (!layout) {
       return res.status(404).json({ success: false, message: 'Portfolio layout not found' });

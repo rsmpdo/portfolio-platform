@@ -28,13 +28,13 @@ const plans = [
     name: "Pro Creator",
     price: "$12",
     period: "per month",
-    description: "For professionals who want custom domains, analytics, and premium themes.",
+    description: "For professionals who want unique portfolio URLs, analytics, and premium themes.",
     features: [
       "Everything in Free",
       "Interactive Embeds (Figma, YouTube)",
       "Advanced Contact Forms",
       "Premium Hover Animations",
-      "Custom Domain Support",
+      "Custom Portfolio Page Name (your URL handle)",
       "SEO Meta Optimization"
     ],
     cta: "Buy Pro Plan",
@@ -61,7 +61,7 @@ const plans = [
 
 const faqs = [
   { q: "Is the free plan really free forever?", a: "Yes! No credit card is required to sign up. You can build, publish, and update your portfolio for free." },
-  { q: "Can I use my own custom domain?", a: "Yes, Pro and Studio plan users can link their custom domain (e.g. yourname.com) seamlessly." },
+  { q: "Can I use a custom domain for my portfolio?", a: "Every portfolio on our platform gets its own unique, shareable URL — for example portfoliosite.com/p/yourname. Each of your portfolios can have a different page name (handle). Custom external domains (e.g. yourname.com) are not currently supported, but every plan including Free gets a clean, professional portfolio URL." },
   { q: "Do I need coding knowledge?", a: "Not at all! Everything is controlled via a visual drag-and-drop CMS editor." },
   { q: "Is payment processing safe?", a: "Yes! All transactions are secured by Stripe, the industry standard for payments." }
 ];
@@ -100,7 +100,7 @@ export default function Pricing() {
             <span className="gradient-text">Personal Brand</span>
           </h1>
           <p className="text-slate-400 text-lg leading-relaxed">
-            Start for free, upgrade when you're ready to take your portfolio to the next level with custom domains and unlimited sections.
+            Start for free, upgrade when you're ready to take your portfolio to the next level with premium themes and unlimited sections.
           </p>
         </div>
 
