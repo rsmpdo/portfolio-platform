@@ -43,7 +43,7 @@ const AVAILABLE_COMPONENTS = [
   { type: 'MediaGallery', title: 'Media Gallery', icon: '🖼️' }
 ];
 
-export default function EditorSidebar() {
+export default function EditorSidebar({ accentColor = '#6366f1', templateLabel = null }) {
   const dispatch = useDispatch();
   const { activeLayout, selectedComponentId, isSaving, saveSuccess } = useSelector(
     (state) => state.layout
@@ -104,10 +104,27 @@ export default function EditorSidebar() {
         )}
       </div>
 
+      {/* Template Identity Strip */}
+      {templateLabel && (
+        <div
+          className="px-4 py-2.5 flex items-center gap-2 border-b border-white/[0.06]"
+          style={{ background: `${accentColor}18`, borderLeft: `3px solid ${accentColor}` }}
+        >
+          <span
+            className="w-2 h-2 rounded-full flex-shrink-0"
+            style={{ background: accentColor }}
+          />
+          <div className="min-w-0">
+            <p className="text-[9px] uppercase tracking-widest font-semibold text-slate-500">Active Template</p>
+            <p className="text-xs font-bold text-white truncate" style={{ color: accentColor }}>{templateLabel}</p>
+          </div>
+        </div>
+      )}
+
       {/* Top Header & Save Button */}
       <div className="p-4 border-b border-white/[0.06] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-indigo-400" />
+          <Sparkles className="w-4 h-4" style={{ color: accentColor }} />
           <span className="font-heading font-bold text-sm text-white">Sections</span>
         </div>
         {/* Read-Only Status Indicator Badge */}

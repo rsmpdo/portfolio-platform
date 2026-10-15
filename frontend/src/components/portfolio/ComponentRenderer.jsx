@@ -23,7 +23,7 @@ const COMPONENT_MAP = {
   AdvancedMetrics
 };
 
-export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick, templateId, viewportMode }) {
+export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick, templateId, viewportMode, accentColor = '#6366f1' }) {
   if (!component || component.isVisible === false) return null;
 
   const ComponentClass = COMPONENT_MAP[component.type];
@@ -43,14 +43,22 @@ export default function ComponentRenderer({ component, isEditing = false, isSele
         isEditing
           ? `cursor-pointer rounded-2xl border-2 my-2 ${
               isSelected
-                ? 'border-indigo-500 ring-4 ring-indigo-500/15 bg-indigo-950/5'
+                ? 'ring-4'
                 : 'border-transparent hover:border-white/10'
             }`
           : ''
       }`}
+      style={isEditing && isSelected ? {
+        borderColor: accentColor,
+        ringColor: `${accentColor}40`,
+        boxShadow: `0 0 0 4px ${accentColor}26`
+      } : undefined}
     >
       {isEditing && (
-        <div className="absolute top-3 left-3 z-20 px-3 py-1 rounded-full glass border border-white/10 text-xs font-semibold text-indigo-400 backdrop-blur-md">
+        <div
+          className="absolute top-3 left-3 z-20 px-3 py-1 rounded-full glass border border-white/10 text-xs font-semibold backdrop-blur-md"
+          style={{ color: accentColor }}
+        >
           {component.title || component.type}
         </div>
       )}

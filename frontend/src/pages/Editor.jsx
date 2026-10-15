@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios, saveUserLayout } from '../store/layoutSlice';
+import { templateLayouts } from '../data/templateLayouts';
 import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
@@ -13,26 +14,35 @@ export default function Editor() {
   const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  // Holds the template ID we need to apply once the layout has loaded from the server
+  const [pendingTemplate, setPendingTemplate] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Fetch the user's layout and capture any ?template= param
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const layoutId = params.get('id');
+    const templateId = params.get('template');
+
     dispatch(fetchUserLayout(layoutId));
     dispatch(fetchUserPortfolios());
+
+    // If a template was requested, store it so we apply it after the layout loads
+    if (templateId) {
+      setPendingTemplate(templateId);
+    }
   }, [dispatch, location.search]);
 
+  // Once activeLayout is available and we have a pending template, apply it
   useEffect(() => {
-    if (activeLayout && activeLayout.components?.length === 0) {
-      const params = new URLSearchParams(location.search);
-      const templateId = params.get('template');
-      if (templateId) {
-        dispatch(applyTemplate(templateId));
-        navigate('/editor', { replace: true });
-      }
+    if (activeLayout && pendingTemplate) {
+      dispatch(applyTemplate(pendingTemplate));
+      setPendingTemplate(null);
+      // Clear the ?template= param from the URL so a refresh doesn't re-apply
+      navigate('/editor', { replace: true });
     }
-  }, [activeLayout, location.search, dispatch, navigate]);
+  }, [activeLayout, pendingTemplate, dispatch, navigate]);
 
   const handleSaveDraft = () => {
     if (!activeLayout) return;
@@ -53,6 +63,13 @@ export default function Editor() {
     return 'w-full';
   };
 
+  // Resolve editor theme from the active template
+  const templateId = activeLayout?.theme?.templateId;
+  const editorTheme = (templateId && templateLayouts[templateId]?.editorTheme) || null;
+  const canvasBg = editorTheme?.canvasBg || '#070a10';
+  const accentColor = editorTheme?.accent || '#6366f1';
+  const templateLabel = editorTheme?.label || null;
+
   return (
     <div className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
       <Header />
@@ -64,6 +81,27 @@ export default function Editor() {
             <Sparkles className="w-4 h-4 text-indigo-400" />
             <span className="font-heading font-bold text-sm text-white">Portfolio Editor</span>
           </div>
+
+          {/* Active Template Badge */}
+          {templateLabel && (
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-px bg-white/10" />
+              <div
+                className="flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold border"
+                style={{
+                  background: `${accentColor}22`,
+                  borderColor: `${accentColor}55`,
+                  color: accentColor
+                }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ background: accentColor }}
+                />
+                {templateLabel}
+              </div>
+            </div>
+          )}
 
           {userPortfolios?.length > 1 && (
             <div className="flex items-center gap-2">
@@ -93,8 +131,8 @@ export default function Editor() {
             <div className="flex items-center gap-2">
               <div className="h-5 w-px bg-white/10" />
               <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
-                activeLayout.isPublished 
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                activeLayout.isPublished
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                   : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${activeLayout.isPublished ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
@@ -194,10 +232,13 @@ export default function Editor() {
       {/* ─── Main Workspace ────────────────────────── */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar */}
-        {!isPreviewMode && <EditorSidebar />}
+        {!isPreviewMode && <EditorSidebar accentColor={accentColor} templateLabel={templateLabel} />}
 
-        {/* Canvas */}
-        <main className="flex-1 overflow-y-auto bg-[#070a10] p-6 flex flex-col items-center">
+        {/* Canvas — bg driven by active template */}
+        <main
+          className="flex-1 overflow-y-auto p-6 flex flex-col items-center transition-colors duration-500"
+          style={{ background: canvasBg }}
+        >
           {loading ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-4">
               <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
@@ -229,6 +270,7 @@ export default function Editor() {
                     onClick={() => !isPreviewMode && dispatch(selectComponent(comp.id))}
                     templateId={activeLayout?.theme?.templateId}
                     viewportMode={viewportMode}
+                    accentColor={accentColor}
                   />
                 ))
               )}
