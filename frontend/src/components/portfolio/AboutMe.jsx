@@ -12,10 +12,12 @@ export default function AboutMe({ props = {}, templateId, viewportMode }) {
   } = props;
 
   const isMobile = viewportMode === 'mobile';
+  const isTablet = viewportMode === 'tablet';
+  const isSmall = isMobile || isTablet;
   const isCyber = templateId === 'dark-cyber' || templateId === 'ai-neural-labs-pro' || templateId === 'fintech-saas-pro';
   const isLuxury = templateId === 'haute-couture-studio' || templateId === 'luxury-motion-pro' || templateId === 'minimalist-editorial' || templateId === 'spatial-architect-studio';
 
-  const gridClass = isMobile ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2';
+  const gridClass = isSmall ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2';
 
   if (isLuxury) {
     return (

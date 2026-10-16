@@ -2,14 +2,16 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import API from '../services/api';
 import { templateLayouts } from '../data/templateLayouts';
 
-// Fetch current user's CMS layout for editing (supports optional layoutId)
+// Fetch current user's CMS layout for editing (supports optional { layoutId, templateId })
 export const fetchUserLayout = createAsyncThunk(
   'layout/fetchUserLayout',
-  async (layoutId, { rejectWithValue }) => {
+  async (args = {}, { rejectWithValue }) => {
     try {
+      const layoutId = typeof args === 'string' ? args : args?.layoutId;
+      const templateId = typeof args === 'object' ? args?.templateId : null;
       const url = layoutId ? `/layouts/me?id=${layoutId}` : '/layouts/me';
       const res = await API.get(url);
-      return res.data.layout;
+      return { layout: res.data.layout, templateId };
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch layout');
     }
@@ -38,6 +40,23 @@ export const saveUserLayout = createAsyncThunk(
       return res.data.layout;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to save layout');
+    }
+  }
+);
+
+// Apply a template and immediately persist it to database
+export const applyTemplateAndSave = createAsyncThunk(
+  'layout/applyTemplateAndSave',
+  async (templateId, { dispatch, getState, rejectWithValue }) => {
+    try {
+      dispatch(applyTemplate(templateId));
+      const { activeLayout } = getState().layout;
+      if (activeLayout) {
+        const res = await API.put('/layouts/me', activeLayout);
+        return res.data.layout;
+      }
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to save applied template');
     }
   }
 );
@@ -170,9 +189,30 @@ const layoutSlice = createSlice({
       })
       .addCase(fetchUserLayout.fulfilled, (state, action) => {
         state.loading = false;
-        state.activeLayout = action.payload;
-        if (action.payload?.components?.length > 0 && !state.selectedComponentId) {
-          state.selectedComponentId = action.payload.components[0].id;
+        const { layout, templateId } = action.payload || {};
+        state.activeLayout = layout;
+
+        if (templateId && templateLayouts[templateId] && state.activeLayout) {
+          const template = templateLayouts[templateId];
+          state.activeLayout.theme = {
+            ...state.activeLayout.theme,
+            ...template.theme,
+            templateId
+          };
+          const ts = Date.now();
+          state.activeLayout.components = template.components.map((c, i) => ({
+            id: `tpl_${ts}_${i}_${Math.random().toString(36).slice(2, 7)}`,
+            type: c.type,
+            title: c.title,
+            order: i,
+            isVisible: c.isVisible !== false,
+            props: JSON.parse(JSON.stringify(c.props || {}))
+          }));
+          if (state.activeLayout.components.length > 0) {
+            state.selectedComponentId = state.activeLayout.components[0].id;
+          }
+        } else if (layout?.components?.length > 0 && !state.selectedComponentId) {
+          state.selectedComponentId = layout.components[0].id;
         }
       })
       .addCase(fetchUserLayout.rejected, (state, action) => {

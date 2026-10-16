@@ -11,7 +11,7 @@ const ICONS = {
   Languages: '💬'
 };
 
-export default function SkillsCloud({ props = {} }) {
+export default function SkillsCloud({ props = {}, viewportMode }) {
   const {
     heading = 'Tools of the Trade',
     subheading = 'Technologies I use daily to turn ideas into products people love.',
@@ -31,20 +31,24 @@ export default function SkillsCloud({ props = {} }) {
     ]
   } = props;
 
+  const isMobile = viewportMode === 'mobile';
+  const isTablet = viewportMode === 'tablet';
+  const isSmall = isMobile || isTablet;
+
   return (
-    <section className="py-20 px-6">
+    <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'}`}>
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
-        <div className="text-center mb-16">
+        <div className={`text-center ${isSmall ? 'mb-10' : 'mb-16'}`}>
           <div className="badge badge-indigo inline-flex mb-4">
             <Cpu className="w-3 h-3" />
             <span>Tech Stack</span>
           </div>
-          <h2 className="font-heading font-black text-3xl md:text-5xl text-white mb-3">{heading}</h2>
-          {subheading && <p className="text-slate-400 text-base max-w-lg mx-auto">{subheading}</p>}
+          <h2 className={`font-heading font-black ${isMobile ? 'text-2xl' : 'text-3xl md:text-5xl'} text-white mb-3`}>{heading}</h2>
+          {subheading && <p className="text-slate-400 text-sm md:text-base max-w-lg mx-auto">{subheading}</p>}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-3'}`}>
           {categories.map((cat, idx) => (
             <motion.div
               key={idx}

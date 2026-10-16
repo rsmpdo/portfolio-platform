@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle2, MessageSquare, MapPin, Clock, Phone, Loader2 } from 'lucide-react';
 import API from '../../services/api';
 
-export default function ContactSection({ props = {} }) {
+export default function ContactSection({ props = {}, viewportMode }) {
   const {
     heading = "Ready to Create Something Great?",
     subheading = "Whether you have a project in mind or just want to explore possibilities — let's start a conversation.",
@@ -12,6 +12,10 @@ export default function ContactSection({ props = {} }) {
     phone = '+94 91 223 4567',
     responseTime = 'Usually responds within 24 hours'
   } = props;
+
+  const isMobile = viewportMode === 'mobile';
+  const isTablet = viewportMode === 'tablet';
+  const isSmall = isMobile || isTablet;
 
   const [form, setForm] = useState({ name: '', userEmail: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
@@ -45,12 +49,12 @@ export default function ContactSection({ props = {} }) {
   };
 
   return (
-    <section className="py-20 px-6 relative">
+    <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} relative`}>
       <div className="max-w-5xl mx-auto">
         <div className="glass gradient-border rounded-[2rem] overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-5">
+          <div className={`grid ${isSmall ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-5'}`}>
             {/* Left Panel */}
-            <div className="lg:col-span-2 bg-gradient-to-br from-indigo-600/20 to-purple-600/10 p-10 border-r border-white/[0.06] flex flex-col justify-between">
+            <div className={`${isSmall ? 'p-6' : 'lg:col-span-2 p-10'} bg-gradient-to-br from-indigo-600/20 to-purple-600/10 border-b lg:border-b-0 lg:border-r border-white/[0.06] flex flex-col justify-between`}>
               <div>
                 <div className="badge badge-indigo inline-flex mb-6">
                   <MessageSquare className="w-3 h-3" />

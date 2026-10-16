@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios, saveUserLayout } from '../store/layoutSlice';
@@ -7,44 +7,54 @@ import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Header from '../components/common/Header';
-import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Sparkles, Layers, Save, Globe, CheckCircle2 } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Sparkles, Layers, Save, Globe } from 'lucide-react';
 
 export default function Editor() {
   const dispatch = useDispatch();
   const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [pendingTemplate, setPendingTemplate] = useState(null);
-  const templateAppliedRef = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fetch the user's layout and capture any ?template= param (runs once on mount)
+  // Fetch the user's layout and apply any requested ?template=
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const layoutId = params.get('id');
     const templateId = params.get('template');
 
-    dispatch(fetchUserLayout(layoutId));
+    dispatch(fetchUserLayout({ layoutId, templateId })).then((res) => {
+      // If a template was requested, auto-save it to MongoDB so it persists across reloads
+      if (res.payload?.templateId && templateLayouts[res.payload.templateId]) {
+        const { layout, templateId: tId } = res.payload;
+        const template = templateLayouts[tId];
+        if (template && layout) {
+          const ts = Date.now();
+          const persistedLayout = {
+            ...layout,
+            theme: {
+              ...layout.theme,
+              ...template.theme,
+              templateId: tId
+            },
+            components: template.components.map((c, i) => ({
+              id: `tpl_${ts}_${i}_${Math.random().toString(36).slice(2, 7)}`,
+              type: c.type,
+              title: c.title,
+              order: i,
+              isVisible: c.isVisible !== false,
+              props: JSON.parse(JSON.stringify(c.props || {}))
+            }))
+          };
+          dispatch(saveUserLayout(persistedLayout));
+        }
+        // Clean URL query silently without re-triggering React Router navigation
+        window.history.replaceState(null, '', layoutId ? `/editor?id=${layoutId}` : '/editor');
+      }
+    });
+
     dispatch(fetchUserPortfolios());
-
-    if (templateId) {
-      setPendingTemplate(templateId);
-      templateAppliedRef.current = false;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
-
-  // Once activeLayout is available and we have a pending template, apply it exactly once
-  useEffect(() => {
-    if (activeLayout && pendingTemplate && !templateAppliedRef.current) {
-      templateAppliedRef.current = true;
-      dispatch(applyTemplate(pendingTemplate));
-      setPendingTemplate(null);
-      // Silently clean URL without triggering React Router re-render
-      window.history.replaceState(null, '', '/editor');
-    }
-  }, [activeLayout, pendingTemplate, dispatch]);
+  }, [dispatch, location.search]);
 
   const handleSaveDraft = () => {
     if (!activeLayout) return;
@@ -57,12 +67,6 @@ export default function Editor() {
     const newPublishState = !activeLayout.isPublished;
     dispatch(saveUserLayout({ ...activeLayout, isPublished: newPublishState }));
     dispatch(fetchUserPortfolios());
-  };
-
-  const getViewportWidth = () => {
-    if (viewportMode === 'mobile') return 'max-w-sm';
-    if (viewportMode === 'tablet') return 'max-w-2xl';
-    return 'w-full';
   };
 
   // Resolve editor theme from the active template
@@ -113,7 +117,7 @@ export default function Editor() {
                 <select
                   value={activeLayout?._id || ''}
                   onChange={(e) => {
-                    dispatch(fetchUserLayout(e.target.value));
+                    dispatch(fetchUserLayout({ layoutId: e.target.value }));
                     navigate(`/editor?id=${e.target.value}`, { replace: true });
                   }}
                   className="bg-transparent text-indigo-300 font-bold text-xs border-none cursor-pointer focus:outline-none"
@@ -148,8 +152,8 @@ export default function Editor() {
           <div className="flex items-center glass p-1 rounded-xl">
             {[
               { mode: 'desktop', icon: Monitor, label: 'Desktop' },
-              { mode: 'tablet', icon: Tablet, label: 'Tablet' },
-              { mode: 'mobile', icon: Smartphone, label: 'Mobile' }
+              { mode: 'tablet', icon: Tablet, label: 'Tablet (768px)' },
+              { mode: 'mobile', icon: Smartphone, label: 'Mobile (390px)' }
             ].map(({ mode, icon: Icon, label }) => (
               <button
                 key={mode}
@@ -238,7 +242,7 @@ export default function Editor() {
 
         {/* Canvas — bg driven by active template */}
         <main
-          className="flex-1 overflow-y-auto p-6 flex flex-col items-center transition-colors duration-500"
+          className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col items-center transition-colors duration-500"
           style={{ background: canvasBg }}
         >
           {loading ? (
@@ -251,30 +255,114 @@ export default function Editor() {
               {error}
             </div>
           ) : (
-            <div className={`transition-all duration-300 mx-auto ${getViewportWidth()}`}>
-              {activeLayout?.components?.length === 0 ? (
-                <div className="py-20 text-center">
-                  <div className="w-20 h-20 rounded-3xl glass flex items-center justify-center mx-auto mb-6">
-                    <Sparkles className="w-8 h-8 text-indigo-400" />
+            <div className="w-full flex justify-center">
+              {viewportMode === 'mobile' ? (
+                /* ─── Mobile Phone Frame (390px) ─── */
+                <div className="w-[390px] max-w-full my-4 bg-slate-950 rounded-[44px] border-[10px] border-slate-800 shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10 flex flex-col overflow-hidden transition-all duration-300">
+                  {/* Phone Top Status Bar / Dynamic Island */}
+                  <div className="h-8 bg-slate-900 border-b border-white/5 flex items-center justify-between px-6 flex-shrink-0 select-none">
+                    <span className="text-[11px] font-semibold text-slate-400">9:41</span>
+                    <div className="w-20 h-4 bg-slate-950 rounded-full border border-slate-800 flex items-center justify-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-slate-900" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-indigo-950" />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400 tracking-wider">5G</span>
                   </div>
-                  <h3 className="font-heading font-bold text-xl text-white mb-2">Start Building Your Portfolio</h3>
-                  <p className="text-slate-500 text-sm max-w-sm mx-auto">
-                    Use the sidebar to add sections like Hero, About, Projects, and more. Your portfolio will come to life as you build.
-                  </p>
+
+                  {/* Device Inner Content with isolated scrolling */}
+                  <div className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] bg-slate-950">
+                    {activeLayout?.components?.length === 0 ? (
+                      <div className="py-16 text-center px-4">
+                        <Sparkles className="w-8 h-8 text-indigo-400 mx-auto mb-3" />
+                        <h3 className="font-heading font-bold text-base text-white mb-1">No Sections Added</h3>
+                        <p className="text-slate-500 text-xs">Add sections using the sidebar.</p>
+                      </div>
+                    ) : (
+                      activeLayout?.components?.map((comp) => (
+                        <ComponentRenderer
+                          key={comp.id}
+                          component={comp}
+                          isEditing={!isPreviewMode}
+                          isSelected={comp.id === selectedComponentId}
+                          onClick={() => !isPreviewMode && dispatch(selectComponent(comp.id))}
+                          templateId={activeLayout?.theme?.templateId}
+                          viewportMode={viewportMode}
+                          accentColor={accentColor}
+                        />
+                      ))
+                    )}
+                  </div>
+
+                  {/* Phone Bottom Home Indicator */}
+                  <div className="h-5 bg-slate-900 border-t border-white/5 flex items-center justify-center flex-shrink-0">
+                    <div className="w-28 h-1 bg-slate-600 rounded-full" />
+                  </div>
+                </div>
+              ) : viewportMode === 'tablet' ? (
+                /* ─── Tablet Frame (768px) ─── */
+                <div className="w-[768px] max-w-full my-4 bg-slate-950 rounded-[32px] border-[12px] border-slate-800 shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10 flex flex-col overflow-hidden transition-all duration-300">
+                  {/* Tablet Top Camera Bezel */}
+                  <div className="h-6 bg-slate-900 border-b border-white/5 flex items-center justify-center flex-shrink-0 select-none">
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-950 border border-slate-700/60" />
+                  </div>
+
+                  {/* Device Inner Content with isolated scrolling */}
+                  <div className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] bg-slate-950">
+                    {activeLayout?.components?.length === 0 ? (
+                      <div className="py-20 text-center px-6">
+                        <Sparkles className="w-8 h-8 text-indigo-400 mx-auto mb-4" />
+                        <h3 className="font-heading font-bold text-lg text-white mb-2">No Sections Added</h3>
+                        <p className="text-slate-500 text-sm">Add sections using the sidebar.</p>
+                      </div>
+                    ) : (
+                      activeLayout?.components?.map((comp) => (
+                        <ComponentRenderer
+                          key={comp.id}
+                          component={comp}
+                          isEditing={!isPreviewMode}
+                          isSelected={comp.id === selectedComponentId}
+                          onClick={() => !isPreviewMode && dispatch(selectComponent(comp.id))}
+                          templateId={activeLayout?.theme?.templateId}
+                          viewportMode={viewportMode}
+                          accentColor={accentColor}
+                        />
+                      ))
+                    )}
+                  </div>
+
+                  {/* Tablet Bottom Home Indicator */}
+                  <div className="h-4 bg-slate-900 border-t border-white/5 flex items-center justify-center flex-shrink-0">
+                    <div className="w-36 h-1 bg-slate-600 rounded-full" />
+                  </div>
                 </div>
               ) : (
-                activeLayout?.components?.map((comp) => (
-                  <ComponentRenderer
-                    key={comp.id}
-                    component={comp}
-                    isEditing={!isPreviewMode}
-                    isSelected={comp.id === selectedComponentId}
-                    onClick={() => !isPreviewMode && dispatch(selectComponent(comp.id))}
-                    templateId={activeLayout?.theme?.templateId}
-                    viewportMode={viewportMode}
-                    accentColor={accentColor}
-                  />
-                ))
+                /* ─── Desktop Standard View ─── */
+                <div className="w-full max-w-6xl mx-auto transition-all duration-300">
+                  {activeLayout?.components?.length === 0 ? (
+                    <div className="py-20 text-center">
+                      <div className="w-20 h-20 rounded-3xl glass flex items-center justify-center mx-auto mb-6">
+                        <Sparkles className="w-8 h-8 text-indigo-400" />
+                      </div>
+                      <h3 className="font-heading font-bold text-xl text-white mb-2">Start Building Your Portfolio</h3>
+                      <p className="text-slate-500 text-sm max-w-sm mx-auto">
+                        Use the sidebar to add sections like Hero, About, Projects, and more. Your portfolio will come to life as you build.
+                      </p>
+                    </div>
+                  ) : (
+                    activeLayout?.components?.map((comp) => (
+                      <ComponentRenderer
+                        key={comp.id}
+                        component={comp}
+                        isEditing={!isPreviewMode}
+                        isSelected={comp.id === selectedComponentId}
+                        onClick={() => !isPreviewMode && dispatch(selectComponent(comp.id))}
+                        templateId={activeLayout?.theme?.templateId}
+                        viewportMode={viewportMode}
+                        accentColor={accentColor}
+                      />
+                    ))
+                  )}
+                </div>
               )}
             </div>
           )}

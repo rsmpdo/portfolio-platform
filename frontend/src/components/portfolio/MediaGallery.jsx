@@ -11,6 +11,8 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
 
   const [lightboxItem, setLightboxItem] = useState(null);
   const isMobile = viewportMode === 'mobile';
+  const isTablet = viewportMode === 'tablet';
+  const isSmall = isMobile || isTablet;
 
   // Helper to render Lightbox universally
   const renderLightbox = (themeClass = "") => (
@@ -40,12 +42,12 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
   // ---------------------------------------------------------
   if (templateId === 'dark-cyber' || templateId === 'ai-neural-labs-pro') {
     return (
-      <section className="py-20 px-6 font-mono bg-[#050505]">
+      <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} font-mono bg-[#050505]`}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl text-emerald-500 mb-8 uppercase tracking-widest border-b border-emerald-500/20 pb-4">
+          <h2 className="text-xl md:text-2xl text-emerald-500 mb-6 uppercase tracking-widest border-b border-emerald-500/20 pb-3">
             &gt; {heading}_
           </h2>
-          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-3'}`}>
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'}`}>
             {items.map((item, index) => (
               <div key={item.id || index} className="border border-emerald-500/30 p-2 bg-emerald-950/10 hover:border-emerald-400 transition cursor-pointer" onClick={() => setLightboxItem(item)}>
                 <div className="w-full h-48 bg-black relative overflow-hidden group">
