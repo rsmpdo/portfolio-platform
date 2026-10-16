@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios, saveUserLayout } from '../store/layoutSlice';
@@ -14,12 +14,12 @@ export default function Editor() {
   const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  // Holds the template ID we need to apply once the layout has loaded from the server
   const [pendingTemplate, setPendingTemplate] = useState(null);
+  const templateAppliedRef = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fetch the user's layout and capture any ?template= param
+  // Fetch the user's layout and capture any ?template= param (runs once on mount)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const layoutId = params.get('id');
@@ -28,21 +28,23 @@ export default function Editor() {
     dispatch(fetchUserLayout(layoutId));
     dispatch(fetchUserPortfolios());
 
-    // If a template was requested, store it so we apply it after the layout loads
     if (templateId) {
       setPendingTemplate(templateId);
+      templateAppliedRef.current = false;
     }
-  }, [dispatch, location.search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
-  // Once activeLayout is available and we have a pending template, apply it
+  // Once activeLayout is available and we have a pending template, apply it exactly once
   useEffect(() => {
-    if (activeLayout && pendingTemplate) {
+    if (activeLayout && pendingTemplate && !templateAppliedRef.current) {
+      templateAppliedRef.current = true;
       dispatch(applyTemplate(pendingTemplate));
       setPendingTemplate(null);
-      // Clear the ?template= param from the URL so a refresh doesn't re-apply
-      navigate('/editor', { replace: true });
+      // Silently clean URL without triggering React Router re-render
+      window.history.replaceState(null, '', '/editor');
     }
-  }, [activeLayout, pendingTemplate, dispatch, navigate]);
+  }, [activeLayout, pendingTemplate, dispatch]);
 
   const handleSaveDraft = () => {
     if (!activeLayout) return;

@@ -140,23 +140,24 @@ const layoutSlice = createSlice({
     applyTemplate: (state, action) => {
       const templateId = action.payload;
       const template = templateLayouts[templateId];
-      if (template && state.activeLayout) {
-        state.activeLayout.theme = { 
-          ...state.activeLayout.theme, 
-          ...template.theme,
-          templateId 
-        };
-        state.activeLayout.components = template.components.map((c, i) => ({
-          id: `comp_${Date.now()}_${i}`,
-          type: c.type,
-          title: c.title,
-          order: i,
-          isVisible: true,
-          props: c.props ? { ...c.props } : {}
-        }));
-        if (state.activeLayout.components.length > 0) {
-          state.selectedComponentId = state.activeLayout.components[0].id;
-        }
+      if (!template || !state.activeLayout) return;
+
+      state.activeLayout.theme = { 
+        ...state.activeLayout.theme, 
+        ...template.theme,
+        templateId 
+      };
+      const ts = Date.now();
+      state.activeLayout.components = template.components.map((c, i) => ({
+        id: `tpl_${ts}_${i}_${Math.random().toString(36).slice(2, 7)}`,
+        type: c.type,
+        title: c.title,
+        order: i,
+        isVisible: c.isVisible !== false,
+        props: JSON.parse(JSON.stringify(c.props || {}))
+      }));
+      if (state.activeLayout.components.length > 0) {
+        state.selectedComponentId = state.activeLayout.components[0].id;
       }
     }
   },
