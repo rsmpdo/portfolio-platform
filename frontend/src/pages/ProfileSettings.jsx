@@ -104,8 +104,8 @@ function PortfoliosManager() {
               {plan === 'studio' 
                 ? 'Studio tier allows up to 5 multi-portfolio showcases' 
                 : plan === 'pro' 
-                ? 'Pro tier allows 2 portfolios. Upgrade to Studio for 5 portfolios!' 
-                : 'Free tier allows 1 portfolio. Upgrade to Studio to manage up to 5 portfolios!'}
+                ? 'Pro tier allows up to 3 portfolios. Upgrade to Studio for 5 portfolios!' 
+                : 'Free tier allows 1 portfolio. Upgrade to Pro for 3 portfolios, or Studio for 5!'}
             </p>
           </div>
         </div>
@@ -113,7 +113,7 @@ function PortfoliosManager() {
         <button
           onClick={() => {
             if (isLimitReached) {
-              alert(`Portfolio limit reached (${portfolios.length}/${maxAllowed}). ${plan !== 'studio' ? 'Upgrade to Studio plan to unlock 5 portfolios!' : ''}`);
+              alert(`Portfolio limit reached (${portfolios.length}/${maxAllowed}). ${plan === 'free' ? 'Upgrade to Pro for 3 portfolios, or Studio for 5!' : plan === 'pro' ? 'Upgrade to Studio plan to unlock 5 portfolios!' : ''}`);
             } else {
               setCreateError('');
               setShowModal(true);
@@ -562,7 +562,7 @@ export default function ProfileSettings() {
                     ) : user.plan === 'pro' ? (
                       <>
                         <Sparkles className="w-4 h-4 text-indigo-400" />
-                        <span className="text-indigo-400">Pro Creator (2 Portfolios)</span>
+                        <span className="text-indigo-400">Pro Creator (3 Portfolios)</span>
                       </>
                     ) : (
                       <span className="text-slate-400">Free Standard (1 Portfolio)</span>

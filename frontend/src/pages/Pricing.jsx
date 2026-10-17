@@ -14,8 +14,9 @@ const plans = [
     period: "forever",
     description: "Everything you need to launch a professional portfolio today.",
     features: [
-      "Full Visual CMS Editor",
+      "1 Live Portfolio",
       "Up to 5 Portfolio Sections",
+      "Full Visual CMS Editor",
       "Cloudinary Image Uploads",
       "Custom Slug (/p/username)",
       "Standard SSL & Edge Hosting"
@@ -30,6 +31,7 @@ const plans = [
     period: "one-time",
     description: "For professionals who want unique portfolio URLs, analytics, and premium themes.",
     features: [
+      "Up to 3 Live Portfolios",
       "Everything in Free",
       "Interactive Embeds (Figma, YouTube)",
       "Advanced Contact Forms",
@@ -47,11 +49,11 @@ const plans = [
     period: "one-time",
     description: "Designed for small agencies, design teams, and multiple portfolio sites.",
     features: [
+      "Up to 5 Live Portfolios",
       "Everything in Pro",
       "Cinematic Video Backgrounds",
       "Advanced Data Metrics Component",
       "Interactive 3D Embeds (Spline)",
-      "Up to 5 Team Portfolios",
       "White-Label Branding"
     ],
     cta: "Buy Studio Plan",

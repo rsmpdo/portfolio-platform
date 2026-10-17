@@ -36,7 +36,7 @@ router.get('/public/:handle', async (req, res) => {
 const getPlanLimit = (user) => {
   if (user.role === 'admin') return 100;
   if (user.plan === 'studio') return 5;
-  if (user.plan === 'pro') return 2;
+  if (user.plan === 'pro') return 3;
   return 1;
 };
 

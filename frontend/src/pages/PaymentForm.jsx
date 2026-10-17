@@ -21,7 +21,7 @@ const BANK_DETAILS = {
 };
 
 const PLAN_INFO = {
-  pro: { name: "Pro Creator", amount: 12, color: "indigo", features: ["2 Portfolio Sites", "Interactive Embeds", "Premium Animations", "Advanced Contact Forms", "SEO Meta Optimization"] },
+  pro: { name: "Pro Creator", amount: 12, color: "indigo", features: ["3 Portfolio Sites", "Interactive Embeds", "Premium Animations", "Advanced Contact Forms", "SEO Meta Optimization"] },
   studio: { name: "Studio & Team", amount: 29, color: "purple", features: ["5 Portfolio Sites", "Everything in Pro", "Cinematic Video Backgrounds", "3D Spline Embeds", "White-Label Branding"] }
 };
 
