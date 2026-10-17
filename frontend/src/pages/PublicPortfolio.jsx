@@ -70,8 +70,15 @@ export default function PublicPortfolio() {
   }
 
   const layoutToRender = publicLayout || fallbackData;
-  const { title, components } = layoutToRender;
+  const { title, components, theme, seo } = layoutToRender;
   const isSample = !publicLayout;
+  const hideBranding = theme?.hideBranding === true;
+
+  useEffect(() => {
+    if (seo?.metaTitle || title) {
+      document.title = seo?.metaTitle || `${title} | Portfolio`;
+    }
+  }, [seo, title]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
@@ -79,14 +86,22 @@ export default function PublicPortfolio() {
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-4 md:mx-8 mt-4">
           <div className="glass-dark rounded-2xl px-6 h-12 flex items-center justify-between shadow-xl shadow-black/20">
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 rounded-lg btn-primary flex items-center justify-center">
-                <Sparkles className="w-3.5 h-3.5 text-white" />
+            {hideBranding ? (
+              <div className="flex items-center gap-2">
+                <span className="font-heading font-bold text-sm text-white tracking-tight">
+                  {title || 'Portfolio'}
+                </span>
               </div>
-              <span className="font-heading font-bold text-sm text-white tracking-tight">
-                Portfolio<span className="gradient-text">Craft</span>
-              </span>
-            </Link>
+            ) : (
+              <Link to="/" className="flex items-center gap-2 group">
+                <div className="w-7 h-7 rounded-lg btn-primary flex items-center justify-center">
+                  <Sparkles className="w-3.5 h-3.5 text-white" />
+                </div>
+                <span className="font-heading font-bold text-sm text-white tracking-tight">
+                  Portfolio<span className="gradient-text">Craft</span>
+                </span>
+              </Link>
+            )}
 
             <div className="flex items-center gap-3">
               {isSample && (
@@ -95,19 +110,21 @@ export default function PublicPortfolio() {
                   <span>Sample Portfolio Demo</span>
                 </div>
               )}
-              {title && (
+              {title && !hideBranding && (
                 <span className="text-xs text-slate-400 font-semibold tracking-wide uppercase truncate max-w-[150px] sm:max-w-none">
                   {title}
                 </span>
               )}
             </div>
 
-            <Link
-              to="/register"
-              className="btn-primary px-3 py-1.5 rounded-xl text-white text-xs font-bold"
-            >
-              Create Yours Free
-            </Link>
+            {!hideBranding && (
+              <Link
+                to="/register"
+                className="btn-primary px-3 py-1.5 rounded-xl text-white text-xs font-bold"
+              >
+                Create Yours Free
+              </Link>
+            )}
           </div>
         </div>
       </nav>
@@ -118,11 +135,26 @@ export default function PublicPortfolio() {
           ?.filter((comp) => comp.isVisible !== false)
           ?.sort((a, b) => (a.order || 0) - (b.order || 0))
           ?.map((comp) => (
-            <ComponentRenderer key={comp.id} component={comp} isEditing={false} templateId={layoutToRender.theme?.templateId} />
+            <ComponentRenderer 
+              key={comp.id} 
+              component={comp} 
+              isEditing={false} 
+              templateId={layoutToRender.theme?.templateId} 
+              accentColor={layoutToRender.theme?.primaryColor || '#6366f1'}
+            />
           ))}
       </main>
 
-      <Footer />
+      {hideBranding ? (
+        <footer className="py-8 px-6 border-t border-white/5 text-center text-xs text-slate-500">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <span className="font-heading font-semibold text-slate-400">{title || 'Portfolio'}</span>
+            <span>© {new Date().getFullYear()} All rights reserved.</span>
+          </div>
+        </footer>
+      ) : (
+        <Footer />
+      )}
     </div>
   );
 }

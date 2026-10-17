@@ -339,6 +339,12 @@ export default function HeroBanner({ props = {}, templateId, viewportMode }) {
     <section className={`relative flex items-center overflow-hidden bg-slate-950 ${
       isMobile ? 'pt-8 pb-10 px-4 min-h-[auto]' : isTablet ? 'pt-12 pb-14 px-6 min-h-[auto]' : 'pt-20 pb-16 px-6 min-h-[85vh]'
     }`}>
+      {bgVideoUrl && (
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <video src={bgVideoUrl} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+        </div>
+      )}
       <div className="absolute top-0 right-0 -mr-32 -mt-32 w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
 

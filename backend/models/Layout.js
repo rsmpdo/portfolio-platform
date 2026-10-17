@@ -23,7 +23,8 @@ const LayoutSchema = new mongoose.Schema(
     seo: {
       metaTitle: String,
       metaDescription: String,
-      ogImage: String
+      ogImage: String,
+      keywords: String
     },
     theme: {
       mode: { type: String, enum: ['dark', 'light', 'custom'], default: 'dark' },
@@ -31,7 +32,9 @@ const LayoutSchema = new mongoose.Schema(
       secondaryColor: { type: String, default: '#a855f7' },
       backgroundColor: { type: String, default: '#0f172a' },
       textColor: { type: String, default: '#f8fafc' },
-      fontFamily: { type: String, default: 'Inter' }
+      fontFamily: { type: String, default: 'Inter' },
+      templateId: { type: String, default: 'minimalist-editorial' },
+      hideBranding: { type: Boolean, default: false }
     },
     // Dynamic array of layout components (schema-less / mixed objects for full design flexibility)
     components: [
@@ -49,6 +52,8 @@ const LayoutSchema = new mongoose.Schema(
             'ContactSection',
             'MediaGallery',
             'TestimonialsCarousel',
+            'PremiumEmbed',
+            'AdvancedMetrics',
             'CustomHTML'
           ]
         },
