@@ -5,19 +5,38 @@ import { fetchPublicLayout } from '../store/layoutSlice';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Footer from '../components/common/Footer';
 import Header from '../components/common/Header';
-import { Loader2, Sparkles, UserCheck, Lock, Home } from 'lucide-react';
-import { ALEX_PORTFOLIO, MARCUS_PORTFOLIO, ELENA_PORTFOLIO } from '../utils/sampleData';
+import ShowcasePortfolio from './ShowcasePortfolio';
+import { Loader2, Sparkles, Lock, Home } from 'lucide-react';
 
 export default function PublicPortfolio() {
   const { handle } = useParams();
   const dispatch = useDispatch();
   const { publicLayout, loading } = useSelector((state) => state.layout);
 
+  const lowerHandle = (handle || '').toLowerCase();
+  const SYSTEM_SHOWCASE_HANDLES = ['alex', 'marcus', 'elena', 'demo', 'sample'];
+  const isSystemShowcase = SYSTEM_SHOWCASE_HANDLES.includes(lowerHandle);
+
   useEffect(() => {
-    if (handle) {
+    if (handle && !isSystemShowcase) {
       dispatch(fetchPublicLayout(handle));
     }
-  }, [handle, dispatch]);
+  }, [handle, isSystemShowcase, dispatch]);
+
+  useEffect(() => {
+    if (!isSystemShowcase && publicLayout) {
+      const { title, seo } = publicLayout;
+      if (seo?.metaTitle || title) {
+        document.title = seo?.metaTitle || `${title} | Portfolio`;
+      }
+    }
+  }, [isSystemShowcase, publicLayout]);
+
+  // System showcase handles render via the dedicated standalone ShowcasePortfolio viewer
+  // (completely separate from Editor Templates / ComponentRenderer)
+  if (isSystemShowcase) {
+    return <ShowcasePortfolio overrideHandle={lowerHandle} />;
+  }
 
   if (loading) {
     return (
@@ -31,12 +50,8 @@ export default function PublicPortfolio() {
     );
   }
 
-  const lowerHandle = (handle || '').toLowerCase();
-  const SYSTEM_SAMPLE_HANDLES = ['alex', 'marcus', 'elena', 'demo', 'sample'];
-  const isSystemSample = SYSTEM_SAMPLE_HANDLES.includes(lowerHandle);
-
-  // If portfolio is not found / unpublished AND it is not a built-in demo handle -> show Private lock screen!
-  if (!publicLayout && !isSystemSample) {
+  // If user portfolio is not found / unpublished -> show Private lock screen
+  if (!publicLayout) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 text-center">
         <Header />
@@ -60,25 +75,8 @@ export default function PublicPortfolio() {
     );
   }
 
-  let fallbackData = ALEX_PORTFOLIO;
-  if (lowerHandle === 'demo' || lowerHandle === 'marcus') {
-    fallbackData = MARCUS_PORTFOLIO;
-  } else if (lowerHandle === 'sample' || lowerHandle === 'elena') {
-    fallbackData = ELENA_PORTFOLIO;
-  } else if (lowerHandle === 'alex') {
-    fallbackData = ALEX_PORTFOLIO;
-  }
-
-  const layoutToRender = publicLayout || fallbackData;
-  const { title, components, theme, seo } = layoutToRender;
-  const isSample = !publicLayout;
+  const { title, components, theme } = publicLayout;
   const hideBranding = theme?.hideBranding === true;
-
-  useEffect(() => {
-    if (seo?.metaTitle || title) {
-      document.title = seo?.metaTitle || `${title} | Portfolio`;
-    }
-  }, [seo, title]);
 
   return (
     <div 
@@ -116,12 +114,6 @@ export default function PublicPortfolio() {
             )}
 
             <div className="flex items-center gap-3">
-              {isSample && (
-                <div className="hidden sm:inline-flex items-center gap-1.5 badge badge-indigo text-xs">
-                  <UserCheck className="w-3 h-3" />
-                  <span>Sample Portfolio Demo</span>
-                </div>
-              )}
               {title && !hideBranding && (
                 <span className="text-xs text-slate-400 font-semibold tracking-wide uppercase truncate max-w-[150px] sm:max-w-none">
                   {title}
@@ -151,9 +143,9 @@ export default function PublicPortfolio() {
               key={comp.id} 
               component={comp} 
               isEditing={false} 
-              templateId={layoutToRender.theme?.templateId} 
-              accentColor={layoutToRender.theme?.primaryColor || '#6366f1'}
-              theme={layoutToRender.theme || {}}
+              templateId={theme?.templateId} 
+              accentColor={theme?.primaryColor || '#6366f1'}
+              theme={theme || {}}
             />
           ))}
       </main>

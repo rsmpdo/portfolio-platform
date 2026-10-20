@@ -12,6 +12,7 @@ import PublicPortfolio from './pages/PublicPortfolio';
 import Features from './pages/Features';
 import Templates from './pages/Templates';
 import Showcase from './pages/Showcase';
+import ShowcasePortfolio from './pages/ShowcasePortfolio';
 import Pricing from './pages/Pricing';
 import About from './pages/About';
 import Blog from './pages/Blog';
@@ -155,6 +156,7 @@ export default function App() {
         <Route path="/templates" element={<Templates />} />
         <Route path="/preview/:templateId" element={<TemplatePreview />} />
         <Route path="/showcase" element={<Showcase />} />
+        <Route path="/showcase/:handle" element={<ShowcasePortfolio />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />

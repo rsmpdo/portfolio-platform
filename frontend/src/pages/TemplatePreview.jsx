@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { demoLayouts } from '../data/demoLayouts';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
-import { Sparkles, ArrowLeft, Crown } from 'lucide-react';
+import { Sparkles, ArrowLeft } from 'lucide-react';
 
 export default function TemplatePreview() {
   const { templateId } = useParams();
@@ -25,7 +25,7 @@ export default function TemplatePreview() {
     );
   }
 
-  // Convert template layout data to the format expected by the renderer
+  // Convert template layout data to the format expected by the editor renderer
   const mockLayout = {
     title: `${template.name} Demo`,
     theme: { ...template.theme, templateId },
@@ -35,13 +35,11 @@ export default function TemplatePreview() {
       title: c.title,
       order: i,
       isVisible: true,
-      props: {} // Defaults will be populated by the component definitions
+      props: c.props || {}
     }))
   };
 
   const handleUseTemplate = () => {
-    // Basic plan access check for the demo 'use template' button
-    // (This logic mirrors Templates.jsx)
     const planAccess = templateId.includes('pro') ? 'pro' : templateId.includes('studio') ? 'studio' : 'free';
     const currentPlan = user?.plan || 'free';
 
@@ -61,7 +59,19 @@ export default function TemplatePreview() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div
+      className="min-h-screen flex flex-col portfolio-theme-root transition-colors duration-300"
+      style={{
+        backgroundColor: mockLayout.theme?.backgroundColor || '#050811',
+        color: mockLayout.theme?.textColor || '#f8fafc',
+        '--theme-primary': mockLayout.theme?.primaryColor || '#6366f1',
+        '--theme-secondary': mockLayout.theme?.secondaryColor || '#a855f7',
+        '--theme-bg': mockLayout.theme?.backgroundColor || '#050811',
+        '--theme-surface': mockLayout.theme?.surfaceColor || '#111827',
+        '--theme-text': mockLayout.theme?.textColor || '#f8fafc',
+        '--theme-muted': mockLayout.theme?.textMutedColor || '#94a3b8'
+      }}
+    >
       {/* Top Demo Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-4 md:mx-8 mt-4">
@@ -69,12 +79,12 @@ export default function TemplatePreview() {
             <div className="flex items-center gap-4">
               <Link to="/templates" className="text-slate-400 hover:text-white transition flex items-center gap-1 text-sm font-semibold">
                 <ArrowLeft className="w-4 h-4" />
-                <span>Back</span>
+                <span>Back to Editor Templates</span>
               </Link>
               <div className="h-6 w-px bg-white/10 hidden sm:block"></div>
               <span className="font-heading font-bold text-sm text-white hidden sm:flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                Live Demo: <span className="text-indigo-400">{template.name}</span>
+                Editor Template Preview: <span className="text-indigo-400">{template.name}</span>
               </span>
             </div>
 
@@ -97,7 +107,9 @@ export default function TemplatePreview() {
               key={comp.id} 
               component={comp} 
               isEditing={false} 
-              templateId={mockLayout.theme.templateId} 
+              templateId={mockLayout.theme.templateId}
+              accentColor={mockLayout.theme?.primaryColor || '#6366f1'}
+              theme={mockLayout.theme}
             />
           ))}
       </main>

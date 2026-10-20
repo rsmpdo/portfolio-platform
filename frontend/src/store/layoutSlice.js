@@ -241,6 +241,7 @@ const layoutSlice = createSlice({
       // Public layout
       .addCase(fetchPublicLayout.pending, (state) => {
         state.loading = true;
+        state.publicLayout = null;
         state.error = null;
       })
       .addCase(fetchPublicLayout.fulfilled, (state, action) => {
@@ -249,6 +250,7 @@ const layoutSlice = createSlice({
       })
       .addCase(fetchPublicLayout.rejected, (state, action) => {
         state.loading = false;
+        state.publicLayout = null;
         state.error = action.payload;
       });
   }
