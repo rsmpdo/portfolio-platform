@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { User, Mail, ShieldCheck, Crown, Sparkles, LogOut, Trash2, ArrowRight, LayoutTemplate, CheckCircle2, AlertCircle, Loader2, MessageSquare, Inbox, Eye, Reply, Plus, Layers, ExternalLink, X } from 'lucide-react';
+import { User, Mail, ShieldCheck, Crown, Sparkles, LogOut, Trash2, ArrowRight, LayoutTemplate, CheckCircle2, AlertCircle, Loader2, MessageSquare, Inbox, Eye, Reply, Plus, Layers, ExternalLink, X, Lock, KeyRound } from 'lucide-react';
 import API from '../services/api';
 import { useEffect } from 'react';
 
@@ -461,6 +461,13 @@ export default function ProfileSettings() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  // 2-Step Account Deletion Modal State
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteStep, setDeleteStep] = useState(1); // 1 = Warning & Checkboxes, 2 = Password Authentication
+  const [confirmUnderstood, setConfirmUnderstood] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+
   if (!user) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-6">
@@ -481,20 +488,43 @@ export default function ProfileSettings() {
     navigate('/login');
   };
 
-  const handleDeleteAccount = async () => {
-    if (!window.confirm('WARNING: Are you sure you want to permanently delete your account and portfolio? This action CANNOT be undone.')) {
+  const openDeleteModal = () => {
+    setDeleteStep(1);
+    setConfirmUnderstood(false);
+    setDeletePassword('');
+    setDeleteError('');
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    if (loading) return;
+    setShowDeleteModal(false);
+    setDeleteStep(1);
+    setConfirmUnderstood(false);
+    setDeletePassword('');
+    setDeleteError('');
+  };
+
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault();
+    if (!deletePassword.trim()) {
+      setDeleteError('Please enter your current password to verify account deletion.');
       return;
     }
 
     try {
       setLoading(true);
-      await API.delete(`/admin/user/${user.id || user._id}`);
-      dispatch(logout());
-      navigate('/');
+      setDeleteError('');
+      const res = await API.post('/auth/delete-account', {
+        password: deletePassword
+      });
+      if (res.data?.success) {
+        setShowDeleteModal(false);
+        dispatch(logout());
+        navigate('/');
+      }
     } catch (err) {
-      // Fallback
-      dispatch(logout());
-      navigate('/');
+      setDeleteError(err.response?.data?.message || 'Password verification failed. Account was not deleted.');
     } finally {
       setLoading(false);
     }
@@ -631,7 +661,7 @@ export default function ProfileSettings() {
             </p>
 
             <button
-              onClick={handleDeleteAccount}
+              onClick={openDeleteModal}
               disabled={loading}
               className="px-5 py-2.5 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 font-bold text-xs transition flex items-center gap-2 disabled:opacity-60"
             >
@@ -641,6 +671,186 @@ export default function ProfileSettings() {
           </div>
         </div>
       </main>
+
+      {/* ─── 2-Step Account Deletion Confirmation & Password Authentication Modal ─── */}
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={closeDeleteModal}
+        >
+          <div
+            className="glass-card gradient-border rounded-3xl p-7 max-w-md w-full border border-red-500/30 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header & Step Indicator */}
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400">
+                  {deleteStep === 1 ? <Trash2 className="w-5 h-5" /> : <KeyRound className="w-5 h-5" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 text-[10px] font-bold uppercase tracking-wider">
+                      Step {deleteStep} of 2
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                      {deleteStep === 1 ? 'Impact Confirmation' : 'Password Verification'}
+                    </span>
+                  </div>
+                  <h3 className="font-heading font-bold text-lg text-white">
+                    {deleteStep === 1 ? 'Delete Your Account?' : 'Confirm with Password'}
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={closeDeleteModal}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Step Progress Bar */}
+            <div className="grid grid-cols-2 gap-2 mb-6">
+              <div className="h-1.5 rounded-full bg-red-500" />
+              <div className={`h-1.5 rounded-full transition-colors ${deleteStep === 2 ? 'bg-red-500' : 'bg-white/10'}`} />
+            </div>
+
+            {deleteStep === 1 ? (
+              /* STEP 1: Warning & Explicit Acknowledgement */
+              <div>
+                <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 mb-5">
+                  <div className="text-xs font-bold text-red-300 mb-2 flex items-center gap-1.5">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                    <span>Warning: This action is irreversible</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed mb-3">
+                    Deleting account <span className="text-white font-semibold">@{user.username}</span> ({user.email}) will immediately and permanently erase:
+                  </p>
+                  <ul className="space-y-1.5 text-[11px] text-slate-300">
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                      <span>All published & draft portfolios and custom handles</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                      <span>All projects, case studies, and custom theme configurations</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                      <span>Your contact message inbox and account subscription</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <label className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/80 border border-white/10 cursor-pointer hover:border-red-500/30 transition mb-6">
+                  <input
+                    type="checkbox"
+                    checked={confirmUnderstood}
+                    onChange={(e) => setConfirmUnderstood(e.target.checked)}
+                    className="mt-0.5 rounded border-white/20 text-red-500 focus:ring-red-500"
+                  />
+                  <span className="text-xs text-slate-300 leading-relaxed select-none">
+                    I understand that deleting my account and portfolios is <strong className="text-white">permanent</strong> and cannot be undone.
+                  </span>
+                </label>
+
+                <div className="flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={closeDeleteModal}
+                    className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!confirmUnderstood}
+                    onClick={() => {
+                      setDeleteError('');
+                      setDeleteStep(2);
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 transition disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-red-500/25"
+                  >
+                    <span>Continue to Step 2</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* STEP 2: Password Authentication */
+              <form onSubmit={handleDeleteAccount} className="space-y-4">
+                <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-white/10 text-xs text-slate-300 leading-relaxed">
+                  Final step: Please enter the password for <span className="text-white font-semibold">{user.email}</span> to authenticate and permanently delete your account.
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    Current Account Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="password"
+                      value={deletePassword}
+                      onChange={(e) => {
+                        setDeletePassword(e.target.value);
+                        setDeleteError('');
+                      }}
+                      placeholder="Enter your password to confirm..."
+                      autoFocus
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900 border border-white/10 text-white text-xs focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                  {deleteError && (
+                    <div className="flex items-center gap-1.5 text-red-400 text-[11px] mt-2 font-medium">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{deleteError}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteError('');
+                      setDeleteStep(1);
+                    }}
+                    disabled={loading}
+                    className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition"
+                  >
+                    ← Back to Step 1
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={closeDeleteModal}
+                      disabled={loading}
+                      className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 text-xs font-bold transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading || !deletePassword.trim()}
+                      className="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 transition disabled:opacity-50 shadow-lg shadow-red-500/25"
+                    >
+                      {loading ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-3.5 h-3.5" />
+                      )}
+                      <span>Permanently Delete Account</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

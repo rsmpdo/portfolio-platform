@@ -6,7 +6,22 @@ const Layout = require('../models/Layout');
 const Payment = require('../models/Payment');
 const PaymentRequest = require('../models/PaymentRequest');
 const Subscriber = require('../models/Subscriber');
+const Message = require('../models/Message');
 const sendEmail = require('../utils/sendEmail');
+
+const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
+
+// Helper to verify Admin Password or Admin Secret Code
+const verifyAdminAuthPassword = async (req, password) => {
+  if (!password || !String(password).trim()) return false;
+  const trimmed = String(password).trim();
+  if (trimmed === ADMIN_SECRET) return true;
+  const adminUser = await User.findById(req.user._id).select('+password');
+  if (adminUser && (await adminUser.matchPassword(trimmed))) {
+    return true;
+  }
+  return false;
+};
 
 // Admin Auth Middleware
 const checkAdmin = (req, res, next) => {
@@ -126,7 +141,7 @@ router.put(
 );
 
 // @route   DELETE /api/admin/user/:id
-// @desc    Delete user and their layout
+// @desc    Delete user and their layout (Requires Admin password authorization)
 // @access  Private (Admin only)
 router.delete(
   '/user/:id',
@@ -134,12 +149,22 @@ router.delete(
   checkAdmin,
   async (req, res) => {
     try {
+      const password = req.body?.password || req.headers['x-admin-password'];
+      const isAuthorized = await verifyAdminAuthPassword(req, password);
+      if (!isAuthorized) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid Admin password or Secret Code. User deletion denied.'
+        });
+      }
+
       const user = await User.findById(req.params.id);
       if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
       }
 
       await Layout.deleteMany({ userId: user._id });
+      await Message.deleteMany({ recipientUserId: user._id });
       await User.findByIdAndDelete(user._id);
 
       res.status(200).json({ success: true, message: 'User and associated portfolio deleted' });
@@ -195,7 +220,7 @@ router.put(
 );
 
 // @route   PUT /api/admin/layout/:id/toggle-ban
-// @desc    Admin ban/unban an inappropriate portfolio (independent of publish status)
+// @desc    Admin ban/unban an inappropriate portfolio (Requires Admin password authorization)
 // @access  Private (Admin only)
 router.put(
   '/layout/:id/toggle-ban',
@@ -203,6 +228,15 @@ router.put(
   checkAdmin,
   async (req, res) => {
     try {
+      const password = req.body?.password || req.headers['x-admin-password'];
+      const isAuthorized = await verifyAdminAuthPassword(req, password);
+      if (!isAuthorized) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid Admin password or Secret Code. Portfolio ban action denied.'
+        });
+      }
+
       const layout = await Layout.findById(req.params.id);
       if (!layout) {
         return res.status(404).json({ success: false, message: 'Layout not found' });

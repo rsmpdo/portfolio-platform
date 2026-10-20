@@ -660,6 +660,12 @@ export default function AdminDashboard() {
   const [reviewNote, setReviewNote] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
 
+  // Admin Password Authorization Modal State for Delete User & Ban Portfolio
+  const [adminAuthModal, setAdminAuthModal] = useState(null); // { type: 'delete-user' | 'toggle-ban', targetUser?, targetLayout? }
+  const [adminAuthPassword, setAdminAuthPassword] = useState('');
+  const [adminAuthError, setAdminAuthError] = useState('');
+  const [adminAuthLoading, setAdminAuthLoading] = useState(false);
+
   useEffect(() => {
     const fetchAdminData = async () => {
       setLoading(true);
@@ -732,19 +738,10 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user and their portfolio?')) return;
-
-    try {
-      const res = await API.delete(`/admin/user/${userId}`);
-      if (res.data.success) {
-        setUsersList(usersList.filter((u) => u._id !== userId));
-        setActionMessage('User and portfolio deleted');
-        setTimeout(() => setActionMessage(''), 3000);
-      }
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete user');
-    }
+  const handleDeleteUser = (userObj) => {
+    setAdminAuthModal({ type: 'delete-user', targetUser: userObj });
+    setAdminAuthPassword('');
+    setAdminAuthError('');
   };
 
   const handleTogglePublish = async (layoutId) => {
@@ -760,16 +757,67 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleToggleBan = async (layoutId) => {
+  const handleToggleBan = (layoutObj) => {
+    setAdminAuthModal({ type: 'toggle-ban', targetLayout: layoutObj });
+    setAdminAuthPassword('');
+    setAdminAuthError('');
+  };
+
+  const handleConfirmAdminProtectedAction = async (e) => {
+    e.preventDefault();
+    if (!adminAuthModal) return;
+    setAdminAuthError('');
+
+    if (!adminAuthPassword.trim()) {
+      setAdminAuthError('Please enter your Admin Password or Administrator Secret Code.');
+      return;
+    }
+
     try {
-      const res = await API.put(`/admin/layout/${layoutId}/toggle-ban`);
-      if (res.data.success) {
-        setLayoutsList(layoutsList.map((l) => (l._id === layoutId ? { ...l, isBanned: res.data.layout.isBanned } : l)));
-        setActionMessage(res.data.layout.isBanned ? 'Portfolio banned — it is now hidden from public.' : 'Portfolio unbanned.');
-        setTimeout(() => setActionMessage(''), 3000);
+      setAdminAuthLoading(true);
+      if (adminAuthModal.type === 'delete-user') {
+        const targetId = adminAuthModal.targetUser._id;
+        const res = await API.delete(`/admin/user/${targetId}`, {
+          data: { password: adminAuthPassword },
+          headers: { 'x-admin-password': adminAuthPassword }
+        });
+        if (res.data.success) {
+          setUsersList(usersList.filter((u) => u._id !== targetId));
+          setLayoutsList(layoutsList.filter((l) => String(l.userId?._id || l.userId) !== String(targetId)));
+          setActionMessage(`User ${adminAuthModal.targetUser.email} and associated portfolios deleted.`);
+          setTimeout(() => setActionMessage(''), 3500);
+          setAdminAuthModal(null);
+          setAdminAuthPassword('');
+        }
+      } else if (adminAuthModal.type === 'toggle-ban') {
+        const layoutId = adminAuthModal.targetLayout._id;
+        const res = await API.put(
+          `/admin/layout/${layoutId}/toggle-ban`,
+          { password: adminAuthPassword },
+          { headers: { 'x-admin-password': adminAuthPassword } }
+        );
+        if (res.data.success) {
+          setLayoutsList(
+            layoutsList.map((l) =>
+              l._id === layoutId ? { ...l, isBanned: res.data.layout.isBanned } : l
+            )
+          );
+          setActionMessage(
+            res.data.layout.isBanned
+              ? `Portfolio /p/${adminAuthModal.targetLayout.handle} banned — hidden from public.`
+              : `Portfolio /p/${adminAuthModal.targetLayout.handle} unbanned.`
+          );
+          setTimeout(() => setActionMessage(''), 3500);
+          setAdminAuthModal(null);
+          setAdminAuthPassword('');
+        }
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update ban status');
+      setAdminAuthError(
+        err.response?.data?.message || 'Invalid password or authorization code. Action denied.'
+      );
+    } finally {
+      setAdminAuthLoading(false);
     }
   };
 
@@ -927,8 +975,9 @@ export default function AdminDashboard() {
                                 Warn User
                               </button>
                               <button
-                                onClick={() => handleDeleteUser(u._id)}
+                                onClick={() => handleDeleteUser(u)}
                                 className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400"
+                                title="Delete User (Requires Admin Password)"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -1022,13 +1071,13 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                   <button
-                                    onClick={() => handleToggleBan(l._id)}
+                                    onClick={() => handleToggleBan(l)}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
                                       l.isBanned
                                         ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
                                         : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
                                     }`}
-                                    title={l.isBanned ? 'Unban this portfolio' : 'Ban this portfolio (hides from public regardless of publish status)'}
+                                    title={l.isBanned ? 'Unban this portfolio (Requires Password)' : 'Ban this portfolio (Requires Password)'}
                                   >
                                     {l.isBanned ? '✓ Unban' : '🚫 Ban'}
                                   </button>
@@ -1260,6 +1309,118 @@ export default function AdminDashboard() {
                 >
                   {sendingWarn ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   <span>Send Warning Email</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Password Authorization Modal for User Deletion & Portfolio Ban/Unban */}
+      {adminAuthModal && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6"
+          onClick={() => !adminAuthLoading && setAdminAuthModal(null)}
+        >
+          <div
+            className="glass gradient-border rounded-3xl max-w-md w-full p-8 shadow-2xl border border-red-500/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                <KeyRound className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-heading font-bold text-xl text-white">
+                  {adminAuthModal.type === 'delete-user'
+                    ? 'Confirm User Account Deletion'
+                    : adminAuthModal.targetLayout?.isBanned
+                    ? 'Confirm Portfolio Unban'
+                    : 'Confirm Portfolio Ban'}
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Admin password authorization required
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 text-xs text-slate-300 leading-relaxed mb-5">
+              {adminAuthModal.type === 'delete-user' ? (
+                <>
+                  You are about to permanently delete user{' '}
+                  <strong className="text-white">
+                    {adminAuthModal.targetUser?.username || 'User'}
+                  </strong>{' '}
+                  (<span className="text-indigo-300 font-mono">{adminAuthModal.targetUser?.email}</span>) and erase all of their portfolios and messages. This action cannot be undone.
+                </>
+              ) : (
+                <>
+                  You are about to{' '}
+                  <strong className="text-white">
+                    {adminAuthModal.targetLayout?.isBanned ? 'UNBAN' : 'BAN'}
+                  </strong>{' '}
+                  portfolio{' '}
+                  <strong className="text-white">
+                    {adminAuthModal.targetLayout?.title || 'Untitled'}
+                  </strong>{' '}
+                  (<span className="text-indigo-300 font-mono">/p/{adminAuthModal.targetLayout?.handle}</span>).
+                </>
+              )}
+            </div>
+
+            {adminAuthError && (
+              <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{adminAuthError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleConfirmAdminProtectedAction} className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Enter Admin Password or Secret Code *
+                </label>
+                <input
+                  type="password"
+                  required
+                  autoFocus
+                  value={adminAuthPassword}
+                  onChange={(e) => setAdminAuthPassword(e.target.value)}
+                  placeholder="Enter admin password or secret code..."
+                  className="input-field w-full px-4 py-3 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  disabled={adminAuthLoading}
+                  onClick={() => setAdminAuthModal(null)}
+                  className="btn-ghost px-4 py-2.5 rounded-xl text-xs text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={adminAuthLoading}
+                  className={`px-5 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2 disabled:opacity-60 ${
+                    adminAuthModal.type === 'toggle-ban' && adminAuthModal.targetLayout?.isBanned
+                      ? 'bg-emerald-600 hover:bg-emerald-500'
+                      : 'bg-red-600 hover:bg-red-500'
+                  }`}
+                >
+                  {adminAuthLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Lock className="w-3.5 h-3.5" />
+                  )}
+                  <span>
+                    {adminAuthModal.type === 'delete-user'
+                      ? 'Authorize & Delete User'
+                      : adminAuthModal.targetLayout?.isBanned
+                      ? 'Authorize & Unban Portfolio'
+                      : 'Authorize & Ban Portfolio'}
+                  </span>
                 </button>
               </div>
             </form>

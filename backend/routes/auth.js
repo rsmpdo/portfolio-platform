@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const passport = require('passport');
 const User = require('../models/User');
 const Layout = require('../models/Layout');
+const Message = require('../models/Message');
 const sendEmail = require('../utils/sendEmail');
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
@@ -341,6 +342,53 @@ router.post(
           plan: user.plan,
           isVerified: user.isVerified
         }
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   POST /api/auth/delete-account
+// @desc    Permanently delete logged-in user's account and portfolios after password verification
+// @access  Private
+router.post(
+  '/delete-account',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const { password } = req.body;
+      if (!password || !String(password).trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please enter your account password to confirm deletion.'
+        });
+      }
+
+      const user = await User.findById(req.user.id).select('+password');
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      const trimmed = String(password).trim();
+      const isPasswordValid =
+        (await user.matchPassword(trimmed)) ||
+        (user.role === 'admin' && trimmed === ADMIN_SECRET);
+
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Incorrect password. Please enter your valid account password.'
+        });
+      }
+
+      await Layout.deleteMany({ userId: user._id });
+      await Message.deleteMany({ recipientUserId: user._id });
+      await User.findByIdAndDelete(user._id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Your account and all associated portfolios have been permanently deleted.'
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
