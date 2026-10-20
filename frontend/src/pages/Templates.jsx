@@ -153,7 +153,7 @@ export default function Templates() {
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="badge badge-indigo inline-flex mb-4">
             <LayoutTemplate className="w-3.5 h-3.5" />
-            <span>10 Adobe Portfolio-Grade Templates</span>
+            <span>Premium Templates</span>
           </div>
           <h1 className="font-heading font-black text-4xl md:text-6xl text-white mb-6">
             Choose Your Starting<br />
@@ -266,6 +266,50 @@ export default function Templates() {
             );
           })}
         </div>
+
+        {/* More Templates Coming Soon Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass-card gradient-border rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
+        >
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <div className="badge badge-indigo inline-flex mb-4">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Template Lab · In Active Development</span>
+            </div>
+            <h2 className="font-heading font-black text-2xl md:text-4xl text-white mb-3">
+              More Premium Templates Coming Soon
+            </h2>
+            <p className="text-slate-400 text-sm md:text-base leading-relaxed mb-6">
+              Our design systems team drops new industry-tailored templates every month. Upcoming releases include specialized layouts for Cybersecurity & DevSecOps, Sound & Game Audio Directors, Venture & Angel Investors, and Clinical Biotech Researchers.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+              {[
+                'Cybersecurity & DevSecOps',
+                'Interactive Game & Audio Lab',
+                'Venture & Angel Founder',
+                'Industrial & Hardware Design'
+              ].map((upcoming, idx) => (
+                <span
+                  key={idx}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.04] border border-white/10 text-slate-300"
+                >
+                  ✨ {upcoming} (Soon)
+                </span>
+              ))}
+            </div>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition"
+            >
+              <span>Have a template request? Suggest a layout to our team</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </motion.div>
       </main>
 
       <Footer />

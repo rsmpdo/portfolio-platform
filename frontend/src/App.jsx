@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentUser, elevateToAdmin } from './store/authSlice';
 import Header from './components/common/Header';
-import { KeyRound, ShieldAlert, AlertCircle, Loader2 } from 'lucide-react';
+import { KeyRound, ShieldAlert, AlertCircle, Loader2, ArrowUp } from 'lucide-react';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -127,6 +127,39 @@ function AdminRoute({ children }) {
   return children;
 }
 
+function ScrollToTopAndBackToTopButton() {
+  const { pathname } = useLocation();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Always scroll to top when switching between pages
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+
+  // Show floating Go-to-Top arrow button when user scrolls down
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  if (!showBackToTop) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label="Go to top of page"
+      title="Back to top"
+      className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-2xl btn-primary text-white shadow-2xl shadow-indigo-500/40 border border-white/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer"
+    >
+      <ArrowUp className="w-5 h-5" />
+    </button>
+  );
+}
+
 export default function App() {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
@@ -148,6 +181,7 @@ export default function App() {
 
   return (
     <Router>
+      <ScrollToTopAndBackToTopButton />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
