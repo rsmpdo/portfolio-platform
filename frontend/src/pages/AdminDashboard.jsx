@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply, Briefcase, RefreshCw, ExternalLink, FileText, XCircle, Clock } from 'lucide-react';
+import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply, Briefcase, RefreshCw, ExternalLink, FileText, XCircle, Clock, Lock, Unlock, KeyRound } from 'lucide-react';
 import API from '../services/api';
 
 function AdminMessagesSection() {
@@ -11,6 +11,14 @@ function AdminMessagesSection() {
   const [recipientStats, setRecipientStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Password Authorization State for Message Bodies
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [unlockedBodies, setUnlockedBodies] = useState({});
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  const [authPassword, setAuthPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
 
   const fetchAdminMessages = async () => {
     try {
@@ -31,6 +39,37 @@ function AdminMessagesSection() {
   useEffect(() => {
     fetchAdminMessages();
   }, []);
+
+  const handleUnlockMessages = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    if (!authPassword.trim()) {
+      setAuthError('Please enter your Admin Password or Administrator Secret Code.');
+      return;
+    }
+
+    try {
+      setAuthLoading(true);
+      const res = await API.post('/messages/admin/unlock', { password: authPassword });
+      if (res.data.success) {
+        setUnlockedBodies(res.data.unlockedBodies || {});
+        setIsUnlocked(true);
+        setShowUnlockModal(false);
+        setAuthPassword('');
+      }
+    } catch (err) {
+      setAuthError(
+        err.response?.data?.message || 'Invalid password or authorization code. Access denied.'
+      );
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleLockMessages = () => {
+    setIsUnlocked(false);
+    setUnlockedBodies({});
+  };
 
   const toggleReadStatus = async (id) => {
     try {
@@ -62,21 +101,44 @@ function AdminMessagesSection() {
               <span>User & Showcase Contact Frequency Analytics</span>
               {unreadCount > 0 && (
                 <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs animate-pulse">
-                  {unreadCount} New
+                  {unreadCount} Unread
                 </span>
               )}
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              Tracks which Users and Showcase Creators are contacted via contact forms, how many times, and by whom (private message content is hidden for privacy).
+              Tracks which Users and Showcase Creators are contacted via contact forms, how many times, and by whom.
             </p>
           </div>
-          <button
-            onClick={fetchAdminMessages}
-            className="btn-ghost px-3.5 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white font-semibold flex items-center gap-1.5 border border-white/10 self-start sm:self-auto"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Refresh Analytics</span>
-          </button>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            {isUnlocked ? (
+              <button
+                onClick={handleLockMessages}
+                className="px-3.5 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 text-xs font-bold flex items-center gap-1.5 transition"
+              >
+                <Unlock className="w-3.5 h-3.5" />
+                <span>Lock Message Bodies</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setAuthError('');
+                  setShowUnlockModal(true);
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 hover:bg-amber-500/25 text-xs font-bold flex items-center gap-1.5 transition"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Unlock Message Bodies</span>
+              </button>
+            )}
+
+            <button
+              onClick={fetchAdminMessages}
+              className="btn-ghost px-3.5 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white font-semibold flex items-center gap-1.5 border border-white/10"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Refresh</span>
+            </button>
+          </div>
         </div>
 
         <div className="glass gradient-border rounded-3xl overflow-hidden">
@@ -174,16 +236,30 @@ function AdminMessagesSection() {
         </div>
       </div>
 
-      {/* 2. Chronological Contact Event Log (Metadata Only — Private Message Body Hidden) */}
+      {/* 2. Chronological Contact Event Log (With Password Authorization for Message Bodies) */}
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
             <Inbox className="w-4 h-4 text-indigo-400" />
             <span>Recent Contact Form Events Log ({messages.length})</span>
           </h3>
-          <span className="text-[11px] text-slate-400 font-mono">
-            🔒 Message bodies hidden to protect user privacy
-          </span>
+          {isUnlocked ? (
+            <span className="text-[11px] text-emerald-400 font-mono font-bold flex items-center gap-1.5">
+              <Unlock className="w-3.5 h-3.5" />
+              <span>Authorized: Full message bodies visible</span>
+            </span>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthError('');
+                setShowUnlockModal(true);
+              }}
+              className="text-[11px] text-amber-400 hover:text-amber-300 font-mono font-bold flex items-center gap-1.5 underline underline-offset-2"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              <span>Message bodies locked — Click to authorize with password</span>
+            </button>
+          )}
         </div>
 
         <div className="glass gradient-border rounded-3xl p-6">
@@ -200,63 +276,189 @@ function AdminMessagesSection() {
               {messages.map((msg) => (
                 <div
                   key={msg._id}
-                  className={`p-4 rounded-2xl glass border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                  className={`p-4 rounded-2xl glass border transition-all space-y-3 ${
                     !msg.isRead ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/[0.06]'
                   }`}
                 >
-                  <div className="space-y-1.5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold uppercase">
-                        Contacted: {msg.recipientName} ({msg.recipientRoute})
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold">
-                        Total Contacted: {msg.recipientTotalContacts}x
-                      </span>
-                      <span className="px-2.5 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/10 text-[10px] font-mono">
-                        🔒 Message Body Private
-                      </span>
-                    </div>
-
-                    <div className="text-xs text-slate-200">
-                      <span className="text-slate-400">From Sender: </span>
-                      <strong className="text-white">{msg.senderName}</strong>{' '}
-                      <span className="font-mono text-indigo-300">({msg.senderEmail})</span>
-                      {msg.subject && (
-                        <>
-                          <span className="text-slate-500 mx-2">·</span>
-                          <span className="text-slate-300">
-                            Inquiry Type: <strong>{msg.subject}</strong>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {!msg.isRead ? (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-black uppercase">
+                            Unread
                           </span>
-                        </>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold uppercase">
+                            Read
+                          </span>
+                        )}
+                        <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold uppercase">
+                          Contacted: {msg.recipientName} ({msg.recipientRoute})
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold">
+                          Total Contacted: {msg.recipientTotalContacts}x
+                        </span>
+                      </div>
+
+                      <div className="text-xs text-slate-200">
+                        <span className="text-slate-400">From Sender: </span>
+                        <strong className="text-white">{msg.senderName}</strong>{' '}
+                        <span className="font-mono text-indigo-300">({msg.senderEmail})</span>
+                        {msg.subject && (
+                          <>
+                            <span className="text-slate-500 mx-2">·</span>
+                            <span className="text-slate-300">
+                              Inquiry Type: <strong>{msg.subject}</strong>
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 shrink-0 text-xs">
+                      <span className="text-[11px] font-mono text-slate-400 mr-1">
+                        {new Date(msg.createdAt).toLocaleString()}
+                      </span>
+
+                      {!isUnlocked && (
+                        <button
+                          onClick={() => {
+                            setAuthError('');
+                            setShowUnlockModal(true);
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-semibold flex items-center gap-1 transition"
+                          title="Enter password to view message body"
+                        >
+                          <Lock className="w-3 h-3" />
+                          <span>Unlock Body</span>
+                        </button>
                       )}
+
+                      <button
+                        onClick={() => toggleReadStatus(msg._id)}
+                        className={`px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition border ${
+                          msg.isRead
+                            ? 'bg-white/5 hover:bg-white/10 border-white/10 text-slate-300'
+                            : 'bg-emerald-500/15 hover:bg-emerald-500/25 border-emerald-500/30 text-emerald-300'
+                        }`}
+                        title={msg.isRead ? 'Mark as Unread' : 'Mark as Read'}
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{msg.isRead ? 'Mark Unread' : 'Mark as Read'}</span>
+                      </button>
+
+                      <a
+                        href={`mailto:${msg.senderEmail}?subject=Re: ${encodeURIComponent(msg.subject || 'PortfolioCraft Inquiry')}`}
+                        className="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 font-semibold flex items-center gap-1 transition"
+                        title="Reply via Email"
+                      >
+                        <Reply className="w-3.5 h-3.5" />
+                      </a>
+
+                      <button
+                        onClick={() => deleteMessage(msg._id)}
+                        className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
+                        title="Delete Log Entry"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0 text-xs">
-                    <span className="text-[11px] font-mono text-slate-400 mr-1">
-                      {new Date(msg.createdAt).toLocaleString()}
-                    </span>
-                    <button
-                      onClick={() => toggleReadStatus(msg._id)}
-                      className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition"
-                      title={msg.isRead ? 'Mark as Unread' : 'Mark as Reviewed'}
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => deleteMessage(msg._id)}
-                      className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
-                      title="Delete Log Entry"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                  {/* Unlocked Message Body */}
+                  {isUnlocked && unlockedBodies[msg._id] !== undefined && (
+                    <div className="p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/25 text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">
+                      <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 mb-1 flex items-center gap-1">
+                        <Unlock className="w-3 h-3" />
+                        <span>Unlocked Inquiry Message Body:</span>
+                      </div>
+                      {unlockedBodies[msg._id]}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Password Authorization Modal to Unlock Message Bodies */}
+      {showUnlockModal && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setShowUnlockModal(false)}
+        >
+          <div
+            className="glass gradient-border rounded-3xl p-7 max-w-md w-full shadow-2xl border border-amber-500/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                <KeyRound className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-heading font-bold text-lg text-white">
+                  Admin Password Authorization
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Verify identity to view private contact message bodies
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed mb-4">
+              Enter your <strong>Admin Account Password</strong> or the{' '}
+              <strong>Administrator Secret Code</strong> to unlock and read full message bodies for this session.
+            </p>
+
+            {authError && (
+              <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{authError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleUnlockMessages} className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Admin Password / Secret Code
+                </label>
+                <input
+                  type="password"
+                  required
+                  autoFocus
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder="Enter password or secret code..."
+                  className="input-field w-full px-4 py-3 rounded-xl text-xs font-mono"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowUnlockModal(false)}
+                  className="px-4 py-2.5 rounded-xl glass text-xs font-semibold text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={authLoading}
+                  className="btn-primary px-5 py-2.5 rounded-xl text-xs font-bold text-white flex items-center gap-2 disabled:opacity-60"
+                >
+                  {authLoading ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Unlock className="w-3.5 h-3.5" />
+                  )}
+                  <span>Authorize & Unlock</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

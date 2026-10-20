@@ -5,6 +5,8 @@ const Message = require('../models/Message');
 const User = require('../models/User');
 const Layout = require('../models/Layout');
 
+const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
+
 const SHOWCASE_DIRECTORY = {
   alex: {
     name: 'Alex Morgan',
@@ -272,6 +274,66 @@ router.get(
         unreadCount,
         recipientStats,
         messages: sanitizedLogs
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   POST /api/messages/admin/unlock
+// @desc    Verify Admin password or Admin Secret Code to unlock private message bodies
+// @access  Private (Admin)
+router.post(
+  '/admin/unlock',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Access denied: Admin role required.' });
+      }
+
+      const { password } = req.body;
+      if (!password || !password.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please enter your Admin password or Administrator Secret Code.'
+        });
+      }
+
+      const trimmed = password.trim();
+      let isAuthorized = false;
+
+      // 1. Check if it matches ADMIN_SECRET
+      if (trimmed === ADMIN_SECRET) {
+        isAuthorized = true;
+      }
+
+      // 2. Or check if it matches the logged-in Admin user's account password
+      if (!isAuthorized) {
+        const adminUser = await User.findById(req.user._id).select('+password');
+        if (adminUser && (await adminUser.matchPassword(trimmed))) {
+          isAuthorized = true;
+        }
+      }
+
+      if (!isAuthorized) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid Admin password or Secret Code. Message bodies remain locked.'
+        });
+      }
+
+      const rawMessages = await Message.find({}).select('_id message');
+      const unlockedBodies = {};
+      rawMessages.forEach((m) => {
+        unlockedBodies[m._id] = m.message;
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Message bodies unlocked for this admin session.',
+        unlockedBodies
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
