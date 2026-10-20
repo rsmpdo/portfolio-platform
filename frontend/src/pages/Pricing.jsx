@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { Sparkles, Check, HelpCircle, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { Sparkles, Check, HelpCircle, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2, Crown, X } from 'lucide-react';
 
 const plans = [
   {
@@ -103,27 +104,6 @@ export default function Pricing() {
       <Header />
 
       <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full">
-        {/* Banner Notice when user already has plan */}
-        {bannerNotice && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-semibold flex items-center justify-between gap-4 max-w-3xl mx-auto shadow-xl backdrop-blur-md"
-          >
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
-              <span>{bannerNotice}</span>
-            </div>
-            <button
-              onClick={() => setBannerNotice(null)}
-              className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition shrink-0"
-              title="Close notification"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </motion.div>
-        )}
-
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
             <Sparkles className="w-3.5 h-3.5" />
@@ -223,6 +203,66 @@ export default function Pricing() {
           </div>
         </div>
       </main>
+
+      {/* ─── Plan Status Popup Modal Window (Portaled to document.body) ─── */}
+      {bannerNotice && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setBannerNotice(null)}
+        >
+          <div
+            className="glass gradient-border rounded-3xl max-w-md w-full p-6 md:p-7 relative shadow-2xl border border-amber-500/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                  <Crown className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] font-bold uppercase tracking-wider inline-block mb-1">
+                    Active Subscription
+                  </span>
+                  <h3 className="font-heading font-bold text-lg text-white">
+                    Plan Already Unlocked
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBannerNotice(null)}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-200 text-xs leading-relaxed mb-6 flex items-start gap-3">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <span>{bannerNotice}</span>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setBannerNotice(null)}
+                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition"
+              >
+                Close
+              </button>
+              <Link
+                to="/profile"
+                onClick={() => setBannerNotice(null)}
+                className="btn-primary px-5 py-2.5 rounded-xl text-white text-xs font-bold flex items-center gap-1.5"
+              >
+                <span>Go to My Profile</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       <Footer />
     </div>
