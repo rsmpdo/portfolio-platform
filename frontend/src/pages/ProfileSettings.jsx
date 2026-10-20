@@ -17,6 +17,12 @@ function PortfoliosManager() {
   const [showModal, setShowModal] = useState(false);
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [portfolioNotice, setPortfolioNotice] = useState('');
+
+  // Delete Portfolio Popup Modal State
+  const [deletePortfolioTarget, setDeletePortfolioTarget] = useState(null);
+  const [deletingPortfolio, setDeletingPortfolio] = useState(false);
+  const [deletePortfolioError, setDeletePortfolioError] = useState('');
   
   const [form, setForm] = useState({
     title: '',
@@ -63,22 +69,39 @@ function PortfoliosManager() {
     }
   };
 
-  const handleDeletePortfolio = async (layoutId) => {
-    if (!window.confirm('Delete this portfolio layout? This action cannot be undone.')) return;
+  const openDeletePortfolioModal = (portfolioItem) => {
+    setDeletePortfolioError('');
+    setDeletePortfolioTarget(portfolioItem);
+  };
+
+  const closeDeletePortfolioModal = () => {
+    if (deletingPortfolio) return;
+    setDeletePortfolioTarget(null);
+    setDeletePortfolioError('');
+  };
+
+  const confirmDeletePortfolio = async () => {
+    if (!deletePortfolioTarget) return;
     try {
-      await API.delete(`/layouts/id/${layoutId}`);
+      setDeletingPortfolio(true);
+      setDeletePortfolioError('');
+      await API.delete(`/layouts/id/${deletePortfolioTarget._id}`);
+      setDeletePortfolioTarget(null);
       fetchPortfolios();
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to delete portfolio');
+      setDeletePortfolioError(err.response?.data?.message || 'Failed to delete portfolio');
+    } finally {
+      setDeletingPortfolio(false);
     }
   };
 
   const handleTogglePublishPortfolio = async (layoutId, currentStatus) => {
     try {
+      setPortfolioNotice('');
       await API.put('/layouts/me', { _id: layoutId, isPublished: !currentStatus });
       fetchPortfolios();
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update publication status');
+      setPortfolioNotice(err.response?.data?.message || 'Failed to update publication status');
     }
   };
 
@@ -113,8 +136,9 @@ function PortfoliosManager() {
         <button
           onClick={() => {
             if (isLimitReached) {
-              alert(`Portfolio limit reached (${portfolios.length}/${maxAllowed}). ${plan === 'free' ? 'Upgrade to Pro for 3 portfolios, or Studio for 5!' : plan === 'pro' ? 'Upgrade to Studio plan to unlock 5 portfolios!' : ''}`);
+              setPortfolioNotice(`Portfolio limit reached (${portfolios.length}/${maxAllowed}). ${plan === 'free' ? 'Upgrade to Pro for 3 portfolios, or Studio for 5!' : plan === 'pro' ? 'Upgrade to Studio plan to unlock 5 portfolios!' : ''}`);
             } else {
+              setPortfolioNotice('');
               setCreateError('');
               setShowModal(true);
             }
@@ -129,6 +153,21 @@ function PortfoliosManager() {
           <span>Create New Portfolio ({portfolios.length}/{maxAllowed})</span>
         </button>
       </div>
+
+      {portfolioNotice && (
+        <div className="mb-5 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>{portfolioNotice}</span>
+          </div>
+          <button
+            onClick={() => setPortfolioNotice('')}
+            className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="py-8 flex flex-col items-center justify-center text-slate-500 gap-2">
@@ -298,6 +337,102 @@ function PortfoliosManager() {
           </div>
         </div>
       )}
+
+      {/* ─── Delete Portfolio Confirmation Popup Modal ────────────────────────── */}
+      {deletePortfolioTarget && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+          onClick={closeDeletePortfolioModal}
+        >
+          <div
+            className="glass-card gradient-border rounded-3xl max-w-md w-full p-6 md:p-7 relative shadow-2xl border border-red-500/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 text-[10px] font-bold uppercase tracking-wider inline-block mb-1">
+                    Permanent Action
+                  </span>
+                  <h3 className="font-heading font-bold text-lg text-white">
+                    Delete Portfolio Layout?
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={closeDeletePortfolioModal}
+                disabled={deletingPortfolio}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Target Portfolio Summary Box */}
+            <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 mb-4">
+              <div className="flex items-center justify-between gap-2 mb-1.5">
+                <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 text-[10px] font-mono font-bold capitalize">
+                  {deletePortfolioTarget.theme?.templateId || 'minimalist-editorial'}
+                </span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  deletePortfolioTarget.isPublished
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                }`}>
+                  {deletePortfolioTarget.isPublished ? 'Live Published' : 'Draft'}
+                </span>
+              </div>
+              <div className="font-heading font-bold text-sm text-white">
+                {deletePortfolioTarget.title || 'Untitled Portfolio'}
+              </div>
+              <div className="text-xs font-mono text-indigo-300 mt-0.5">
+                /p/{deletePortfolioTarget.handle}
+              </div>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs text-slate-300 leading-relaxed mb-5 flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+              <span>
+                Are you sure you want to delete <strong className="text-white">{deletePortfolioTarget.title || 'this portfolio'}</strong>? All sections, projects, and custom styling inside this portfolio layout will be permanently removed. This action cannot be undone.
+              </span>
+            </div>
+
+            {deletePortfolioError && (
+              <div className="mb-4 p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <span>{deletePortfolioError}</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={closeDeletePortfolioModal}
+                disabled={deletingPortfolio}
+                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeletePortfolio}
+                disabled={deletingPortfolio}
+                className="px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 transition disabled:opacity-50 shadow-lg shadow-red-500/25"
+              >
+                {deletingPortfolio ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="w-3.5 h-3.5" />
+                )}
+                <span>Yes, Delete Portfolio</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -306,6 +441,8 @@ function MessagesInbox() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [deleteMsgTarget, setDeleteMsgTarget] = useState(null);
+  const [deletingMsg, setDeletingMsg] = useState(false);
 
   const fetchMessages = async () => {
     try {
@@ -335,13 +472,17 @@ function MessagesInbox() {
     }
   };
 
-  const deleteMessage = async (id) => {
-    if (!window.confirm('Delete this contact message?')) return;
+  const confirmDeleteMessage = async () => {
+    if (!deleteMsgTarget) return;
     try {
-      await API.delete(`/messages/${id}`);
+      setDeletingMsg(true);
+      await API.delete(`/messages/${deleteMsgTarget._id}`);
+      setDeleteMsgTarget(null);
       fetchMessages();
     } catch (err) {
       console.error('Delete message error:', err);
+    } finally {
+      setDeletingMsg(false);
     }
   };
 
@@ -429,7 +570,7 @@ function MessagesInbox() {
                     <Eye className="w-3.5 h-3.5" />
                   </button>
                   <button
-                    onClick={() => deleteMessage(msg._id)}
+                    onClick={() => setDeleteMsgTarget(msg)}
                     className="p-2 rounded-xl hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
                     title="Delete Message"
                   >
@@ -446,6 +587,62 @@ function MessagesInbox() {
               </p>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ─── Delete Message Confirmation Popup Modal ────────────────────────── */}
+      {deleteMsgTarget && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+          onClick={() => !deletingMsg && setDeleteMsgTarget(null)}
+        >
+          <div
+            className="glass-card gradient-border rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-red-500/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-base text-white">Delete Contact Message?</h3>
+                  <p className="text-[11px] text-slate-400">From {deleteMsgTarget.senderName} ({deleteMsgTarget.senderEmail})</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setDeleteMsgTarget(null)}
+                disabled={deletingMsg}
+                className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed mb-5">
+              Are you sure you want to permanently remove this inquiry from your inbox? This action cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setDeleteMsgTarget(null)}
+                disabled={deletingMsg}
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteMessage}
+                disabled={deletingMsg}
+                className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 transition disabled:opacity-50"
+              >
+                {deletingMsg ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                <span>Delete Message</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
