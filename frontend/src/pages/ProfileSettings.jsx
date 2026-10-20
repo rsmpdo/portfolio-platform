@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/authSlice';
@@ -6,7 +7,6 @@ import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 import { User, Mail, ShieldCheck, Crown, Sparkles, LogOut, Trash2, ArrowRight, LayoutTemplate, CheckCircle2, AlertCircle, Loader2, MessageSquare, Inbox, Eye, Reply, Plus, Layers, ExternalLink, X, Lock, KeyRound } from 'lucide-react';
 import API from '../services/api';
-import { useEffect } from 'react';
 
 function PortfoliosManager() {
   const navigate = useNavigate();
@@ -231,7 +231,8 @@ function PortfoliosManager() {
                   </button>
                   {portfolios.length > 1 && (
                     <button
-                      onClick={() => handleDeletePortfolio(item._id)}
+                      type="button"
+                      onClick={() => openDeletePortfolioModal(item)}
                       className="p-1.5 rounded-xl hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
                       title="Delete Portfolio"
                     >
@@ -245,11 +246,18 @@ function PortfoliosManager() {
         </div>
       )}
 
-      {/* ─── Create Portfolio Modal ────────────────────────── */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
-          <div className="glass gradient-border rounded-3xl max-w-md w-full p-6 md:p-8 relative shadow-2xl">
+      {/* ─── Create Portfolio Modal (Portaled to document.body) ────────────────────────── */}
+      {showModal && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="glass gradient-border rounded-3xl max-w-md w-full p-6 md:p-8 relative shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
+              type="button"
               onClick={() => setShowModal(false)}
               className="absolute top-5 right-5 p-2 rounded-xl glass text-slate-400 hover:text-white transition"
             >
@@ -335,17 +343,18 @@ function PortfoliosManager() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* ─── Delete Portfolio Confirmation Popup Modal ────────────────────────── */}
-      {deletePortfolioTarget && (
+      {/* ─── Delete Portfolio Confirmation Popup Modal (Portaled to document.body) ────────────────────────── */}
+      {deletePortfolioTarget && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
           onClick={closeDeletePortfolioModal}
         >
           <div
-            className="glass-card gradient-border rounded-3xl max-w-md w-full p-6 md:p-7 relative shadow-2xl border border-red-500/30"
+            className="glass gradient-border rounded-3xl max-w-md w-full p-6 md:p-7 relative shadow-2xl border border-red-500/30"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4 mb-5">
@@ -363,6 +372,7 @@ function PortfoliosManager() {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={closeDeletePortfolioModal}
                 disabled={deletingPortfolio}
                 className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
@@ -431,7 +441,8 @@ function PortfoliosManager() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -590,14 +601,14 @@ function MessagesInbox() {
         </div>
       )}
 
-      {/* ─── Delete Message Confirmation Popup Modal ────────────────────────── */}
-      {deleteMsgTarget && (
+      {/* ─── Delete Message Confirmation Popup Modal (Portaled to document.body) ────────────────────────── */}
+      {deleteMsgTarget && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn"
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => !deletingMsg && setDeleteMsgTarget(null)}
         >
           <div
-            className="glass-card gradient-border rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-red-500/30"
+            className="glass gradient-border rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-red-500/30"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4 mb-4">
@@ -611,6 +622,7 @@ function MessagesInbox() {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setDeleteMsgTarget(null)}
                 disabled={deletingMsg}
                 className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
@@ -643,7 +655,8 @@ function MessagesInbox() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
