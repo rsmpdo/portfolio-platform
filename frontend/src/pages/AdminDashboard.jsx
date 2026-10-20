@@ -8,6 +8,7 @@ import API from '../services/api';
 
 function AdminMessagesSection() {
   const [messages, setMessages] = useState([]);
+  const [recipientStats, setRecipientStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -17,6 +18,7 @@ function AdminMessagesSection() {
       const res = await API.get('/messages/admin');
       if (res.data.success) {
         setMessages(res.data.messages || []);
+        setRecipientStats(res.data.recipientStats || []);
         setUnreadCount(res.data.unreadCount || 0);
       }
     } catch (err) {
@@ -40,7 +42,7 @@ function AdminMessagesSection() {
   };
 
   const deleteMessage = async (id) => {
-    if (!window.confirm('Delete this message permanently from platform logs?')) return;
+    if (!window.confirm('Delete this contact log entry from platform records?')) return;
     try {
       await API.delete(`/messages/${id}`);
       fetchAdminMessages();
@@ -50,104 +52,210 @@ function AdminMessagesSection() {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
-          <Mail className="w-5 h-5 text-indigo-400" />
-          <span>Platform Contact Messages & Inquiries ({messages.length})</span>
-          {unreadCount > 0 && (
-            <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs animate-pulse">
-              {unreadCount} Unread
-            </span>
-          )}
-        </h2>
-        <button
-          onClick={fetchAdminMessages}
-          className="btn-ghost px-3 py-1 rounded-xl text-xs text-slate-400 hover:text-white font-semibold flex items-center gap-1"
-        >
-          <span>Refresh Messages</span>
-        </button>
-      </div>
+    <div className="space-y-8">
+      {/* 1. Recipient Contact Analytics Table (Who & How Many Times Contacted) */}
+      <div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+              <Mail className="w-5 h-5 text-indigo-400" />
+              <span>User & Showcase Contact Frequency Analytics</span>
+              {unreadCount > 0 && (
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs animate-pulse">
+                  {unreadCount} New
+                </span>
+              )}
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Tracks which Users and Showcase Creators are contacted via contact forms, how many times, and by whom (private message content is hidden for privacy).
+            </p>
+          </div>
+          <button
+            onClick={fetchAdminMessages}
+            className="btn-ghost px-3.5 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white font-semibold flex items-center gap-1.5 border border-white/10 self-start sm:self-auto"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Refresh Analytics</span>
+          </button>
+        </div>
 
-      <div className="glass gradient-border rounded-3xl p-6">
-        {loading ? (
-          <div className="py-10 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />
-            <span>Fetching site-wide contact messages...</span>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="py-10 text-center text-slate-500 text-xs">
-            No contact messages recorded on the platform yet.
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {messages.map((msg) => (
-              <div
-                key={msg._id}
-                className={`p-4 rounded-2xl glass border transition-all ${
-                  !msg.isRead ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/[0.06]'
-                }`}
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2 pb-2 border-b border-white/[0.04]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs flex items-center justify-center">
-                      {msg.senderName?.[0]?.toUpperCase() || 'S'}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs text-white">{msg.senderName}</span>
-                        <span className="text-xs font-mono text-indigo-300">({msg.senderEmail})</span>
-                        {msg.isSiteAdminMessage ? (
-                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase">
-                            Site Inquiry
+        <div className="glass gradient-border rounded-3xl overflow-hidden">
+          {loading ? (
+            <div className="py-10 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />
+              <span>Loading contact frequency analytics...</span>
+            </div>
+          ) : recipientStats.length === 0 ? (
+            <div className="py-10 text-center text-slate-500 text-xs">
+              No contact activity recorded yet.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
+                  <tr>
+                    <th className="p-4">Contacted Person / Portfolio</th>
+                    <th className="p-4">Type</th>
+                    <th className="p-4">Times Contacted</th>
+                    <th className="p-4">Unique Senders</th>
+                    <th className="p-4">Most Recent Sender & Topic</th>
+                    <th className="p-4">Last Contacted</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.06]">
+                  {recipientStats.map((stat) => (
+                    <tr key={stat.key} className="hover:bg-white/[0.02] transition">
+                      <td className="p-4">
+                        <div className="font-bold text-white text-sm">{stat.recipientName}</div>
+                        <div className="flex items-center gap-2 text-xs font-mono text-indigo-400 mt-0.5">
+                          <span>{stat.route}</span>
+                          {stat.recipientEmail && (
+                            <span className="text-slate-500">({stat.recipientEmail})</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        {stat.recipientType === 'showcase' ? (
+                          <span className="px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-bold uppercase">
+                            Showcase Creator
+                          </span>
+                        ) : stat.recipientType === 'platform' ? (
+                          <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold uppercase">
+                            Platform Inquiry
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono">
-                            Target: /p/{msg.recipientHandle || 'portfolio'}
+                          <span className="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold uppercase">
+                            User Portfolio
                           </span>
                         )}
-                      </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono font-bold text-xs">
+                          <span>{stat.totalContacts}</span>
+                          <span>{stat.totalContacts === 1 ? 'Time' : 'Times'}</span>
+                        </div>
+                        {stat.unreadCount > 0 && (
+                          <span className="ml-2 px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold">
+                            {stat.unreadCount} unread
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4 font-mono font-bold text-slate-300">
+                        {stat.uniqueSendersCount} {stat.uniqueSendersCount === 1 ? 'person' : 'people'}
+                      </td>
+                      <td className="p-4">
+                        {stat.lastSender ? (
+                          <div>
+                            <div className="font-semibold text-white">
+                              {stat.lastSender.name}{' '}
+                              <span className="text-indigo-300 font-mono text-[11px]">
+                                ({stat.lastSender.email})
+                              </span>
+                            </div>
+                            <div className="text-[11px] text-slate-400 truncate max-w-xs">
+                              Topic: {stat.lastSender.subject}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-slate-500 italic">No inquiries yet</span>
+                        )}
+                      </td>
+                      <td className="p-4 font-mono text-slate-400 whitespace-nowrap">
+                        {stat.lastContactedAt
+                          ? new Date(stat.lastContactedAt).toLocaleString()
+                          : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Chronological Contact Event Log (Metadata Only — Private Message Body Hidden) */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
+            <Inbox className="w-4 h-4 text-indigo-400" />
+            <span>Recent Contact Form Events Log ({messages.length})</span>
+          </h3>
+          <span className="text-[11px] text-slate-400 font-mono">
+            🔒 Message bodies hidden to protect user privacy
+          </span>
+        </div>
+
+        <div className="glass gradient-border rounded-3xl p-6">
+          {loading ? (
+            <div className="py-8 text-center text-slate-500 text-xs">
+              Loading contact activity log...
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="py-8 text-center text-slate-500 text-xs">
+              No contact form submissions logged yet.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {messages.map((msg) => (
+                <div
+                  key={msg._id}
+                  className={`p-4 rounded-2xl glass border transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                    !msg.isRead ? 'border-amber-500/40 bg-amber-500/5' : 'border-white/[0.06]'
+                  }`}
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold uppercase">
+                        Contacted: {msg.recipientName} ({msg.recipientRoute})
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold">
+                        Total Contacted: {msg.recipientTotalContacts}x
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/10 text-[10px] font-mono">
+                        🔒 Message Body Private
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-slate-200">
+                      <span className="text-slate-400">From Sender: </span>
+                      <strong className="text-white">{msg.senderName}</strong>{' '}
+                      <span className="font-mono text-indigo-300">({msg.senderEmail})</span>
+                      {msg.subject && (
+                        <>
+                          <span className="text-slate-500 mx-2">·</span>
+                          <span className="text-slate-300">
+                            Inquiry Type: <strong>{msg.subject}</strong>
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0 text-xs">
-                    <span className="text-[10px] font-mono text-slate-500 mr-1">
+                    <span className="text-[11px] font-mono text-slate-400 mr-1">
                       {new Date(msg.createdAt).toLocaleString()}
                     </span>
-                    <a
-                      href={`mailto:${msg.senderEmail}?subject=Re: ${encodeURIComponent(msg.subject || 'PortfolioCraft Inquiry')}`}
-                      className="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 font-semibold flex items-center gap-1 transition"
-                    >
-                      <Reply className="w-3 h-3" />
-                      <span>Reply</span>
-                    </a>
                     <button
                       onClick={() => toggleReadStatus(msg._id)}
                       className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition"
-                      title={msg.isRead ? 'Mark as Unread' : 'Mark as Read'}
+                      title={msg.isRead ? 'Mark as Unread' : 'Mark as Reviewed'}
                     >
                       <Eye className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => deleteMessage(msg._id)}
                       className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
-                      title="Delete Message"
+                      title="Delete Log Entry"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
-
-                {msg.subject && (
-                  <div className="text-xs font-semibold text-slate-300 mb-1">Subject: {msg.subject}</div>
-                )}
-                <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
-                  {msg.message}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

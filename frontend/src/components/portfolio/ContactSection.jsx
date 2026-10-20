@@ -27,10 +27,12 @@ export default function ContactSection({ props = {}, viewportMode }) {
     try {
       const pathname = window.location.pathname;
       const pathParts = pathname.split('/').filter(Boolean);
-      const recipientHandle = pathParts.length > 0 && pathParts[0] === 'p' ? pathParts[1] : '';
+      const isPortfolioRoute = pathParts.length > 1 && ['p', 'portfolio', 'showcase'].includes(pathParts[0]);
+      const recipientHandle = isPortfolioRoute ? pathParts[1].toLowerCase() : '';
 
       await API.post('/messages', {
         recipientHandle,
+        isSiteAdminMessage: !isPortfolioRoute,
         senderName: form.name,
         senderEmail: form.userEmail,
         message: form.message

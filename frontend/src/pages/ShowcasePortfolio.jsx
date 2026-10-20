@@ -23,9 +23,11 @@ import {
   Users,
   Award,
   Quote,
-  ChevronRight
+  ChevronRight,
+  Loader2
 } from 'lucide-react';
 import Footer from '../components/common/Footer';
+import API from '../services/api';
 import { SHOWCASE_CREATORS, getShowcaseCreator } from '../data/showcaseData';
 
 export default function ShowcasePortfolio({ overrideHandle = null }) {
@@ -44,6 +46,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
     budget: '$10k – $25k',
     message: ''
   });
+  const [sendingMessage, setSendingMessage] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
 
   useEffect(() => {
@@ -86,16 +89,31 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
     setTimeout(() => setCopiedField(''), 2200);
   };
 
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
-    setMessageSent(true);
-    setContactForm({
-      name: '',
-      email: '',
-      scope: 'Product / Architecture Sprint',
-      budget: '$10k – $25k',
-      message: ''
-    });
+    setSendingMessage(true);
+    try {
+      await API.post('/messages', {
+        recipientHandle: creator.handle,
+        senderName: contactForm.name,
+        senderEmail: contactForm.email,
+        subject: `${contactForm.scope} (${contactForm.budget})`,
+        message: contactForm.message,
+        isSiteAdminMessage: false
+      });
+    } catch (err) {
+      console.error('Showcase inquiry log error:', err);
+    } finally {
+      setSendingMessage(false);
+      setMessageSent(true);
+      setContactForm({
+        name: '',
+        email: '',
+        scope: 'Product / Architecture Sprint',
+        budget: '$10k – $25k',
+        message: ''
+      });
+    }
   };
 
   const contactInfo = creator.contact || {};
@@ -315,7 +333,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                 </h2>
               </div>
               <p className="text-slate-400 text-sm max-w-md">
-                Click any project card below to open the complete multi-stage case study with KPI metrics, process breakdown, screen gallery, and client feedback.
+                Click "Read Full Case Study" on any project below to inspect the complete multi-stage case study with KPI metrics, process breakdown, screen gallery, and client feedback.
               </p>
             </div>
 
@@ -327,15 +345,14 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
-                  onClick={() => handleOpenProject(proj)}
-                  className="glass-card rounded-3xl overflow-hidden border border-white/10 hover:border-white/30 transition-all cursor-pointer flex flex-col justify-between group"
+                  className="glass-card rounded-3xl overflow-hidden border border-white/10 hover:border-white/25 transition-all flex flex-col justify-between group"
                 >
                   <div>
                     <div className="relative h-56 overflow-hidden bg-slate-900">
                       <img
                         src={proj.image}
                         alt={proj.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
                       <div className="absolute top-3 left-3">
@@ -350,7 +367,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                     </div>
 
                     <div className="p-6">
-                      <h3 className="font-heading font-bold text-xl text-white mb-2 group-hover:text-indigo-400 transition-colors">
+                      <h3 className="font-heading font-bold text-xl text-white mb-2">
                         {proj.title}
                       </h3>
                       <p className="text-slate-300 text-xs leading-relaxed mb-4">
@@ -393,13 +410,15 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                     <span className="text-[11px] font-bold text-emerald-400">
                       {proj.process?.length || 4}-Phase Case Study
                     </span>
-                    <span
-                      className="inline-flex items-center gap-1 text-xs font-bold group-hover:translate-x-0.5 transition-transform"
+                    <button
+                      type="button"
+                      onClick={() => handleOpenProject(proj)}
+                      className="inline-flex items-center gap-1 text-xs font-bold hover:underline cursor-pointer transition-transform hover:translate-x-0.5"
                       style={{ color: creator.accentColor }}
                     >
                       <span>Read Full Case Study</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
-                    </span>
+                    </button>
                   </div>
                 </motion.div>
               ))}

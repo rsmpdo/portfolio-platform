@@ -5,44 +5,85 @@ const Message = require('../models/Message');
 const User = require('../models/User');
 const Layout = require('../models/Layout');
 
+const SHOWCASE_DIRECTORY = {
+  alex: {
+    name: 'Alex Morgan',
+    role: 'Senior Product Designer',
+    email: 'alex.morgan@vervedigital.io',
+    route: '/showcase/alex'
+  },
+  marcus: {
+    name: 'Marcus Vance',
+    role: 'Full Stack Engineer',
+    email: 'marcus.vance@cloudscale.dev',
+    route: '/showcase/marcus'
+  },
+  elena: {
+    name: 'Elena Rostova',
+    role: 'Creative Director',
+    email: 'elena@atelierrostova.co.uk',
+    route: '/showcase/elena'
+  }
+};
+
 // @route   POST /api/messages
 // @desc    Submit a new contact message (Public)
 // @access  Public
 router.post('/', async (req, res) => {
   try {
-    const { recipientHandle, recipientUserId, senderName, senderEmail, subject, message, isSiteAdminMessage } = req.body;
+    const {
+      recipientHandle,
+      recipientUserId,
+      senderName,
+      senderEmail,
+      subject,
+      message,
+      isSiteAdminMessage
+    } = req.body;
 
     if (!senderName || !senderEmail || !message) {
-      return res.status(400).json({ success: false, message: 'Please fill out name, email, and message.' });
+      return res.status(400).json({
+        success: false,
+        message: 'Please fill out name, email, and message.'
+      });
     }
 
-    let targetUserId = recipientUserId;
+    let cleanHandle = (recipientHandle || '').toLowerCase().trim();
+    if (cleanHandle === 'demo') cleanHandle = 'marcus';
+    if (cleanHandle === 'sample') cleanHandle = 'elena';
 
-    // Resolve user ID from portfolio handle if provided
-    if (!targetUserId && recipientHandle) {
-      const layout = await Layout.findOne({ handle: recipientHandle.toLowerCase() });
+    const isShowcaseHandle = Boolean(SHOWCASE_DIRECTORY[cleanHandle]);
+    let targetUserId = recipientUserId || null;
+
+    // Resolve user ID from portfolio handle if it's a user portfolio (not a standalone showcase handle)
+    if (!targetUserId && cleanHandle && !isShowcaseHandle) {
+      const layout = await Layout.findOne({ handle: cleanHandle });
       if (layout) {
         targetUserId = layout.userId;
       } else {
-        const user = await User.findOne({ username: recipientHandle.toLowerCase() });
+        const user = await User.findOne({ username: cleanHandle });
         if (user) targetUserId = user._id;
       }
     }
 
     const newMessage = await Message.create({
       recipientUserId: targetUserId || null,
-      recipientHandle: recipientHandle || '',
-      isSiteAdminMessage: Boolean(isSiteAdminMessage || !targetUserId),
+      recipientHandle: cleanHandle,
+      isSiteAdminMessage: Boolean(isSiteAdminMessage && !cleanHandle),
       senderName,
       senderEmail: senderEmail.toLowerCase(),
-      subject: subject || 'Portfolio Contact Inquiry',
+      subject: subject || (isShowcaseHandle ? 'Showcase Project Inquiry' : 'Portfolio Contact Inquiry'),
       message
     });
 
     res.status(201).json({
       success: true,
       message: 'Your message has been sent successfully!',
-      data: newMessage
+      data: {
+        _id: newMessage._id,
+        recipientHandle: newMessage.recipientHandle,
+        createdAt: newMessage.createdAt
+      }
     });
   } catch (error) {
     console.error('Submit message error:', error);
@@ -51,7 +92,7 @@ router.post('/', async (req, res) => {
 });
 
 // @route   GET /api/messages/me
-// @desc    Get received messages for logged-in user
+// @desc    Get received messages for logged-in user (Owner sees full message)
 // @access  Private
 router.get(
   '/me',
@@ -74,7 +115,7 @@ router.get(
 );
 
 // @route   GET /api/messages/admin
-// @desc    Get all site-wide contact messages for Admin
+// @desc    Get privacy-preserving contact analytics & metadata log for Admin (NO raw message content exposed)
 // @access  Private (Admin)
 router.get(
   '/admin',
@@ -85,14 +126,152 @@ router.get(
         return res.status(403).json({ success: false, message: 'Access denied: Admin role required.' });
       }
 
-      const messages = await Message.find({}).sort({ createdAt: -1 }).populate('recipientUserId', 'username email');
-      const unreadCount = messages.filter((m) => !m.isRead).length;
+      const rawMessages = await Message.find({})
+        .sort({ createdAt: -1 })
+        .populate('recipientUserId', 'username email plan');
+
+      // Seed map with the 3 Showcase creators so Admin always sees their contact stats
+      const statsMap = {};
+      Object.entries(SHOWCASE_DIRECTORY).forEach(([handle, info]) => {
+        const key = `showcase:${handle}`;
+        statsMap[key] = {
+          key,
+          recipientType: 'showcase',
+          recipientHandle: handle,
+          recipientName: info.name,
+          recipientRole: info.role,
+          recipientEmail: info.email,
+          route: info.route,
+          totalContacts: 0,
+          unreadCount: 0,
+          uniqueSendersSet: new Set(),
+          lastContactedAt: null,
+          lastSender: null
+        };
+      });
+
+      rawMessages.forEach((m) => {
+        let handle = (m.recipientHandle || '').toLowerCase().trim();
+        if (handle === 'demo') handle = 'marcus';
+        if (handle === 'sample') handle = 'elena';
+
+        const isShowcase = Boolean(SHOWCASE_DIRECTORY[handle]);
+        let key;
+        let recipientType;
+        let recipientName;
+        let recipientEmail;
+        let route;
+
+        if (isShowcase) {
+          key = `showcase:${handle}`;
+          recipientType = 'showcase';
+          recipientName = SHOWCASE_DIRECTORY[handle].name;
+          recipientEmail = SHOWCASE_DIRECTORY[handle].email;
+          route = SHOWCASE_DIRECTORY[handle].route;
+        } else if (m.recipientUserId || handle) {
+          const uName = m.recipientUserId?.username || handle || 'Portfolio User';
+          const uEmail = m.recipientUserId?.email || '';
+          key = `user:${handle || m.recipientUserId?._id}`;
+          recipientType = 'user';
+          recipientName = uName;
+          recipientEmail = uEmail;
+          route = handle ? `/p/${handle}` : '#';
+        } else {
+          key = 'platform:support';
+          recipientType = 'platform';
+          recipientName = 'Platform Support (/contact)';
+          recipientEmail = 'support@portfoliocraft.io';
+          route = '/contact';
+        }
+
+        if (!statsMap[key]) {
+          statsMap[key] = {
+            key,
+            recipientType,
+            recipientHandle: handle || 'support',
+            recipientName,
+            recipientEmail,
+            route,
+            totalContacts: 0,
+            unreadCount: 0,
+            uniqueSendersSet: new Set(),
+            lastContactedAt: null,
+            lastSender: null
+          };
+        }
+
+        const entry = statsMap[key];
+        entry.totalContacts += 1;
+        if (!m.isRead) entry.unreadCount += 1;
+        if (m.senderEmail) entry.uniqueSendersSet.add(m.senderEmail.toLowerCase());
+
+        if (!entry.lastContactedAt || new Date(m.createdAt) > new Date(entry.lastContactedAt)) {
+          entry.lastContactedAt = m.createdAt;
+          entry.lastSender = {
+            name: m.senderName,
+            email: m.senderEmail,
+            subject: m.subject || 'Portfolio Contact Inquiry'
+          };
+        }
+      });
+
+      const recipientStats = Object.values(statsMap)
+        .map((item) => ({
+          key: item.key,
+          recipientType: item.recipientType,
+          recipientHandle: item.recipientHandle,
+          recipientName: item.recipientName,
+          recipientRole: item.recipientRole || null,
+          recipientEmail: item.recipientEmail,
+          route: item.route,
+          totalContacts: item.totalContacts,
+          uniqueSendersCount: item.uniqueSendersSet.size,
+          unreadCount: item.unreadCount,
+          lastContactedAt: item.lastContactedAt,
+          lastSender: item.lastSender
+        }))
+        .sort((a, b) => b.totalContacts - a.totalContacts);
+
+      // Build privacy-safe contact activity log (NO full message body!)
+      const sanitizedLogs = rawMessages.map((m) => {
+        let handle = (m.recipientHandle || '').toLowerCase().trim();
+        if (handle === 'demo') handle = 'marcus';
+        if (handle === 'sample') handle = 'elena';
+
+        const isShowcase = Boolean(SHOWCASE_DIRECTORY[handle]);
+        const key = isShowcase
+          ? `showcase:${handle}`
+          : m.recipientUserId || handle
+          ? `user:${handle || m.recipientUserId?._id}`
+          : 'platform:support';
+
+        const statEntry = statsMap[key];
+
+        return {
+          _id: m._id,
+          recipientType: statEntry?.recipientType || 'user',
+          recipientHandle: handle,
+          recipientName: statEntry?.recipientName || handle || 'User',
+          recipientEmail: statEntry?.recipientEmail || '',
+          recipientRoute: statEntry?.route || '#',
+          recipientTotalContacts: statEntry?.totalContacts || 1,
+          senderName: m.senderName,
+          senderEmail: m.senderEmail,
+          subject: m.subject || 'Portfolio Contact Inquiry',
+          isRead: m.isRead,
+          createdAt: m.createdAt
+          // Note: `message` content is intentionally omitted for privacy!
+        };
+      });
+
+      const unreadCount = rawMessages.filter((m) => !m.isRead).length;
 
       res.status(200).json({
         success: true,
-        count: messages.length,
+        count: sanitizedLogs.length,
         unreadCount,
-        messages
+        recipientStats,
+        messages: sanitizedLogs
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
@@ -100,7 +279,7 @@ router.get(
   }
 );
 
-// @route   PUT /api/messages/:id/read
+// @route   GET /api/messages/:id/read
 // @desc    Toggle or set isRead state of a message
 // @access  Private
 router.get(
@@ -127,7 +306,7 @@ router.get(
 );
 
 // @route   DELETE /api/messages/:id
-// @desc    Delete a message
+// @desc    Delete a message log entry
 // @access  Private
 router.delete(
   '/:id',
@@ -143,7 +322,7 @@ router.delete(
       }
 
       await msg.deleteOne();
-      res.status(200).json({ success: true, message: 'Message deleted successfully' });
+      res.status(200).json({ success: true, message: 'Message record deleted successfully' });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }

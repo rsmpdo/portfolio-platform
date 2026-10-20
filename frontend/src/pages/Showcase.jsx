@@ -57,22 +57,20 @@ export default function Showcase() {
                   </div>
                 </Link>
 
-                {/* 3 Featured Projects Inside Card (Clickable!) */}
+                {/* 3 Featured Projects Inside Card */}
                 <div className="mb-5">
                   <div className="flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider mb-3">
                     <div className="flex items-center gap-1.5">
                       <Layers className="w-3.5 h-3.5 text-indigo-400" />
                       <span>3 Featured Projects</span>
                     </div>
-                    <span className="text-[10px] text-indigo-400/80 normal-case font-medium">Click to inspect</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     {s.projects.map((proj) => (
-                      <Link
+                      <div
                         key={proj.id}
-                        to={`/showcase/${s.handle}?project=${proj.id}`}
-                        className="group/proj relative aspect-square rounded-xl overflow-hidden glass border border-white/10 hover:border-indigo-500/60 transition-all block"
-                        title={`View case study: ${proj.title}`}
+                        className="group/proj relative aspect-square rounded-xl overflow-hidden glass border border-white/10 transition-all"
+                        title={proj.title}
                       >
                         <img
                           src={proj.image}
@@ -80,12 +78,11 @@ export default function Showcase() {
                           className="w-full h-full object-cover group-hover/proj:scale-110 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-slate-950/80 opacity-0 group-hover/proj:opacity-100 transition-opacity flex flex-col items-center justify-center p-1.5 text-center">
-                          <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400 mb-0.5 shrink-0" />
                           <span className="text-[10px] text-white font-semibold line-clamp-2 leading-tight">
                             {proj.title}
                           </span>
                         </div>
-                      </Link>
+                      </div>
                     ))}
                   </div>
                 </div>
