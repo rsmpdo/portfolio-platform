@@ -37,6 +37,54 @@ const UserSchema = new mongoose.Schema({
     enum: ['free', 'pro', 'studio'],
     default: 'free'
   },
+  fullName: {
+    type: String,
+    trim: true,
+    maxlength: 80,
+    default: ''
+  },
+  headline: {
+    type: String,
+    trim: true,
+    maxlength: 120,
+    default: ''
+  },
+  bio: {
+    type: String,
+    trim: true,
+    maxlength: 1000,
+    default: ''
+  },
+  location: {
+    type: String,
+    trim: true,
+    maxlength: 100,
+    default: ''
+  },
+  website: {
+    type: String,
+    trim: true,
+    maxlength: 200,
+    default: ''
+  },
+  github: {
+    type: String,
+    trim: true,
+    maxlength: 200,
+    default: ''
+  },
+  linkedin: {
+    type: String,
+    trim: true,
+    maxlength: 200,
+    default: ''
+  },
+  avatarUrl: {
+    type: String,
+    trim: true,
+    maxlength: 500,
+    default: ''
+  },
   planExpiresAt: Date,
   isVerified: {
     type: Boolean,

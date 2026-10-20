@@ -39,11 +39,21 @@ const sendTokenResponse = (user, statusCode, res) => {
     token,
     user: {
       id: user._id,
+      _id: user._id,
       username: user.username,
+      fullName: user.fullName || '',
+      headline: user.headline || '',
+      bio: user.bio || '',
+      location: user.location || '',
+      website: user.website || '',
+      github: user.github || '',
+      linkedin: user.linkedin || '',
+      avatarUrl: user.avatarUrl || '',
       email: user.email,
       role: user.role,
       plan: user.plan || 'free',
-      isVerified: user.isVerified
+      isVerified: user.isVerified,
+      createdAt: user.createdAt
     }
   });
 };
@@ -342,6 +352,139 @@ router.post(
           plan: user.plan,
           isVerified: user.isVerified
         }
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   PUT /api/auth/profile
+// @desc    Update logged-in user's profile information (name, bio, headline, links, etc.)
+// @access  Private
+router.put(
+  '/profile',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      const {
+        username,
+        fullName,
+        headline,
+        bio,
+        location,
+        website,
+        github,
+        linkedin,
+        avatarUrl
+      } = req.body;
+
+      if (username !== undefined && username.trim() !== user.username) {
+        const cleanUsername = username.trim();
+        if (cleanUsername.length < 3 || cleanUsername.length > 30) {
+          return res.status(400).json({
+            success: false,
+            message: 'Username must be between 3 and 30 characters.'
+          });
+        }
+        const existingUser = await User.findOne({
+          username: cleanUsername,
+          _id: { $ne: user._id }
+        });
+        if (existingUser) {
+          return res.status(400).json({
+            success: false,
+            message: 'That username is already taken by another user.'
+          });
+        }
+        user.username = cleanUsername;
+      }
+
+      if (fullName !== undefined) user.fullName = String(fullName).trim();
+      if (headline !== undefined) user.headline = String(headline).trim();
+      if (bio !== undefined) user.bio = String(bio).trim();
+      if (location !== undefined) user.location = String(location).trim();
+      if (website !== undefined) user.website = String(website).trim();
+      if (github !== undefined) user.github = String(github).trim();
+      if (linkedin !== undefined) user.linkedin = String(linkedin).trim();
+      if (avatarUrl !== undefined) user.avatarUrl = String(avatarUrl).trim();
+
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Profile information updated successfully!',
+        user: {
+          id: user._id,
+          _id: user._id,
+          username: user.username,
+          fullName: user.fullName || '',
+          headline: user.headline || '',
+          bio: user.bio || '',
+          location: user.location || '',
+          website: user.website || '',
+          github: user.github || '',
+          linkedin: user.linkedin || '',
+          avatarUrl: user.avatarUrl || '',
+          email: user.email,
+          role: user.role,
+          plan: user.plan || 'free',
+          isVerified: user.isVerified,
+          createdAt: user.createdAt
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   PUT /api/auth/password
+// @desc    Update logged-in user's account password after verifying current password
+// @access  Private
+router.put(
+  '/password',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide both your current password and new password.'
+        });
+      }
+      if (String(newPassword).length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: 'New password must be at least 6 characters long.'
+        });
+      }
+
+      const user = await User.findById(req.user.id).select('+password');
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      const isMatch = await user.matchPassword(String(currentPassword).trim());
+      if (!isMatch) {
+        return res.status(401).json({
+          success: false,
+          message: 'Current password is incorrect.'
+        });
+      }
+
+      user.password = String(newPassword);
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Your account password has been updated successfully!'
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });

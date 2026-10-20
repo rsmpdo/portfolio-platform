@@ -2,10 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/authSlice';
+import { logout, setUser } from '../store/authSlice';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { User, Mail, ShieldCheck, Crown, Sparkles, LogOut, Trash2, ArrowRight, LayoutTemplate, CheckCircle2, AlertCircle, Loader2, MessageSquare, Inbox, Eye, Reply, Plus, Layers, ExternalLink, X, Lock, KeyRound } from 'lucide-react';
+import {
+  User,
+  Mail,
+  ShieldCheck,
+  Crown,
+  Sparkles,
+  LogOut,
+  Trash2,
+  ArrowRight,
+  LayoutTemplate,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  MessageSquare,
+  Inbox,
+  Eye,
+  Reply,
+  Plus,
+  Layers,
+  ExternalLink,
+  X,
+  Lock,
+  KeyRound,
+  MapPin,
+  Globe,
+  Briefcase,
+  FileText,
+  Settings,
+  Save
+} from 'lucide-react';
 import API from '../services/api';
 
 function PortfoliosManager() {
@@ -452,6 +481,7 @@ function MessagesInbox() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [filterMode, setFilterMode] = useState('all'); // 'all' | 'unread' | 'read'
   const [deleteMsgTarget, setDeleteMsgTarget] = useState(null);
   const [deletingMsg, setDeletingMsg] = useState(false);
 
@@ -497,9 +527,15 @@ function MessagesInbox() {
     }
   };
 
+  const filteredMessages = messages.filter((m) => {
+    if (filterMode === 'unread') return !m.isRead;
+    if (filterMode === 'read') return m.isRead;
+    return true;
+  });
+
   return (
     <div className="glass-card gradient-border rounded-3xl p-8">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/[0.06]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
             <Inbox className="w-5 h-5" />
@@ -516,12 +552,35 @@ function MessagesInbox() {
             <p className="text-slate-400 text-xs">Inquiries sent by visitors via your public portfolio contact form.</p>
           </div>
         </div>
-        <button
-          onClick={fetchMessages}
-          className="btn-ghost px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5"
-        >
-          <span>Refresh Inbox</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center p-1 rounded-xl bg-slate-900/90 border border-white/10 text-xs">
+            {[
+              { id: 'all', label: `All (${messages.length})` },
+              { id: 'unread', label: `Unread (${unreadCount})` },
+              { id: 'read', label: `Read (${messages.length - unreadCount})` }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setFilterMode(tab.id)}
+                className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                  filterMode === tab.id
+                    ? 'bg-indigo-500 text-white'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={fetchMessages}
+            className="btn-ghost px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5"
+          >
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -529,17 +588,21 @@ function MessagesInbox() {
           <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
           <span className="text-xs">Loading your messages...</span>
         </div>
-      ) : messages.length === 0 ? (
+      ) : filteredMessages.length === 0 ? (
         <div className="py-12 glass rounded-2xl border border-white/[0.06] flex flex-col items-center justify-center text-center p-6">
           <MessageSquare className="w-10 h-10 text-slate-600 mb-3" />
-          <h3 className="font-bold text-slate-300 text-sm mb-1">No Messages Received Yet</h3>
+          <h3 className="font-bold text-slate-300 text-sm mb-1">
+            {messages.length === 0 ? 'No Messages Received Yet' : `No ${filterMode} messages`}
+          </h3>
           <p className="text-xs text-slate-500 max-w-sm">
-            When visitors submit your portfolio's contact form, their inquiries will show up right here!
+            {messages.length === 0
+              ? "When visitors submit your portfolio's contact form, their inquiries will show up right here!"
+              : 'Switch the filter above to view all of your received inquiries.'}
           </p>
         </div>
       ) : (
         <div className="space-y-4">
-          {messages.map((msg) => (
+          {filteredMessages.map((msg) => (
             <div
               key={msg._id}
               className={`p-5 rounded-2xl glass border transition-all ${
@@ -667,16 +730,58 @@ export default function ProfileSettings() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  // Active Section Navigation ('all' | 'profile' | 'portfolios' | 'messages' | 'settings')
+  const [activeSection, setActiveSection] = useState('all');
+
+  // Personal Profile Info & Bio Form State
+  const [profileForm, setProfileForm] = useState({
+    fullName: '',
+    username: '',
+    headline: '',
+    bio: '',
+    location: '',
+    website: '',
+    github: '',
+    linkedin: '',
+    avatarUrl: ''
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSuccess, setProfileSuccess] = useState('');
+  const [profileError, setProfileError] = useState('');
+
+  // Password Update Form State
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   // 2-Step Account Deletion Modal State
+  const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteStep, setDeleteStep] = useState(1); // 1 = Warning & Checkboxes, 2 = Password Authentication
   const [confirmUnderstood, setConfirmUnderstood] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setProfileForm({
+        fullName: user.fullName || '',
+        username: user.username || '',
+        headline: user.headline || '',
+        bio: user.bio || '',
+        location: user.location || '',
+        website: user.website || '',
+        github: user.github || '',
+        linkedin: user.linkedin || '',
+        avatarUrl: user.avatarUrl || ''
+      });
+    }
+  }, [user]);
 
   if (!user) {
     return (
@@ -692,6 +797,59 @@ export default function ProfileSettings() {
       </div>
     );
   }
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setProfileSuccess('');
+    setProfileError('');
+    try {
+      setSavingProfile(true);
+      const res = await API.put('/auth/profile', profileForm);
+      if (res.data?.success) {
+        dispatch(setUser(res.data.user));
+        setProfileSuccess(res.data.message || 'Profile information updated successfully!');
+      }
+    } catch (err) {
+      setProfileError(err.response?.data?.message || 'Failed to update profile information.');
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    setPasswordSuccess('');
+    setPasswordError('');
+
+    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
+      setPasswordError('Please fill in both your current password and new password.');
+      return;
+    }
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters long.');
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError('New password and confirmation password do not match.');
+      return;
+    }
+
+    try {
+      setSavingPassword(true);
+      const res = await API.put('/auth/password', {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword
+      });
+      if (res.data?.success) {
+        setPasswordSuccess(res.data.message || 'Password updated successfully!');
+        setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      }
+    } catch (err) {
+      setPasswordError(err.response?.data?.message || 'Failed to update password.');
+    } finally {
+      setSavingPassword(false);
+    }
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -740,156 +898,568 @@ export default function ProfileSettings() {
     }
   };
 
+  const navTabs = [
+    { id: 'all', label: 'All Sections', icon: Layers },
+    { id: 'profile', label: 'Personal Info & Bio', icon: User },
+    { id: 'portfolios', label: 'My Portfolios', icon: LayoutTemplate },
+    { id: 'messages', label: 'Received Messages', icon: Inbox },
+    { id: 'settings', label: 'Account Settings & Deletion', icon: Settings }
+  ];
+
+  const showProfile = activeSection === 'all' || activeSection === 'profile';
+  const showPortfolios = activeSection === 'all' || activeSection === 'portfolios';
+  const showMessages = activeSection === 'all' || activeSection === 'messages';
+  const showSettings = activeSection === 'all' || activeSection === 'settings';
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
 
-      <main className="flex-1 pt-32 pb-20 px-6 max-w-4xl mx-auto w-full">
+      <main className="flex-1 pt-32 pb-20 px-6 max-w-5xl mx-auto w-full">
         {/* Page Header */}
-        <div className="mb-10 pb-6 border-b border-white/[0.06] flex items-center justify-between">
+        <div className="mb-6 pb-6 border-b border-white/[0.06] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="badge badge-indigo inline-flex mb-2">
               <User className="w-3.5 h-3.5" />
-              <span>Account Settings</span>
+              <span>User Account & Profile</span>
             </div>
-            <h1 className="font-heading font-black text-3xl text-white">User Profile & Subscription</h1>
+            <h1 className="font-heading font-black text-3xl text-white">Account Hub & Profile Settings</h1>
+            <p className="text-slate-400 text-xs mt-1">
+              Manage your personal info and bio, portfolios, visitor contact messages, and account security settings.
+            </p>
           </div>
           <Link
             to="/editor"
-            className="btn-primary px-4 py-2.5 rounded-xl text-white text-xs font-bold flex items-center gap-2"
+            className="btn-primary px-4 py-2.5 rounded-xl text-white text-xs font-bold flex items-center gap-2 self-start md:self-auto"
           >
             <LayoutTemplate className="w-4 h-4" />
             <span>Open Portfolio Editor</span>
           </Link>
         </div>
 
-        <div className="space-y-8">
-          {/* Profile Overview Card */}
-          <div className="glass-card gradient-border rounded-3xl p-8">
-            <h2 className="font-heading font-bold text-xl text-white mb-6">Profile Information</h2>
-            
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 border-2 border-indigo-500/40 flex items-center justify-center font-heading font-black text-2xl text-indigo-400">
-                  {user.username?.[0]?.toUpperCase() || 'U'}
+        {/* Top Profile Identity Banner */}
+        <div className="glass-card gradient-border rounded-3xl p-6 md:p-8 mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-start sm:items-center gap-4">
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.fullName || user.username}
+                  className="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-500/40 shrink-0"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 border-2 border-indigo-500/40 flex items-center justify-center font-heading font-black text-2xl text-indigo-400 shrink-0">
+                  {(user.fullName || user.username)?.[0]?.toUpperCase() || 'U'}
                 </div>
-                <div>
-                  <h3 className="font-heading font-bold text-lg text-white mb-1 flex items-center gap-2">
-                    <span>{user.username}</span>
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold ${
-                      user.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'
-                    }`}>
-                      {user.role}
-                    </span>
-                  </h3>
-                  <div className="flex items-center gap-2 text-slate-400 text-xs font-mono">
+              )}
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <h2 className="font-heading font-bold text-xl text-white">
+                    {user.fullName || user.username}
+                  </h2>
+                  <span className="text-xs font-mono text-indigo-400">@{user.username}</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold ${
+                    user.role === 'admin'
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                      : 'bg-slate-800 text-slate-400'
+                  }`}>
+                    {user.role}
+                  </span>
+                </div>
+                {user.headline && (
+                  <p className="text-xs font-semibold text-slate-200 mb-1">{user.headline}</p>
+                )}
+                {user.bio && (
+                  <p className="text-xs text-slate-400 max-w-xl leading-relaxed mb-2 line-clamp-2">{user.bio}</p>
+                )}
+                <div className="flex flex-wrap items-center gap-4 text-slate-400 text-xs">
+                  <span className="flex items-center gap-1.5 font-mono">
                     <Mail className="w-3.5 h-3.5 text-slate-500" />
                     <span>{user.email}</span>
-                  </div>
+                  </span>
+                  {user.location && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>{user.location}</span>
+                    </span>
+                  )}
+                  {user.website && (
+                    <a
+                      href={user.website.startsWith('http') ? user.website : `https://${user.website}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 text-indigo-400 hover:underline"
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>Website</span>
+                    </a>
+                  )}
                 </div>
-              </div>
-
-              {/* Plan Status Badge */}
-              <div className="glass p-4 rounded-2xl border border-white/10 flex items-center gap-4 shrink-0">
-                <div>
-                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Plan</div>
-                  <div className="font-heading font-bold text-sm text-white uppercase flex items-center gap-1.5 mt-0.5">
-                    {user.plan === 'studio' ? (
-                      <>
-                        <Crown className="w-4 h-4 text-emerald-400" />
-                        <span className="text-emerald-400">Studio Plan (5 Portfolios)</span>
-                      </>
-                    ) : user.plan === 'pro' ? (
-                      <>
-                        <Sparkles className="w-4 h-4 text-indigo-400" />
-                        <span className="text-indigo-400">Pro Creator (3 Portfolios)</span>
-                      </>
-                    ) : (
-                      <span className="text-slate-400">Free Standard (1 Portfolio)</span>
-                    )}
-                  </div>
-                </div>
-
-                <Link
-                  to="/pricing"
-                  className="btn-primary px-3 py-2 rounded-xl text-white text-xs font-bold flex items-center gap-1"
-                >
-                  <span>{user.plan === 'free' ? 'Upgrade Plan' : 'Manage Subscription'}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
               </div>
             </div>
-          </div>
 
-          {/* ─── My Portfolios Multi-Portfolio Management ────────────────────────── */}
-          <PortfoliosManager />
-
-          {/* ─── Received Contact Messages Inbox ────────────────────────── */}
-          <MessagesInbox />
-
-          {/* Quick Actions */}
-          <div className="glass-card gradient-border rounded-3xl p-8">
-            <h2 className="font-heading font-bold text-xl text-white mb-6">Account Actions</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button
-                onClick={handleLogout}
-                className="p-4 rounded-2xl glass border border-white/10 hover:border-white/20 flex items-center justify-between group transition text-left"
-              >
-                <div>
-                  <div className="font-bold text-white text-sm mb-1 group-hover:text-indigo-400 transition flex items-center gap-2">
-                    <LogOut className="w-4 h-4 text-indigo-400" />
-                    <span>Sign Out</span>
-                  </div>
-                  <p className="text-slate-500 text-xs">Safely terminate your current session on this browser.</p>
+            {/* Plan Status Badge */}
+            <div className="glass p-4 rounded-2xl border border-white/10 flex items-center gap-4 shrink-0 self-start md:self-center">
+              <div>
+                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Plan</div>
+                <div className="font-heading font-bold text-sm text-white uppercase flex items-center gap-1.5 mt-0.5">
+                  {user.plan === 'studio' ? (
+                    <>
+                      <Crown className="w-4 h-4 text-emerald-400" />
+                      <span className="text-emerald-400">Studio Plan (5 Portfolios)</span>
+                    </>
+                  ) : user.plan === 'pro' ? (
+                    <>
+                      <Sparkles className="w-4 h-4 text-indigo-400" />
+                      <span className="text-indigo-400">Pro Creator (3 Portfolios)</span>
+                    </>
+                  ) : (
+                    <span className="text-slate-400">Free Standard (1 Portfolio)</span>
+                  )}
                 </div>
-              </button>
+              </div>
 
               <Link
                 to="/pricing"
-                className="p-4 rounded-2xl glass border border-white/10 hover:border-white/20 flex items-center justify-between group transition text-left"
+                className="btn-primary px-3 py-2 rounded-xl text-white text-xs font-bold flex items-center gap-1"
               >
-                <div>
-                  <div className="font-bold text-white text-sm mb-1 group-hover:text-indigo-400 transition flex items-center gap-2">
-                    <Crown className="w-4 h-4 text-amber-400" />
-                    <span>View Pricing Plans</span>
-                  </div>
-                  <p className="text-slate-500 text-xs">Explore Pro and Studio features, templates, and analytics.</p>
-                </div>
+                <span>{user.plan === 'free' ? 'Upgrade Plan' : 'Manage Plan'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
+        </div>
 
-          {/* Danger Zone — Account Deletion */}
-          <div className="p-8 rounded-3xl bg-red-500/5 border border-red-500/20">
-            <h2 className="font-heading font-bold text-xl text-red-400 mb-2 flex items-center gap-2">
-              <Trash2 className="w-5 h-5" />
-              <span>Danger Zone</span>
-            </h2>
-            <p className="text-slate-400 text-xs leading-relaxed mb-6">
-              Permanently delete your account, your user credentials, and your live portfolio layout from PortfolioCraft. This action is permanent and cannot be undone.
-            </p>
+        {/* Section Switcher Navigation Bar */}
+        <div className="flex flex-wrap items-center gap-2 mb-8 p-2 rounded-2xl glass border border-white/[0.08]">
+          {navTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeSection === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveSection(tab.id)}
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
+                  isActive
+                    ? 'btn-primary text-white shadow-lg shadow-indigo-500/20'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-            <button
-              onClick={openDeleteModal}
-              disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 font-bold text-xs transition flex items-center gap-2 disabled:opacity-60"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-              <span>Delete My Account Permanently</span>
-            </button>
-          </div>
+        <div className="space-y-8">
+          {/* ─── SECTION 1: Update Personal Information & Bio ────────────────────────── */}
+          {showProfile && (
+            <section className="glass-card gradient-border rounded-3xl p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="font-heading font-bold text-xl text-white">
+                      Personal Information & Bio
+                    </h2>
+                    <p className="text-slate-400 text-xs">
+                      Update your display name, username, professional headline, bio, location, and social links.
+                    </p>
+                  </div>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold">
+                  Section 1 • Profile Info
+                </span>
+              </div>
+
+              {profileSuccess && (
+                <div className="mb-5 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>{profileSuccess}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setProfileSuccess('')}
+                    className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {profileError && (
+                <div className="mb-5 p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                    <span>{profileError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setProfileError('')}
+                    className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              <form onSubmit={handleSaveProfile} className="space-y-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Full Name / Display Name
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.fullName}
+                      onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
+                      placeholder="e.g. Elena Vance"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Username (@handle)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={profileForm.username}
+                      onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
+                      placeholder="username"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Professional Headline / Role
+                    </label>
+                    <div className="relative">
+                      <Briefcase className="w-3.5 h-3.5 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={profileForm.headline}
+                        onChange={(e) => setProfileForm({ ...profileForm, headline: e.target.value })}
+                        placeholder="e.g. Principal Product Designer & Creative Technologist"
+                        className="input-field w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Location
+                    </label>
+                    <div className="relative">
+                      <MapPin className="w-3.5 h-3.5 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={profileForm.location}
+                        onChange={(e) => setProfileForm({ ...profileForm, location: e.target.value })}
+                        placeholder="e.g. San Francisco, CA / Remote"
+                        className="input-field w-full pl-9 pr-3.5 py-2.5 rounded-xl text-xs"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      About Me / Bio
+                    </label>
+                    <span className="text-[10px] font-mono text-slate-500">
+                      {profileForm.bio.length} / 1000 chars
+                    </span>
+                  </div>
+                  <textarea
+                    rows={4}
+                    maxLength={1000}
+                    value={profileForm.bio}
+                    onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                    placeholder="Write a short bio about your background, design philosophy, or engineering expertise..."
+                    className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs leading-relaxed resize-y"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Profile Avatar Image URL
+                    </label>
+                    <input
+                      type="url"
+                      value={profileForm.avatarUrl}
+                      onChange={(e) => setProfileForm({ ...profileForm, avatarUrl: e.target.value })}
+                      placeholder="https://images.unsplash.com/..."
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Personal Website URL
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.website}
+                      onChange={(e) => setProfileForm({ ...profileForm, website: e.target.value })}
+                      placeholder="https://yourwebsite.com"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      GitHub Profile URL
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.github}
+                      onChange={(e) => setProfileForm({ ...profileForm, github: e.target.value })}
+                      placeholder="https://github.com/username"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      LinkedIn Profile URL
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.linkedin}
+                      onChange={(e) => setProfileForm({ ...profileForm, linkedin: e.target.value })}
+                      placeholder="https://linkedin.com/in/username"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-between gap-4 border-t border-white/[0.06]">
+                  <p className="text-[11px] text-slate-500">
+                    Registered Email: <span className="text-slate-300 font-mono">{user.email}</span>
+                  </p>
+                  <button
+                    type="submit"
+                    disabled={savingProfile}
+                    className="btn-primary px-5 py-2.5 rounded-xl text-white text-xs font-bold flex items-center gap-2 disabled:opacity-60"
+                  >
+                    {savingProfile ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
+                    <span>Save Profile Information</span>
+                  </button>
+                </div>
+              </form>
+            </section>
+          )}
+
+          {/* ─── SECTION 2: My Portfolios Management ────────────────────────── */}
+          {showPortfolios && <PortfoliosManager />}
+
+          {/* ─── SECTION 3: Received Contact Messages Inbox ────────────────────────── */}
+          {showMessages && <MessagesInbox />}
+
+          {/* ─── SECTION 4: Account Settings, Security & Deletion ────────────────────────── */}
+          {showSettings && (
+            <div className="space-y-8">
+              {/* Password & Security Settings Card */}
+              <section className="glass-card gradient-border rounded-3xl p-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-heading font-bold text-xl text-white">
+                        Account Security & Password
+                      </h2>
+                      <p className="text-slate-400 text-xs">
+                        Update your account password to keep your portfolios and inbox secure.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold">
+                    Security Settings
+                  </span>
+                </div>
+
+                {passwordSuccess && (
+                  <div className="mb-5 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span>{passwordSuccess}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPasswordSuccess('')}
+                      className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                {passwordError && (
+                  <div className="mb-5 p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                      <span>{passwordError}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPasswordError('')}
+                      className="p-1 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                <form onSubmit={handleUpdatePassword} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordForm.currentPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                      placeholder="Enter current password"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      New Password (min 6 chars)
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                      placeholder="Enter new password"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                      placeholder="Confirm new password"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs"
+                    />
+                  </div>
+
+                  <div className="md:col-span-3 flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      disabled={savingPassword}
+                      className="btn-primary px-5 py-2.5 rounded-xl text-white text-xs font-bold flex items-center gap-2 disabled:opacity-60"
+                    >
+                      {savingPassword ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <KeyRound className="w-4 h-4" />
+                      )}
+                      <span>Update Password</span>
+                    </button>
+                  </div>
+                </form>
+              </section>
+
+              {/* Session & Subscription Quick Actions */}
+              <section className="glass-card gradient-border rounded-3xl p-8">
+                <h2 className="font-heading font-bold text-xl text-white mb-2">Session & Subscription Actions</h2>
+                <p className="text-slate-400 text-xs mb-6">
+                  Manage your active browser session or upgrade your portfolio tier.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="p-4 rounded-2xl glass border border-white/10 hover:border-white/20 flex items-center justify-between group transition text-left"
+                  >
+                    <div>
+                      <div className="font-bold text-white text-sm mb-1 group-hover:text-indigo-400 transition flex items-center gap-2">
+                        <LogOut className="w-4 h-4 text-indigo-400" />
+                        <span>Sign Out of Account</span>
+                      </div>
+                      <p className="text-slate-500 text-xs">Safely terminate your current session on this browser.</p>
+                    </div>
+                  </button>
+
+                  <Link
+                    to="/pricing"
+                    className="p-4 rounded-2xl glass border border-white/10 hover:border-white/20 flex items-center justify-between group transition text-left"
+                  >
+                    <div>
+                      <div className="font-bold text-white text-sm mb-1 group-hover:text-indigo-400 transition flex items-center gap-2">
+                        <Crown className="w-4 h-4 text-amber-400" />
+                        <span>View & Upgrade Pricing Plans</span>
+                      </div>
+                      <p className="text-slate-500 text-xs">Explore Pro (3 portfolios) and Studio (5 portfolios) features.</p>
+                    </div>
+                  </Link>
+                </div>
+              </section>
+
+              {/* Danger Zone — Account Deletion */}
+              <section className="p-8 rounded-3xl bg-red-500/5 border border-red-500/20">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                  <div>
+                    <h2 className="font-heading font-bold text-xl text-red-400 mb-1 flex items-center gap-2">
+                      <Trash2 className="w-5 h-5" />
+                      <span>Danger Zone — Account Deletion</span>
+                    </h2>
+                    <p className="text-slate-400 text-xs leading-relaxed max-w-2xl">
+                      Permanently delete your account, your user credentials, your received messages, and all of your live/draft portfolio layouts from PortfolioCraft. Requires 2-step confirmation and password authentication.
+                    </p>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-red-500/15 border border-red-500/30 text-red-300 text-[10px] font-bold uppercase tracking-wider self-start">
+                    2-Step Password Protected
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={openDeleteModal}
+                  disabled={loading}
+                  className="px-5 py-2.5 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 font-bold text-xs transition flex items-center gap-2 disabled:opacity-60"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                  <span>Delete My Account Permanently</span>
+                </button>
+              </section>
+            </div>
+          )}
         </div>
       </main>
 
-      {/* ─── 2-Step Account Deletion Confirmation & Password Authentication Modal ─── */}
-      {showDeleteModal && (
+      {/* ─── 2-Step Account Deletion Confirmation & Password Authentication Modal (Portaled to document.body) ─── */}
+      {showDeleteModal && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
           onClick={closeDeleteModal}
         >
           <div
-            className="glass-card gradient-border rounded-3xl p-7 max-w-md w-full border border-red-500/30 shadow-2xl"
+            className="glass gradient-border rounded-3xl p-7 max-w-md w-full border border-red-500/30 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header & Step Indicator */}
@@ -913,6 +1483,7 @@ export default function ProfileSettings() {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={closeDeleteModal}
                 className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
               >
@@ -1059,7 +1630,8 @@ export default function ProfileSettings() {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <Footer />
