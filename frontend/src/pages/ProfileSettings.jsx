@@ -776,8 +776,8 @@ export default function ProfileSettings() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  // Active Section Navigation ('all' | 'profile' | 'portfolios' | 'messages' | 'settings')
-  const [activeSection, setActiveSection] = useState('all');
+  // Active Section Navigation ('profile' | 'portfolios' | 'messages' | 'settings')
+  const [activeSection, setActiveSection] = useState('profile');
 
   // Personal Profile Info & Bio Form State
   const [profileForm, setProfileForm] = useState({
@@ -945,17 +945,16 @@ export default function ProfileSettings() {
   };
 
   const navTabs = [
-    { id: 'all', label: 'All Sections', icon: Layers },
     { id: 'profile', label: 'Personal Info & Bio', icon: User },
     { id: 'portfolios', label: 'My Portfolios', icon: LayoutTemplate },
     { id: 'messages', label: 'Received Messages', icon: Inbox },
     { id: 'settings', label: 'Account Settings & Deletion', icon: Settings }
   ];
 
-  const showProfile = activeSection === 'all' || activeSection === 'profile';
-  const showPortfolios = activeSection === 'all' || activeSection === 'portfolios';
-  const showMessages = activeSection === 'all' || activeSection === 'messages';
-  const showSettings = activeSection === 'all' || activeSection === 'settings';
+  const showProfile = activeSection === 'profile';
+  const showPortfolios = activeSection === 'portfolios';
+  const showMessages = activeSection === 'messages';
+  const showSettings = activeSection === 'settings';
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">

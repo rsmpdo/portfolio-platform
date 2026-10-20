@@ -1,9 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { ShieldAlert, Users, DollarSign, Crown, Sparkles, Layers, Mail, AlertCircle, Trash2, Eye, EyeOff, CheckCircle2, Loader2, Send, Inbox, Reply, Briefcase, RefreshCw, ExternalLink, FileText, XCircle, Clock, Lock, Unlock, KeyRound } from 'lucide-react';
+import {
+  ShieldAlert,
+  Users,
+  DollarSign,
+  Crown,
+  Sparkles,
+  Layers,
+  Mail,
+  AlertCircle,
+  Trash2,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  Loader2,
+  Send,
+  Inbox,
+  Reply,
+  Briefcase,
+  RefreshCw,
+  ExternalLink,
+  FileText,
+  XCircle,
+  Clock,
+  Lock,
+  Unlock,
+  KeyRound,
+  Search,
+  Filter,
+  X
+} from 'lucide-react';
 import API from '../services/api';
 
 function AdminMessagesSection() {
@@ -11,6 +41,19 @@ function AdminMessagesSection() {
   const [recipientStats, setRecipientStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Filters for Recipient Contact Analytics Table
+  const [statTypeFilter, setStatTypeFilter] = useState('all'); // 'all' | 'user' | 'showcase' | 'platform'
+  const [statSearch, setStatSearch] = useState('');
+
+  // Filters for Chronological Contact Events Log
+  const [msgReadFilter, setMsgReadFilter] = useState('all'); // 'all' | 'unread' | 'read'
+  const [msgTypeFilter, setMsgTypeFilter] = useState('all'); // 'all' | 'user' | 'showcase' | 'platform'
+  const [msgSearch, setMsgSearch] = useState('');
+
+  // Delete Message Popup Modal State
+  const [deleteMsgTarget, setDeleteMsgTarget] = useState(null);
+  const [deletingMsg, setDeletingMsg] = useState(false);
 
   // Password Authorization State for Message Bodies
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -80,15 +123,53 @@ function AdminMessagesSection() {
     }
   };
 
-  const deleteMessage = async (id) => {
-    if (!window.confirm('Delete this contact log entry from platform records?')) return;
+  const confirmDeleteMessage = async () => {
+    if (!deleteMsgTarget) return;
     try {
-      await API.delete(`/messages/${id}`);
+      setDeletingMsg(true);
+      await API.delete(`/messages/${deleteMsgTarget._id}`);
+      setDeleteMsgTarget(null);
       fetchAdminMessages();
     } catch (err) {
       console.error('Delete message error:', err);
+    } finally {
+      setDeletingMsg(false);
     }
   };
+
+  const filteredRecipientStats = recipientStats.filter((stat) => {
+    const matchesType =
+      statTypeFilter === 'all' ? true : (stat.recipientType || 'user') === statTypeFilter;
+    const q = statSearch.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      (stat.recipientName || '').toLowerCase().includes(q) ||
+      (stat.route || '').toLowerCase().includes(q) ||
+      (stat.recipientEmail || '').toLowerCase().includes(q) ||
+      (stat.lastSender?.name || '').toLowerCase().includes(q) ||
+      (stat.lastSender?.email || '').toLowerCase().includes(q);
+    return matchesType && matchesSearch;
+  });
+
+  const filteredMessages = messages.filter((msg) => {
+    const matchesRead =
+      msgReadFilter === 'all'
+        ? true
+        : msgReadFilter === 'unread'
+        ? !msg.isRead
+        : msg.isRead;
+    const matchesType =
+      msgTypeFilter === 'all' ? true : (msg.recipientType || 'user') === msgTypeFilter;
+    const q = msgSearch.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      (msg.senderName || '').toLowerCase().includes(q) ||
+      (msg.senderEmail || '').toLowerCase().includes(q) ||
+      (msg.recipientName || '').toLowerCase().includes(q) ||
+      (msg.recipientRoute || '').toLowerCase().includes(q) ||
+      (msg.subject || '').toLowerCase().includes(q);
+    return matchesRead && matchesType && matchesSearch;
+  });
 
   return (
     <div className="space-y-8">
@@ -141,15 +222,60 @@ function AdminMessagesSection() {
           </div>
         </div>
 
+        {/* Analytics Filters Bar */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 p-3.5 rounded-2xl glass border border-white/[0.06]">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[
+              { id: 'all', label: `All Recipients (${recipientStats.length})` },
+              { id: 'user', label: `User Portfolios (${recipientStats.filter((s) => (s.recipientType || 'user') === 'user').length})` },
+              { id: 'showcase', label: `Showcase Creators (${recipientStats.filter((s) => s.recipientType === 'showcase').length})` },
+              { id: 'platform', label: `Platform Inquiries (${recipientStats.filter((s) => s.recipientType === 'platform').length})` }
+            ].map((pill) => (
+              <button
+                key={pill.id}
+                type="button"
+                onClick={() => setStatTypeFilter(pill.id)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                  statTypeFilter === pill.id
+                    ? 'btn-primary text-white'
+                    : 'bg-white/[0.04] text-slate-400 hover:text-white'
+                }`}
+              >
+                {pill.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative w-full md:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={statSearch}
+              onChange={(e) => setStatSearch(e.target.value)}
+              placeholder="Filter recipient or route..."
+              className="input-field w-full pl-9 pr-8 py-2 rounded-xl text-xs"
+            />
+            {statSearch && (
+              <button
+                type="button"
+                onClick={() => setStatSearch('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="glass gradient-border rounded-3xl overflow-hidden">
           {loading ? (
             <div className="py-10 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
               <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />
               <span>Loading contact frequency analytics...</span>
             </div>
-          ) : recipientStats.length === 0 ? (
+          ) : filteredRecipientStats.length === 0 ? (
             <div className="py-10 text-center text-slate-500 text-xs">
-              No contact activity recorded yet.
+              No matching contact analytics found for the current filter.
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -165,7 +291,7 @@ function AdminMessagesSection() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.06]">
-                  {recipientStats.map((stat) => (
+                  {filteredRecipientStats.map((stat) => (
                     <tr key={stat.key} className="hover:bg-white/[0.02] transition">
                       <td className="p-4">
                         <div className="font-bold text-white text-sm">{stat.recipientName}</div>
@@ -241,7 +367,7 @@ function AdminMessagesSection() {
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
             <Inbox className="w-4 h-4 text-indigo-400" />
-            <span>Recent Contact Form Events Log ({messages.length})</span>
+            <span>Recent Contact Form Events Log ({filteredMessages.length} / {messages.length})</span>
           </h3>
           {isUnlocked ? (
             <span className="text-[11px] text-emerald-400 font-mono font-bold flex items-center gap-1.5">
@@ -262,18 +388,75 @@ function AdminMessagesSection() {
           )}
         </div>
 
+        {/* Message Events Filter Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-3.5 rounded-2xl glass border border-white/[0.06]">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center p-1 rounded-xl bg-slate-900/90 border border-white/10 text-xs">
+              {[
+                { id: 'all', label: `All (${messages.length})` },
+                { id: 'unread', label: `Unread (${unreadCount})` },
+                { id: 'read', label: `Read (${messages.length - unreadCount})` }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setMsgReadFilter(tab.id)}
+                  className={`px-2.5 py-1 rounded-lg font-bold transition ${
+                    msgReadFilter === tab.id
+                      ? 'bg-indigo-500 text-white'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <select
+              value={msgTypeFilter}
+              onChange={(e) => setMsgTypeFilter(e.target.value)}
+              className="input-field px-3 py-1.5 rounded-xl text-xs bg-slate-900 border-white/10 font-semibold"
+            >
+              <option value="all">All Target Types</option>
+              <option value="user">User Portfolios</option>
+              <option value="showcase">Showcase Creators</option>
+              <option value="platform">Platform Inquiries</option>
+            </select>
+          </div>
+
+          <div className="relative w-full lg:w-72">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={msgSearch}
+              onChange={(e) => setMsgSearch(e.target.value)}
+              placeholder="Search sender, recipient, or topic..."
+              className="input-field w-full pl-9 pr-8 py-2 rounded-xl text-xs"
+            />
+            {msgSearch && (
+              <button
+                type="button"
+                onClick={() => setMsgSearch('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="glass gradient-border rounded-3xl p-6">
           {loading ? (
             <div className="py-8 text-center text-slate-500 text-xs">
               Loading contact activity log...
             </div>
-          ) : messages.length === 0 ? (
+          ) : filteredMessages.length === 0 ? (
             <div className="py-8 text-center text-slate-500 text-xs">
-              No contact form submissions logged yet.
+              No contact form submissions match the current filter.
             </div>
           ) : (
             <div className="space-y-3">
-              {messages.map((msg) => (
+              {filteredMessages.map((msg) => (
                 <div
                   key={msg._id}
                   className={`p-4 rounded-2xl glass border transition-all space-y-3 ${
@@ -356,7 +539,8 @@ function AdminMessagesSection() {
                       </a>
 
                       <button
-                        onClick={() => deleteMessage(msg._id)}
+                        type="button"
+                        onClick={() => setDeleteMsgTarget(msg)}
                         className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
                         title="Delete Log Entry"
                       >
@@ -382,10 +566,70 @@ function AdminMessagesSection() {
         </div>
       </div>
 
-      {/* Password Authorization Modal to Unlock Message Bodies */}
-      {showUnlockModal && (
+      {/* Delete Contact Log Entry Popup Modal */}
+      {deleteMsgTarget && createPortal(
         <div
-          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => !deletingMsg && setDeleteMsgTarget(null)}
+        >
+          <div
+            className="glass gradient-border rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-red-500/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-base text-white">Delete Contact Log Entry?</h3>
+                  <p className="text-[11px] text-slate-400">
+                    From {deleteMsgTarget.senderName} → {deleteMsgTarget.recipientName}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteMsgTarget(null)}
+                disabled={deletingMsg}
+                className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed mb-5">
+              Are you sure you want to permanently remove this contact log entry from platform records?
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setDeleteMsgTarget(null)}
+                disabled={deletingMsg}
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteMessage}
+                disabled={deletingMsg}
+                className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 transition disabled:opacity-50"
+              >
+                {deletingMsg ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                <span>Delete Log Entry</span>
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Password Authorization Modal to Unlock Message Bodies */}
+      {showUnlockModal && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setShowUnlockModal(false)}
         >
           <div
@@ -457,7 +701,8 @@ function AdminMessagesSection() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -467,6 +712,15 @@ function JobApplicationsSection() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+
+  // Filters for Job Applications & CVs
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'pending' | 'reviewed' | 'shortlisted' | 'rejected'
+  const [deptFilter, setDeptFilter] = useState('all');
+  const [cvSearch, setCvSearch] = useState('');
+
+  // Delete Application Popup Modal State
+  const [deleteAppTarget, setDeleteAppTarget] = useState(null);
+  const [deletingApp, setDeletingApp] = useState(false);
 
   const fetchApplications = async () => {
     try {
@@ -492,24 +746,48 @@ function JobApplicationsSection() {
       await API.put(`/careers/admin/${appId}/status`, { status: newStatus });
       fetchApplications();
     } catch (err) {
-      alert('Failed to update status: ' + (err.response?.data?.message || err.message));
+      console.error('Failed to update status:', err);
     } finally {
       setUpdatingId(null);
     }
   };
 
-  const handleDeleteApp = async (appId) => {
-    if (!window.confirm('Delete this job application record?')) return;
+  const confirmDeleteApp = async () => {
+    if (!deleteAppTarget) return;
     try {
-      await API.delete(`/careers/admin/${appId}`);
+      setDeletingApp(true);
+      await API.delete(`/careers/admin/${deleteAppTarget._id}`);
+      setDeleteAppTarget(null);
       fetchApplications();
     } catch (err) {
-      alert('Failed to delete application: ' + (err.response?.data?.message || err.message));
+      console.error('Failed to delete application:', err);
+    } finally {
+      setDeletingApp(false);
     }
   };
 
+  const departments = Array.from(
+    new Set(applications.map((a) => a.department).filter(Boolean))
+  );
+
+  const filteredApplications = applications.filter((app) => {
+    const matchesStatus =
+      statusFilter === 'all' ? true : (app.status || 'pending') === statusFilter;
+    const matchesDept =
+      deptFilter === 'all' ? true : (app.department || '') === deptFilter;
+    const q = cvSearch.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      (app.fullName || '').toLowerCase().includes(q) ||
+      (app.email || '').toLowerCase().includes(q) ||
+      (app.referenceId || '').toLowerCase().includes(q) ||
+      (app.jobTitle || '').toLowerCase().includes(q) ||
+      (app.department || '').toLowerCase().includes(q);
+    return matchesStatus && matchesDept && matchesSearch;
+  });
+
   return (
-    <div className="glass-card gradient-border rounded-3xl p-8 mb-8">
+    <div className="glass-card gradient-border rounded-3xl p-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
@@ -517,12 +795,14 @@ function JobApplicationsSection() {
           </div>
           <div>
             <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
-              <span>Careers Job Applications</span>
+              <span>Careers Job Applications & CVs</span>
               <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold font-mono border border-indigo-500/30">
-                {applications.length} Received
+                {filteredApplications.length} / {applications.length} Shown
               </span>
             </h2>
-            <p className="text-slate-400 text-xs">Review and manage candidate applications submitted via the Careers page</p>
+            <p className="text-slate-400 text-xs">
+              Filter, review, and manage candidate CVs and job applications submitted via the Careers page
+            </p>
           </div>
         </div>
 
@@ -535,16 +815,83 @@ function JobApplicationsSection() {
         </button>
       </div>
 
+      {/* Job Applications & CVs Filter Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-6 p-3.5 rounded-2xl glass border border-white/[0.06]">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {[
+            { id: 'all', label: `All CVs (${applications.length})` },
+            { id: 'pending', label: `Pending (${applications.filter((a) => (a.status || 'pending') === 'pending').length})` },
+            { id: 'reviewed', label: `Reviewed (${applications.filter((a) => a.status === 'reviewed').length})` },
+            { id: 'shortlisted', label: `Shortlisted (${applications.filter((a) => a.status === 'shortlisted').length})` },
+            { id: 'rejected', label: `Rejected (${applications.filter((a) => a.status === 'rejected').length})` }
+          ].map((pill) => (
+            <button
+              key={pill.id}
+              type="button"
+              onClick={() => setStatusFilter(pill.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                statusFilter === pill.id
+                  ? 'btn-primary text-white'
+                  : 'bg-white/[0.04] text-slate-400 hover:text-white'
+              }`}
+            >
+              {pill.label}
+            </button>
+          ))}
+
+          {departments.length > 0 && (
+            <select
+              value={deptFilter}
+              onChange={(e) => setDeptFilter(e.target.value)}
+              className="input-field px-3 py-1.5 rounded-xl text-xs bg-slate-900 border-white/10 font-semibold ml-1"
+            >
+              <option value="all">All Departments</option>
+              {departments.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        <div className="relative w-full lg:w-72">
+          <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={cvSearch}
+            onChange={(e) => setCvSearch(e.target.value)}
+            placeholder="Search candidate, email, Ref ID, role..."
+            className="input-field w-full pl-9 pr-8 py-2 rounded-xl text-xs"
+          />
+          {cvSearch && (
+            <button
+              type="button"
+              onClick={() => setCvSearch('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+
       {loading ? (
         <div className="py-12 flex flex-col items-center justify-center text-slate-500 gap-2">
           <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
           <span className="text-xs">Loading job applications...</span>
         </div>
-      ) : applications.length === 0 ? (
+      ) : filteredApplications.length === 0 ? (
         <div className="py-12 text-center text-slate-500 glass rounded-2xl border border-white/5">
           <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-40 text-indigo-400" />
-          <p className="text-sm font-semibold text-slate-400 mb-1">No Job Applications Received Yet</p>
-          <p className="text-xs text-slate-500">Applications submitted by candidates on the /careers page will appear here instantly.</p>
+          <p className="text-sm font-semibold text-slate-400 mb-1">
+            {applications.length === 0 ? 'No Job Applications Received Yet' : 'No Matching Applications Found'}
+          </p>
+          <p className="text-xs text-slate-500">
+            {applications.length === 0
+              ? 'Applications submitted by candidates on the /careers page will appear here instantly.'
+              : 'Try adjusting or clearing your status, department, or search filters.'}
+          </p>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -560,7 +907,7 @@ function JobApplicationsSection() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {applications.map((app) => (
+              {filteredApplications.map((app) => (
                 <tr key={app._id} className="hover:bg-white/[0.02] transition">
                   <td className="py-3.5 px-3 font-mono text-indigo-300 font-bold whitespace-nowrap">
                     {app.referenceId}
@@ -621,7 +968,8 @@ function JobApplicationsSection() {
                   </td>
                   <td className="py-3.5 px-3 text-right whitespace-nowrap">
                     <button
-                      onClick={() => handleDeleteApp(app._id)}
+                      type="button"
+                      onClick={() => setDeleteAppTarget(app)}
                       className="p-1.5 rounded-xl hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
                       title="Delete Application"
                     >
@@ -634,6 +982,66 @@ function JobApplicationsSection() {
           </table>
         </div>
       )}
+
+      {/* Delete Job Application Popup Modal */}
+      {deleteAppTarget && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => !deletingApp && setDeleteAppTarget(null)}
+        >
+          <div
+            className="glass gradient-border rounded-3xl max-w-md w-full p-6 relative shadow-2xl border border-red-500/30"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-base text-white">Delete Job Application?</h3>
+                  <p className="text-[11px] text-slate-400">
+                    {deleteAppTarget.fullName} ({deleteAppTarget.referenceId})
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteAppTarget(null)}
+                disabled={deletingApp}
+                className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed mb-5">
+              Are you sure you want to permanently remove the application for <strong className="text-white">{deleteAppTarget.jobTitle}</strong> submitted by <strong className="text-white">{deleteAppTarget.fullName}</strong>?
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setDeleteAppTarget(null)}
+                disabled={deletingApp}
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteApp}
+                disabled={deletingApp}
+                className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold flex items-center gap-1.5 transition disabled:opacity-50"
+              >
+                {deletingApp ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                <span>Delete Application</span>
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
@@ -642,12 +1050,29 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
+  // Active Section ('users' | 'portfolios' | 'messages' | 'payments' | 'careers') — No 'all' section
+  const [activeTab, setActiveTab] = useState('users');
+
   const [stats, setStats] = useState(null);
   const [usersList, setUsersList] = useState([]);
   const [layoutsList, setLayoutsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
+
+  // Section 1: User Accounts & Plan Control Filters
+  const [userPlanFilter, setUserPlanFilter] = useState('all'); // 'all' | 'free' | 'pro' | 'studio'
+  const [userRoleFilter, setUserRoleFilter] = useState('all'); // 'all' | 'standard' | 'admin'
+  const [userSearch, setUserSearch] = useState('');
+
+  // Section 2: Portfolio Content Moderation Filters
+  const [layoutStatusFilter, setLayoutStatusFilter] = useState('all'); // 'all' | 'published' | 'unpublished' | 'banned' | 'showcase'
+  const [layoutSearch, setLayoutSearch] = useState('');
+
+  // Section 4: Manual Payment Requests Filters
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState('all'); // 'all' | 'pending' | 'approved' | 'rejected'
+  const [paymentPlanFilter, setPaymentPlanFilter] = useState('all'); // 'all' | 'pro' | 'studio'
+  const [paymentSearch, setPaymentSearch] = useState('');
 
   // Warning Modal State
   const [warnUser, setWarnUser] = useState(null);
@@ -669,7 +1094,6 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchAdminData = async () => {
       setLoading(true);
-      let hasErrors = false;
 
       try {
         const statsRes = await API.get('/admin/stats');
@@ -845,6 +1269,96 @@ export default function AdminDashboard() {
     }
   };
 
+  // Filtered Lists
+  const filteredUsers = usersList.filter((u) => {
+    if (!u) return false;
+    const plan = (u.plan || 'free').toLowerCase();
+    const role = (u.role || 'standard').toLowerCase();
+    const matchesPlan = userPlanFilter === 'all' ? true : plan === userPlanFilter;
+    const matchesRole = userRoleFilter === 'all' ? true : role === userRoleFilter;
+    const q = userSearch.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      (u.username || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q);
+    return matchesPlan && matchesRole && matchesSearch;
+  });
+
+  const filteredLayouts = layoutsList.filter((l) => {
+    if (!l) return false;
+    const isProtectedShowcase = ['alex', 'marcus', 'elena', 'demo', 'sample'].includes(
+      (l.handle || '').toLowerCase()
+    );
+    const matchesStatus =
+      layoutStatusFilter === 'all'
+        ? true
+        : layoutStatusFilter === 'banned'
+        ? !!l.isBanned
+        : layoutStatusFilter === 'showcase'
+        ? isProtectedShowcase
+        : layoutStatusFilter === 'published'
+        ? !l.isBanned && !!l.isPublished
+        : !l.isBanned && !l.isPublished;
+    const q = layoutSearch.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      (l.title || '').toLowerCase().includes(q) ||
+      (l.handle || '').toLowerCase().includes(q) ||
+      (l.userId?.username || '').toLowerCase().includes(q) ||
+      (l.userId?.email || '').toLowerCase().includes(q);
+    return matchesStatus && matchesSearch;
+  });
+
+  const filteredPaymentRequests = paymentRequests.filter((r) => {
+    if (!r) return false;
+    const matchesStatus =
+      paymentStatusFilter === 'all' ? true : (r.status || 'pending') === paymentStatusFilter;
+    const matchesPlan =
+      paymentPlanFilter === 'all' ? true : (r.plan || '').toLowerCase() === paymentPlanFilter;
+    const q = paymentSearch.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      (r.userId?.username || '').toLowerCase().includes(q) ||
+      (r.email || '').toLowerCase().includes(q) ||
+      (r.fullName || '').toLowerCase().includes(q) ||
+      (r.country || '').toLowerCase().includes(q);
+    return matchesStatus && matchesPlan && matchesSearch;
+  });
+
+  const pendingPaymentsCount = paymentRequests.filter((r) => r.status === 'pending').length;
+
+  const adminSections = [
+    {
+      id: 'users',
+      label: 'User Accounts & Plan Control',
+      count: usersList.length,
+      icon: Users
+    },
+    {
+      id: 'portfolios',
+      label: 'Portfolio Moderation',
+      count: layoutsList.length,
+      icon: Layers
+    },
+    {
+      id: 'messages',
+      label: 'Contact Analytics & Messages',
+      icon: Mail
+    },
+    {
+      id: 'payments',
+      label: 'Payment Requests',
+      count: paymentRequests.length,
+      badge: pendingPaymentsCount > 0 ? `${pendingPaymentsCount} Pending` : null,
+      icon: FileText
+    },
+    {
+      id: 'careers',
+      label: 'Job Applications & CVs',
+      icon: Briefcase
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
@@ -880,334 +1394,663 @@ export default function AdminDashboard() {
             {error}
           </div>
         ) : (
-          <div className="space-y-12">
-            {/* System Metrics Cards */}
+          <div className="space-y-8">
+            {/* System Metrics Cards (Click to filter & jump to section) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="glass-card gradient-border rounded-3xl p-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('users');
+                  setUserPlanFilter('all');
+                }}
+                className="glass-card gradient-border rounded-3xl p-6 text-left transition"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Total Users</span>
                   <Users className="w-5 h-5 text-indigo-400" />
                 </div>
                 <div className="font-heading font-black text-3xl text-white">{stats?.totalUsers || 0}</div>
-              </div>
+              </button>
 
-              <div className="glass-card gradient-border rounded-3xl p-6">
+              <button
+                type="button"
+                onClick={() => setActiveTab('payments')}
+                className="glass-card gradient-border rounded-3xl p-6 text-left transition"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Total Revenue</span>
                   <DollarSign className="w-5 h-5 text-emerald-400" />
                 </div>
                 <div className="font-heading font-black text-3xl text-white">${stats?.totalRevenue || 0}</div>
-              </div>
+              </button>
 
-              <div className="glass-card gradient-border rounded-3xl p-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('users');
+                  setUserPlanFilter('pro');
+                }}
+                className="glass-card gradient-border rounded-3xl p-6 text-left transition"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Pro Subscribers</span>
                   <Crown className="w-5 h-5 text-amber-400" />
                 </div>
                 <div className="font-heading font-black text-3xl text-white">{stats?.proUsers || 0}</div>
-              </div>
+              </button>
 
-              <div className="glass-card gradient-border rounded-3xl p-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('users');
+                  setUserPlanFilter('studio');
+                }}
+                className="glass-card gradient-border rounded-3xl p-6 text-left transition"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Studio Subscribers</span>
                   <Sparkles className="w-5 h-5 text-pink-400" />
                 </div>
                 <div className="font-heading font-black text-3xl text-white">{stats?.studioUsers || 0}</div>
-              </div>
+              </button>
             </div>
 
-            {/* Users Moderation Section */}
-            <div>
-              <h2 className="font-heading font-bold text-xl text-white mb-4 flex items-center gap-2">
-                <Users className="w-5 h-5 text-indigo-400" />
-                <span>User Accounts & Plan Control ({usersList.length})</span>
-              </h2>
-
-              <div className="glass gradient-border rounded-3xl overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
-                      <tr>
-                        <th className="p-4">User</th>
-                        <th className="p-4">Email</th>
-                        <th className="p-4">Role</th>
-                        <th className="p-4">Current Plan</th>
-                        <th className="p-4">Registered</th>
-                        <th className="p-4 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/[0.06]">
-                      {usersList.map((u) => {
-                        if (!u) return null;
-                        return (
-                          <tr key={u._id || Math.random()} className="hover:bg-white/[0.02] transition">
-                            <td className="p-4 font-bold text-white flex items-center gap-2">
-                              <span className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-mono">
-                                {(u.username || u.email || 'U')[0].toUpperCase()}
-                              </span>
-                              <span>{u.username || u.email?.split('@')[0] || 'User'}</span>
-                            </td>
-                            <td className="p-4 text-slate-300 font-mono">{u.email}</td>
-                            <td className="p-4">
-                              <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
-                                u.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'
-                              }`}>
-                                {u.role}
-                              </span>
-                            </td>
-                            <td className="p-4">
-                              <select
-                                value={u.plan || 'free'}
-                                onChange={(e) => handlePlanChange(u._id, e.target.value)}
-                                className="input-field px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 border-white/10"
-                              >
-                                <option value="free">FREE</option>
-                                <option value="pro">PRO ($12)</option>
-                                <option value="studio">STUDIO ($29)</option>
-                              </select>
-                            </td>
-                            <td className="p-4 text-slate-500">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
-                            <td className="p-4 text-right space-x-2">
-                              <button
-                                onClick={() => setWarnUser(u)}
-                                className="px-3 py-1.5 rounded-lg btn-ghost text-amber-400 hover:text-amber-300 text-xs font-semibold"
-                              >
-                                Warn User
-                              </button>
-                              <button
-                                onClick={() => handleDeleteUser(u)}
-                                className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400"
-                                title="Delete User (Requires Admin Password)"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+            {/* ─── Section Navigation Tabs (Below Statistics) ─── */}
+            <div className="flex flex-wrap items-center gap-2 p-2 rounded-2xl glass border border-white/[0.08]">
+              {adminSections.map((sec) => {
+                const Icon = sec.icon;
+                const isActive = activeTab === sec.id;
+                return (
+                  <button
+                    key={sec.id}
+                    type="button"
+                    onClick={() => setActiveTab(sec.id)}
+                    className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
+                      isActive
+                        ? 'btn-primary text-white shadow-lg shadow-indigo-500/20'
+                        : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{sec.label}</span>
+                    {sec.count !== undefined && (
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
+                          isActive
+                            ? 'bg-white/20 text-white'
+                            : 'bg-white/[0.06] text-slate-400'
+                        }`}
+                      >
+                        {sec.count}
+                      </span>
+                    )}
+                    {sec.badge && (
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 text-[10px] font-bold animate-pulse">
+                        {sec.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Layouts Moderation Section */}
-            <div>
-              <h2 className="font-heading font-bold text-xl text-white mb-4 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-indigo-400" />
-                <span>Portfolio Content Moderation ({layoutsList.length})</span>
-              </h2>
-
-              <div className="glass gradient-border rounded-3xl overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
-                      <tr>
-                        <th className="p-4">Portfolio Title</th>
-                        <th className="p-4">Handle URL</th>
-                        <th className="p-4">Owner</th>
-                        <th className="p-4">Status</th>
-                        <th className="p-4 text-right">Moderation</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/[0.06]">
-                      {layoutsList.map((l) => {
-                        const isProtectedShowcase = ['alex', 'marcus', 'elena', 'demo', 'sample'].includes((l.handle || '').toLowerCase());
-                        return (
-                          <tr key={l._id} className="hover:bg-white/[0.02] transition">
-                            <td className="p-4 font-bold text-white flex items-center gap-2">
-                              <span>{l.title || 'Untitled Portfolio'}</span>
-                              {isProtectedShowcase && (
-                                <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono font-bold shrink-0">
-                                  System Showcase
-                                </span>
-                              )}
-                            </td>
-                            <td className="p-4 text-indigo-400 font-mono">/p/{l.handle}</td>
-                            <td className="p-4 text-slate-300">{l.userId?.username || 'User'}</td>
-                            <td className="p-4">
-                              {l.isBanned ? (
-                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-red-500/20 text-red-400 border border-red-500/30">
-                                  🚫 Banned
-                                </span>
-                              ) : l.isPublished ? (
-                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-emerald-500/20 text-emerald-400">
-                                  Published
-                                </span>
-                              ) : (
-                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-slate-500/20 text-slate-400">
-                                  Unpublished
-                                </span>
-                              )}
-                            </td>
-                            <td className="p-4 text-right space-x-2 whitespace-nowrap">
-                              <a
-                                href={`/p/${l.handle}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-3 py-1.5 rounded-lg btn-ghost text-slate-300 hover:text-white inline-flex items-center gap-1"
-                              >
-                                <Eye className="w-3.5 h-3.5" /> View
-                              </a>
-                              {isProtectedShowcase ? (
-                                <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 text-xs font-bold border border-white/5 cursor-not-allowed inline-flex items-center gap-1" title="System showcase portfolio cannot be modified">
-                                  Protected
-                                </span>
-                              ) : (
-                                <>
-                                  <button
-                                    onClick={() => handleTogglePublish(l._id)}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                                      l.isPublished
-                                        ? 'bg-slate-500/10 text-slate-400 hover:bg-slate-500/20'
-                                        : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
-                                    }`}
-                                    title={l.isPublished ? 'Unpublish this portfolio' : 'Publish this portfolio'}
-                                  >
-                                    {l.isPublished ? (
-                                      <><EyeOff className="w-3 h-3 inline mr-1" />Unpublish</>
-                                    ) : (
-                                      <><Eye className="w-3 h-3 inline mr-1" />Publish</>  
-                                    )}
-                                  </button>
-                                  <button
-                                    onClick={() => handleToggleBan(l)}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                                      l.isBanned
-                                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
-                                        : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                                    }`}
-                                    title={l.isBanned ? 'Unban this portfolio (Requires Password)' : 'Ban this portfolio (Requires Password)'}
-                                  >
-                                    {l.isBanned ? '✓ Unban' : '🚫 Ban'}
-                                  </button>
-                                </>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            {/* ─── Platform Contact Messages Inbox ────────────────────────── */}
-            <AdminMessagesSection />
-
-            {/* ─── Manual Payment Requests ─────────────────────────────────── */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-amber-400" />
-                  <span>Manual Payment Requests ({paymentRequests.length})</span>
-                  {paymentRequests.filter(r => r.status === 'pending').length > 0 && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs animate-pulse">
-                      {paymentRequests.filter(r => r.status === 'pending').length} Pending
-                    </span>
+            {/* ─── SECTION 1: User Accounts & Plan Control ────────────────────────── */}
+            {activeTab === 'users' && (
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                  <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+                    <Users className="w-5 h-5 text-indigo-400" />
+                    <span>User Accounts & Plan Control ({filteredUsers.length} / {usersList.length})</span>
+                  </h2>
+                  {(userPlanFilter !== 'all' || userRoleFilter !== 'all' || userSearch) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserPlanFilter('all');
+                        setUserRoleFilter('all');
+                        setUserSearch('');
+                      }}
+                      className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 self-start sm:self-auto"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Reset Filters</span>
+                    </button>
                   )}
-                </h2>
-              </div>
+                </div>
 
-              <div className="glass gradient-border rounded-3xl overflow-hidden">
-                {paymentRequests.length === 0 ? (
-                  <div className="py-12 text-center text-slate-500 text-xs">No payment requests submitted yet.</div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
-                        <tr>
-                          <th className="p-4">Submitted</th>
-                          <th className="p-4">User</th>
-                          <th className="p-4">Full Name</th>
-                          <th className="p-4">Plan</th>
-                          <th className="p-4">Amount</th>
-                          <th className="p-4">Country</th>
-                          <th className="p-4">Documents</th>
-                          <th className="p-4">Status</th>
-                          <th className="p-4 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-white/[0.06]">
-                        {paymentRequests.map((r) => (
-                          <tr key={r._id} className={`hover:bg-white/[0.02] transition ${r.status === 'pending' ? 'border-l-2 border-amber-500/40' : ''}`}>
-                            <td className="p-4 text-slate-500 font-mono">{new Date(r.createdAt).toLocaleDateString()}</td>
-                            <td className="p-4">
-                              <div className="font-bold text-white">{r.userId?.username || 'Unknown'}</div>
-                              <div className="text-slate-500 font-mono">{r.email}</div>
-                            </td>
-                            <td className="p-4 text-slate-300 font-semibold">{r.fullName}</td>
-                            <td className="p-4">
-                              <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
-                                r.plan === 'studio' ? 'bg-purple-500/20 text-purple-400' : 'bg-indigo-500/20 text-indigo-400'
-                              }`}>{r.plan}</span>
-                            </td>
-                            <td className="p-4 font-mono font-bold text-white">${r.amount} USD</td>
-                            <td className="p-4 text-slate-400">{r.country}</td>
-                            <td className="p-4">
-                              <div className="flex flex-col gap-1.5">
-                                <a href={r.nationalIdUrl} target="_blank" rel="noreferrer"
-                                  className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 text-[10px] font-semibold underline underline-offset-2">
-                                  <Eye className="w-3 h-3" /> National ID
-                                </a>
-                                <a href={r.paymentSlipUrl} target="_blank" rel="noreferrer"
-                                  className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 text-[10px] font-semibold underline underline-offset-2">
-                                  <Eye className="w-3 h-3" /> Payment Slip
-                                </a>
-                              </div>
-                            </td>
-                            <td className="p-4">
-                              {r.status === 'pending' && (
-                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1 w-fit">
-                                  <Clock className="w-3 h-3" /> Pending
-                                </span>
-                              )}
-                              {r.status === 'approved' && (
-                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-emerald-500/20 text-emerald-400 flex items-center gap-1 w-fit">
-                                  <CheckCircle2 className="w-3 h-3" /> Approved
-                                </span>
-                              )}
-                              {r.status === 'rejected' && (
-                                <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-red-500/20 text-red-400 flex items-center gap-1 w-fit">
-                                  <XCircle className="w-3 h-3" /> Rejected
-                                </span>
-                              )}
-                              {r.adminNote && r.status !== 'pending' && (
-                                <p className="text-[10px] text-slate-500 mt-1 max-w-[160px] truncate" title={r.adminNote}>{r.adminNote}</p>
-                              )}
-                            </td>
-                            <td className="p-4 text-right whitespace-nowrap">
-                              {r.status === 'pending' ? (
-                                <div className="flex items-center gap-2 justify-end">
-                                  <button
-                                    onClick={() => { setReviewingRequest({ id: r._id, action: 'approve', user: r.userId?.username || r.email, plan: r.plan }); setReviewNote(''); }}
-                                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-                                  >
-                                    ✓ Approve
-                                  </button>
-                                  <button
-                                    onClick={() => { setReviewingRequest({ id: r._id, action: 'reject', user: r.userId?.username || r.email, plan: r.plan }); setReviewNote(''); }}
-                                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20"
-                                  >
-                                    ✕ Reject
-                                  </button>
-                                </div>
-                              ) : (
-                                <span className="text-slate-600 text-[10px] font-mono">Reviewed</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                {/* User Plan, Role & Search Filter Bar */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-4 rounded-2xl glass border border-white/[0.06]">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1 mr-1">
+                      <Filter className="w-3 h-3 text-indigo-400" />
+                      <span>Plan:</span>
+                    </span>
+                    {[
+                      { id: 'all', label: `All Plans (${usersList.length})` },
+                      {
+                        id: 'free',
+                        label: `Free (${usersList.filter((u) => (u?.plan || 'free') === 'free').length})`
+                      },
+                      {
+                        id: 'pro',
+                        label: `Pro $12 (${usersList.filter((u) => u?.plan === 'pro').length})`
+                      },
+                      {
+                        id: 'studio',
+                        label: `Studio $29 (${usersList.filter((u) => u?.plan === 'studio').length})`
+                      }
+                    ].map((pill) => (
+                      <button
+                        key={pill.id}
+                        type="button"
+                        onClick={() => setUserPlanFilter(pill.id)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                          userPlanFilter === pill.id
+                            ? 'btn-primary text-white'
+                            : 'bg-white/[0.04] text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {pill.label}
+                      </button>
+                    ))}
+
+                    <select
+                      value={userRoleFilter}
+                      onChange={(e) => setUserRoleFilter(e.target.value)}
+                      className="input-field px-3 py-1.5 rounded-xl text-xs bg-slate-900 border-white/10 font-semibold ml-1"
+                    >
+                      <option value="all">All Roles</option>
+                      <option value="standard">Standard Users</option>
+                      <option value="admin">Admins Only</option>
+                    </select>
                   </div>
-                )}
-              </div>
-            </div>
 
-            {/* ─── Careers Job Applications Management ────────────────────────── */}
-            <JobApplicationsSection />
+                  <div className="relative w-full lg:w-72">
+                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={userSearch}
+                      onChange={(e) => setUserSearch(e.target.value)}
+                      placeholder="Search username or email..."
+                      className="input-field w-full pl-9 pr-8 py-2 rounded-xl text-xs"
+                    />
+                    {userSearch && (
+                      <button
+                        type="button"
+                        onClick={() => setUserSearch('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="glass gradient-border rounded-3xl overflow-hidden">
+                  {filteredUsers.length === 0 ? (
+                    <div className="py-12 text-center text-slate-500 text-xs">
+                      No users match the selected plan, role, or search query.
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
+                          <tr>
+                            <th className="p-4">User</th>
+                            <th className="p-4">Email</th>
+                            <th className="p-4">Role</th>
+                            <th className="p-4">Current Plan</th>
+                            <th className="p-4">Registered</th>
+                            <th className="p-4 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/[0.06]">
+                          {filteredUsers.map((u) => {
+                            if (!u) return null;
+                            return (
+                              <tr key={u._id || Math.random()} className="hover:bg-white/[0.02] transition">
+                                <td className="p-4 font-bold text-white flex items-center gap-2">
+                                  <span className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-mono">
+                                    {(u.username || u.email || 'U')[0].toUpperCase()}
+                                  </span>
+                                  <span>{u.username || u.email?.split('@')[0] || 'User'}</span>
+                                </td>
+                                <td className="p-4 text-slate-300 font-mono">{u.email}</td>
+                                <td className="p-4">
+                                  <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
+                                    u.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'
+                                  }`}>
+                                    {u.role}
+                                  </span>
+                                </td>
+                                <td className="p-4">
+                                  <select
+                                    value={u.plan || 'free'}
+                                    onChange={(e) => handlePlanChange(u._id, e.target.value)}
+                                    className="input-field px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 border-white/10"
+                                  >
+                                    <option value="free">FREE</option>
+                                    <option value="pro">PRO ($12)</option>
+                                    <option value="studio">STUDIO ($29)</option>
+                                  </select>
+                                </td>
+                                <td className="p-4 text-slate-500">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
+                                <td className="p-4 text-right space-x-2">
+                                  <button
+                                    onClick={() => setWarnUser(u)}
+                                    className="px-3 py-1.5 rounded-lg btn-ghost text-amber-400 hover:text-amber-300 text-xs font-semibold"
+                                  >
+                                    Warn User
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteUser(u)}
+                                    className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400"
+                                    title="Delete User (Requires Admin Password)"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ─── SECTION 2: Portfolio Content Moderation ────────────────────────── */}
+            {activeTab === 'portfolios' && (
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                  <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-indigo-400" />
+                    <span>Portfolio Content Moderation ({filteredLayouts.length} / {layoutsList.length})</span>
+                  </h2>
+                  {(layoutStatusFilter !== 'all' || layoutSearch) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLayoutStatusFilter('all');
+                        setLayoutSearch('');
+                      }}
+                      className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 self-start sm:self-auto"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Reset Filters</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Portfolio Status & Search Filter Bar */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-4 rounded-2xl glass border border-white/[0.06]">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1 mr-1">
+                      <Filter className="w-3 h-3 text-indigo-400" />
+                      <span>Status:</span>
+                    </span>
+                    {[
+                      { id: 'all', label: `All Portfolios (${layoutsList.length})` },
+                      {
+                        id: 'published',
+                        label: `Published (${layoutsList.filter((l) => !l.isBanned && l.isPublished).length})`
+                      },
+                      {
+                        id: 'unpublished',
+                        label: `Unpublished (${layoutsList.filter((l) => !l.isBanned && !l.isPublished).length})`
+                      },
+                      {
+                        id: 'banned',
+                        label: `Banned (${layoutsList.filter((l) => l.isBanned).length})`
+                      },
+                      {
+                        id: 'showcase',
+                        label: `System Showcase (${layoutsList.filter((l) => ['alex', 'marcus', 'elena', 'demo', 'sample'].includes((l.handle || '').toLowerCase())).length})`
+                      }
+                    ].map((pill) => (
+                      <button
+                        key={pill.id}
+                        type="button"
+                        onClick={() => setLayoutStatusFilter(pill.id)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                          layoutStatusFilter === pill.id
+                            ? 'btn-primary text-white'
+                            : 'bg-white/[0.04] text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {pill.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="relative w-full lg:w-72">
+                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={layoutSearch}
+                      onChange={(e) => setLayoutSearch(e.target.value)}
+                      placeholder="Search title, /p/handle, or owner..."
+                      className="input-field w-full pl-9 pr-8 py-2 rounded-xl text-xs"
+                    />
+                    {layoutSearch && (
+                      <button
+                        type="button"
+                        onClick={() => setLayoutSearch('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="glass gradient-border rounded-3xl overflow-hidden">
+                  {filteredLayouts.length === 0 ? (
+                    <div className="py-12 text-center text-slate-500 text-xs">
+                      No portfolios match the selected status or search query.
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
+                          <tr>
+                            <th className="p-4">Portfolio Title</th>
+                            <th className="p-4">Handle URL</th>
+                            <th className="p-4">Owner</th>
+                            <th className="p-4">Status</th>
+                            <th className="p-4 text-right">Moderation</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/[0.06]">
+                          {filteredLayouts.map((l) => {
+                            const isProtectedShowcase = ['alex', 'marcus', 'elena', 'demo', 'sample'].includes((l.handle || '').toLowerCase());
+                            return (
+                              <tr key={l._id} className="hover:bg-white/[0.02] transition">
+                                <td className="p-4 font-bold text-white flex items-center gap-2">
+                                  <span>{l.title || 'Untitled Portfolio'}</span>
+                                  {isProtectedShowcase && (
+                                    <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono font-bold shrink-0">
+                                      System Showcase
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-4 text-indigo-400 font-mono">/p/{l.handle}</td>
+                                <td className="p-4 text-slate-300">{l.userId?.username || 'User'}</td>
+                                <td className="p-4">
+                                  {l.isBanned ? (
+                                    <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-red-500/20 text-red-400 border border-red-500/30">
+                                      🚫 Banned
+                                    </span>
+                                  ) : l.isPublished ? (
+                                    <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-emerald-500/20 text-emerald-400">
+                                      Published
+                                    </span>
+                                  ) : (
+                                    <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-slate-500/20 text-slate-400">
+                                      Unpublished
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-4 text-right space-x-2 whitespace-nowrap">
+                                  <a
+                                    href={`/p/${l.handle}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-3 py-1.5 rounded-lg btn-ghost text-slate-300 hover:text-white inline-flex items-center gap-1"
+                                  >
+                                    <Eye className="w-3.5 h-3.5" /> View
+                                  </a>
+                                  {isProtectedShowcase ? (
+                                    <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 text-xs font-bold border border-white/5 cursor-not-allowed inline-flex items-center gap-1" title="System showcase portfolio cannot be modified">
+                                      Protected
+                                    </span>
+                                  ) : (
+                                    <>
+                                      <button
+                                        onClick={() => handleTogglePublish(l._id)}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                                          l.isPublished
+                                            ? 'bg-slate-500/10 text-slate-400 hover:bg-slate-500/20'
+                                            : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                        }`}
+                                        title={l.isPublished ? 'Unpublish this portfolio' : 'Publish this portfolio'}
+                                      >
+                                        {l.isPublished ? (
+                                          <><EyeOff className="w-3 h-3 inline mr-1" />Unpublish</>
+                                        ) : (
+                                          <><Eye className="w-3 h-3 inline mr-1" />Publish</>  
+                                        )}
+                                      </button>
+                                      <button
+                                        onClick={() => handleToggleBan(l)}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                                          l.isBanned
+                                            ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                            : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                                        }`}
+                                        title={l.isBanned ? 'Unban this portfolio (Requires Password)' : 'Ban this portfolio (Requires Password)'}
+                                      >
+                                        {l.isBanned ? '✓ Unban' : '🚫 Ban'}
+                                      </button>
+                                    </>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ─── SECTION 3: Platform Contact Messages Inbox & Analytics ────────────────────────── */}
+            {activeTab === 'messages' && <AdminMessagesSection />}
+
+            {/* ─── SECTION 4: Manual Payment Requests ─────────────────────────────────── */}
+            {activeTab === 'payments' && (
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                  <h2 className="font-heading font-bold text-xl text-white flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-amber-400" />
+                    <span>Manual Payment Requests ({filteredPaymentRequests.length} / {paymentRequests.length})</span>
+                    {pendingPaymentsCount > 0 && (
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-xs animate-pulse">
+                        {pendingPaymentsCount} Pending
+                      </span>
+                    )}
+                  </h2>
+                  {(paymentStatusFilter !== 'all' || paymentPlanFilter !== 'all' || paymentSearch) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentStatusFilter('all');
+                        setPaymentPlanFilter('all');
+                        setPaymentSearch('');
+                      }}
+                      className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 self-start sm:self-auto"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Reset Filters</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Payment Requests Filter Bar */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-4 rounded-2xl glass border border-white/[0.06]">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1 mr-1">
+                      <Filter className="w-3 h-3 text-indigo-400" />
+                      <span>Status:</span>
+                    </span>
+                    {[
+                      { id: 'all', label: `All Requests (${paymentRequests.length})` },
+                      {
+                        id: 'pending',
+                        label: `Pending (${paymentRequests.filter((r) => (r.status || 'pending') === 'pending').length})`
+                      },
+                      {
+                        id: 'approved',
+                        label: `Approved (${paymentRequests.filter((r) => r.status === 'approved').length})`
+                      },
+                      {
+                        id: 'rejected',
+                        label: `Rejected (${paymentRequests.filter((r) => r.status === 'rejected').length})`
+                      }
+                    ].map((pill) => (
+                      <button
+                        key={pill.id}
+                        type="button"
+                        onClick={() => setPaymentStatusFilter(pill.id)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+                          paymentStatusFilter === pill.id
+                            ? 'btn-primary text-white'
+                            : 'bg-white/[0.04] text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {pill.label}
+                      </button>
+                    ))}
+
+                    <select
+                      value={paymentPlanFilter}
+                      onChange={(e) => setPaymentPlanFilter(e.target.value)}
+                      className="input-field px-3 py-1.5 rounded-xl text-xs bg-slate-900 border-white/10 font-semibold ml-1"
+                    >
+                      <option value="all">All Plans</option>
+                      <option value="pro">Pro ($12)</option>
+                      <option value="studio">Studio ($29)</option>
+                    </select>
+                  </div>
+
+                  <div className="relative w-full lg:w-72">
+                    <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={paymentSearch}
+                      onChange={(e) => setPaymentSearch(e.target.value)}
+                      placeholder="Search user, full name, or country..."
+                      className="input-field w-full pl-9 pr-8 py-2 rounded-xl text-xs"
+                    />
+                    {paymentSearch && (
+                      <button
+                        type="button"
+                        onClick={() => setPaymentSearch('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="glass gradient-border rounded-3xl overflow-hidden">
+                  {filteredPaymentRequests.length === 0 ? (
+                    <div className="py-12 text-center text-slate-500 text-xs">
+                      {paymentRequests.length === 0
+                        ? 'No payment requests submitted yet.'
+                        : 'No payment requests match the selected filters.'}
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
+                          <tr>
+                            <th className="p-4">Submitted</th>
+                            <th className="p-4">User</th>
+                            <th className="p-4">Full Name</th>
+                            <th className="p-4">Plan</th>
+                            <th className="p-4">Amount</th>
+                            <th className="p-4">Country</th>
+                            <th className="p-4">Documents</th>
+                            <th className="p-4">Status</th>
+                            <th className="p-4 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/[0.06]">
+                          {filteredPaymentRequests.map((r) => (
+                            <tr key={r._id} className={`hover:bg-white/[0.02] transition ${r.status === 'pending' ? 'border-l-2 border-amber-500/40' : ''}`}>
+                              <td className="p-4 text-slate-500 font-mono">{new Date(r.createdAt).toLocaleDateString()}</td>
+                              <td className="p-4">
+                                <div className="font-bold text-white">{r.userId?.username || 'Unknown'}</div>
+                                <div className="text-slate-500 font-mono">{r.email}</div>
+                              </td>
+                              <td className="p-4 text-slate-300 font-semibold">{r.fullName}</td>
+                              <td className="p-4">
+                                <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase ${
+                                  r.plan === 'studio' ? 'bg-purple-500/20 text-purple-400' : 'bg-indigo-500/20 text-indigo-400'
+                                }`}>{r.plan}</span>
+                              </td>
+                              <td className="p-4 font-mono font-bold text-white">${r.amount} USD</td>
+                              <td className="p-4 text-slate-400">{r.country}</td>
+                              <td className="p-4">
+                                <div className="flex flex-col gap-1.5">
+                                  <a href={r.nationalIdUrl} target="_blank" rel="noreferrer"
+                                    className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 text-[10px] font-semibold underline underline-offset-2">
+                                    <Eye className="w-3 h-3" /> National ID
+                                  </a>
+                                  <a href={r.paymentSlipUrl} target="_blank" rel="noreferrer"
+                                    className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 text-[10px] font-semibold underline underline-offset-2">
+                                    <Eye className="w-3 h-3" /> Payment Slip
+                                  </a>
+                                </div>
+                              </td>
+                              <td className="p-4">
+                                {r.status === 'pending' && (
+                                  <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1 w-fit">
+                                    <Clock className="w-3 h-3" /> Pending
+                                  </span>
+                                )}
+                                {r.status === 'approved' && (
+                                  <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-emerald-500/20 text-emerald-400 flex items-center gap-1 w-fit">
+                                    <CheckCircle2 className="w-3 h-3" /> Approved
+                                  </span>
+                                )}
+                                {r.status === 'rejected' && (
+                                  <span className="px-2.5 py-1 rounded-full font-bold text-[10px] bg-red-500/20 text-red-400 flex items-center gap-1 w-fit">
+                                    <XCircle className="w-3 h-3" /> Rejected
+                                  </span>
+                                )}
+                                {r.adminNote && r.status !== 'pending' && (
+                                  <p className="text-[10px] text-slate-500 mt-1 max-w-[160px] truncate" title={r.adminNote}>{r.adminNote}</p>
+                                )}
+                              </td>
+                              <td className="p-4 text-right whitespace-nowrap">
+                                {r.status === 'pending' ? (
+                                  <div className="flex items-center gap-2 justify-end">
+                                    <button
+                                      onClick={() => { setReviewingRequest({ id: r._id, action: 'approve', user: r.userId?.username || r.email, plan: r.plan }); setReviewNote(''); }}
+                                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                                    >
+                                      ✓ Approve
+                                    </button>
+                                    <button
+                                      onClick={() => { setReviewingRequest({ id: r._id, action: 'reject', user: r.userId?.username || r.email, plan: r.plan }); setReviewNote(''); }}
+                                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20"
+                                    >
+                                      ✕ Reject
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <span className="text-slate-600 text-[10px] font-mono">Reviewed</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ─── SECTION 5: Careers Job Applications & CVs Management ────────────────────────── */}
+            {activeTab === 'careers' && <JobApplicationsSection />}
           </div>
         )}
       </main>
