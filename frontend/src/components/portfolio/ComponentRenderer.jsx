@@ -23,7 +23,16 @@ const COMPONENT_MAP = {
   AdvancedMetrics
 };
 
-export default function ComponentRenderer({ component, isEditing = false, isSelected = false, onClick, templateId, viewportMode, accentColor = '#6366f1' }) {
+export default function ComponentRenderer({ 
+  component, 
+  isEditing = false, 
+  isSelected = false, 
+  onClick, 
+  templateId, 
+  viewportMode, 
+  accentColor = '#6366f1',
+  theme = {}
+}) {
   if (!component || component.isVisible === false) return null;
 
   const ComponentClass = COMPONENT_MAP[component.type];
@@ -35,6 +44,8 @@ export default function ComponentRenderer({ component, isEditing = false, isSele
       </div>
     );
   }
+
+  const effectiveAccent = theme.primaryColor || accentColor;
 
   return (
     <div
@@ -49,20 +60,25 @@ export default function ComponentRenderer({ component, isEditing = false, isSele
           : ''
       }`}
       style={isEditing && isSelected ? {
-        borderColor: accentColor,
-        ringColor: `${accentColor}40`,
-        boxShadow: `0 0 0 4px ${accentColor}26`
+        borderColor: effectiveAccent,
+        ringColor: `${effectiveAccent}40`,
+        boxShadow: `0 0 0 4px ${effectiveAccent}26`
       } : undefined}
     >
       {isEditing && (
         <div
           className="absolute top-3 left-3 z-20 px-3 py-1 rounded-full glass border border-white/10 text-xs font-semibold backdrop-blur-md"
-          style={{ color: accentColor }}
+          style={{ color: effectiveAccent }}
         >
           {component.title || component.type}
         </div>
       )}
-      <ComponentClass props={component.props} templateId={templateId} viewportMode={viewportMode} />
+      <ComponentClass 
+        props={component.props} 
+        templateId={templateId} 
+        viewportMode={viewportMode} 
+        theme={theme}
+      />
     </div>
   );
 }

@@ -267,3 +267,60 @@
   border: 1px solid rgba(16,185,129,0.2);
   color: #6ee7b7;
 }
+
+/* ─── Dynamic Portfolio Theme System ────────────── */
+.portfolio-theme-root {
+  background-color: var(--theme-bg, #050811);
+  color: var(--theme-text, #f8fafc);
+}
+
+.portfolio-theme-root section {
+  background-color: transparent !important;
+}
+
+.portfolio-theme-root .btn-primary {
+  background: linear-gradient(135deg, var(--theme-primary, #6366f1) 0%, var(--theme-secondary, #a855f7) 100%) !important;
+  box-shadow: 0 4px 25px -2px color-mix(in srgb, var(--theme-primary, #6366f1) 45%, transparent), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  color: #ffffff !important;
+}
+
+.portfolio-theme-root .btn-primary:hover {
+  box-shadow: 0 10px 35px -2px color-mix(in srgb, var(--theme-primary, #6366f1) 65%, transparent), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+
+.portfolio-theme-root .badge-indigo,
+.portfolio-theme-root .badge-primary {
+  background: color-mix(in srgb, var(--theme-primary, #6366f1) 15%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-primary, #6366f1) 35%, transparent) !important;
+  color: var(--theme-primary, #a5b4fc) !important;
+}
+
+.portfolio-theme-root .gradient-text {
+  background: linear-gradient(135deg, var(--theme-primary, #818cf8) 0%, var(--theme-secondary, #c084fc) 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.portfolio-theme-root .glass-card {
+  background: var(--theme-surface, rgba(255,255,255,0.035)) !important;
+  border-color: color-mix(in srgb, var(--theme-primary, #6366f1) 18%, rgba(255,255,255,0.08)) !important;
+}
+
+.portfolio-theme-root .glass-dark {
+  background: color-mix(in srgb, var(--theme-surface, #0f172a) 85%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-primary, #6366f1) 15%, rgba(255,255,255,0.08)) !important;
+}
+
+.portfolio-theme-root h1:not(.bg-clip-text),
+.portfolio-theme-root h2:not(.bg-clip-text),
+.portfolio-theme-root h3:not(.bg-clip-text),
+.portfolio-theme-root h4:not(.bg-clip-text) {
+  color: var(--theme-text, #f8fafc) !important;
+}
+
+.portfolio-theme-root p {
+  color: var(--theme-muted, #94a3b8) !important;
+}
+
+

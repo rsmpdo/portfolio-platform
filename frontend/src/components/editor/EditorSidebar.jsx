@@ -590,28 +590,175 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </div>
             </div>
 
-            {/* Standard Primary & Secondary Palette */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Color Accents</h3>
+            {/* Quick Theme Palettes */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Color Schemes</h3>
+                <span className="text-[10px] text-slate-500">1-Click Apply</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  {
+                    name: 'Emerald Matrix',
+                    primaryColor: '#10b981',
+                    secondaryColor: '#059669',
+                    backgroundColor: '#040d08',
+                    surfaceColor: '#091f14',
+                    textColor: '#e6fcf5',
+                    textMutedColor: '#6ee7b7'
+                  },
+                  {
+                    name: 'Obsidian Gold',
+                    primaryColor: '#f59e0b',
+                    secondaryColor: '#d97706',
+                    backgroundColor: '#0a0907',
+                    surfaceColor: '#1c170c',
+                    textColor: '#fef3c7',
+                    textMutedColor: '#d4b483'
+                  },
+                  {
+                    name: 'Electric Violet',
+                    primaryColor: '#8b5cf6',
+                    secondaryColor: '#a855f7',
+                    backgroundColor: '#080714',
+                    surfaceColor: '#130f28',
+                    textColor: '#ede9fe',
+                    textMutedColor: '#a78bfa'
+                  },
+                  {
+                    name: 'Cyberpunk Cyan',
+                    primaryColor: '#06b6d4',
+                    secondaryColor: '#3b82f6',
+                    backgroundColor: '#040a14',
+                    surfaceColor: '#0a1c30',
+                    textColor: '#e0f2fe',
+                    textMutedColor: '#7dd3fc'
+                  },
+                  {
+                    name: 'Crimson Dusk',
+                    primaryColor: '#f43f5e',
+                    secondaryColor: '#e11d48',
+                    backgroundColor: '#100508',
+                    surfaceColor: '#240a12',
+                    textColor: '#ffe4e6',
+                    textMutedColor: '#fda4af'
+                  },
+                  {
+                    name: 'OLED Pure Dark',
+                    primaryColor: '#6366f1',
+                    secondaryColor: '#a855f7',
+                    backgroundColor: '#000000',
+                    surfaceColor: '#0d0d12',
+                    textColor: '#ffffff',
+                    textMutedColor: '#94a3b8'
+                  },
+                  {
+                    name: 'Nordic Light',
+                    primaryColor: '#2563eb',
+                    secondaryColor: '#4f46e5',
+                    backgroundColor: '#f8fafc',
+                    surfaceColor: '#ffffff',
+                    textColor: '#0f172a',
+                    textMutedColor: '#64748b'
+                  },
+                  {
+                    name: 'Warm Paper',
+                    primaryColor: '#18181b',
+                    secondaryColor: '#44403c',
+                    backgroundColor: '#faf8f5',
+                    surfaceColor: '#f4efe6',
+                    textColor: '#18181b',
+                    textMutedColor: '#78716c'
+                  }
+                ].map((palette) => (
+                  <button
+                    key={palette.name}
+                    type="button"
+                    onClick={() =>
+                      dispatch(
+                        updateTheme({
+                          primaryColor: palette.primaryColor,
+                          secondaryColor: palette.secondaryColor,
+                          backgroundColor: palette.backgroundColor,
+                          surfaceColor: palette.surfaceColor,
+                          textColor: palette.textColor,
+                          textMutedColor: palette.textMutedColor
+                        })
+                      )
+                    }
+                    className="p-2.5 rounded-xl glass border border-white/[0.08] hover:border-indigo-500/40 flex flex-col gap-2 text-left transition group"
+                  >
+                    <div className="flex items-center gap-1">
+                      <span className="w-3.5 h-3.5 rounded-full border border-white/20" style={{ backgroundColor: palette.backgroundColor }} />
+                      <span className="w-3.5 h-3.5 rounded-full border border-white/20" style={{ backgroundColor: palette.primaryColor }} />
+                      <span className="w-3.5 h-3.5 rounded-full border border-white/20" style={{ backgroundColor: palette.secondaryColor }} />
+                      <span className="w-3.5 h-3.5 rounded-full border border-white/20" style={{ backgroundColor: palette.textColor }} />
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-300 group-hover:text-white truncate">
+                      {palette.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Granular Color Controls */}
+            <div className="space-y-4 pt-2 border-t border-white/[0.06]">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Custom Colors</h3>
+                <button
+                  type="button"
+                  onClick={() =>
+                    dispatch(
+                      updateTheme({
+                        primaryColor: '#6366f1',
+                        secondaryColor: '#a855f7',
+                        backgroundColor: '#070a10',
+                        surfaceColor: '#111827',
+                        textColor: '#f8fafc',
+                        textMutedColor: '#94a3b8'
+                      })
+                    )
+                  }
+                  className="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold"
+                >
+                  Reset Defaults
+                </button>
+              </div>
               {[
-                { label: 'Primary Accent Color', key: 'primaryColor', default: '#6366f1' },
-                { label: 'Secondary Accent Color', key: 'secondaryColor', default: '#a855f7' }
-              ].map(({ label, key, default: def }) => (
-                <div key={key}>
-                  <label className="block text-xs font-semibold text-slate-400 mb-2">{label}</label>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="color"
-                      value={activeLayout.theme?.[key] || def}
-                      onChange={(e) => dispatch(updateTheme({ [key]: e.target.value }))}
-                      className="w-10 h-10 rounded-xl bg-transparent border-2 border-white/10 cursor-pointer"
-                    />
-                    <div className="flex-1 input-field px-3 py-2 rounded-xl text-xs font-mono">
-                      {activeLayout.theme?.[key] || def}
+                { label: 'Primary Accent Color', desc: 'Buttons, active badges & highlights', key: 'primaryColor', default: '#6366f1' },
+                { label: 'Secondary Accent Color', desc: 'Gradients, borders & subtle glows', key: 'secondaryColor', default: '#a855f7' },
+                { label: 'Page Background Color', desc: 'Main canvas & section background', key: 'backgroundColor', default: '#070a10' },
+                { label: 'Card & Surface Color', desc: 'Cards, project tiles & containers', key: 'surfaceColor', default: '#111827' },
+                { label: 'Heading & Primary Text', desc: 'Main titles & headlines', key: 'textColor', default: '#f8fafc' },
+                { label: 'Body & Muted Text', desc: 'Paragraphs, subtitles & labels', key: 'textMutedColor', default: '#94a3b8' }
+              ].map(({ label, desc, key, default: def }) => {
+                const currentVal = activeLayout.theme?.[key] || def;
+                const safeHex = /^#[0-9A-Fa-f]{6}$/.test(currentVal) ? currentVal : def;
+                return (
+                  <div key={key} className="space-y-1.5">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-300">{label}</label>
+                      <p className="text-[10px] text-slate-500">{desc}</p>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <input
+                        type="color"
+                        value={safeHex}
+                        onChange={(e) => dispatch(updateTheme({ [key]: e.target.value }))}
+                        className="w-10 h-10 rounded-xl bg-transparent border-2 border-white/10 cursor-pointer shrink-0"
+                      />
+                      <input
+                        type="text"
+                        value={currentVal}
+                        onChange={(e) => dispatch(updateTheme({ [key]: e.target.value }))}
+                        placeholder={def}
+                        className="flex-1 input-field px-3 py-2 rounded-xl text-xs font-mono"
+                      />
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

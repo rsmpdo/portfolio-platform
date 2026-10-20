@@ -69,12 +69,24 @@ export default function Editor() {
     dispatch(fetchUserPortfolios());
   };
 
-  // Resolve editor theme from the active template
-  const templateId = activeLayout?.theme?.templateId;
+  // Resolve editor theme from the active template and user custom colors
+  const theme = activeLayout?.theme || {};
+  const templateId = theme.templateId;
   const editorTheme = (templateId && templateLayouts[templateId]?.editorTheme) || null;
-  const canvasBg = editorTheme?.canvasBg || '#070a10';
-  const accentColor = editorTheme?.accent || '#6366f1';
+  const canvasBg = theme.backgroundColor || editorTheme?.canvasBg || '#070a10';
+  const accentColor = theme.primaryColor || editorTheme?.accent || '#6366f1';
   const templateLabel = editorTheme?.label || null;
+
+  const themeCssVariables = {
+    '--theme-primary': theme.primaryColor || '#6366f1',
+    '--theme-secondary': theme.secondaryColor || '#a855f7',
+    '--theme-bg': theme.backgroundColor || '#070a10',
+    '--theme-surface': theme.surfaceColor || '#111827',
+    '--theme-text': theme.textColor || '#f8fafc',
+    '--theme-muted': theme.textMutedColor || '#94a3b8',
+    backgroundColor: theme.backgroundColor || '#070a10',
+    color: theme.textColor || '#f8fafc'
+  };
 
   return (
     <div className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
@@ -270,7 +282,10 @@ export default function Editor() {
                   </div>
 
                   {/* Device Inner Content with isolated scrolling */}
-                  <div className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] bg-slate-950">
+                  <div 
+                    className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] portfolio-theme-root transition-colors duration-300"
+                    style={themeCssVariables}
+                  >
                     {activeLayout?.components?.length === 0 ? (
                       <div className="py-16 text-center px-4">
                         <Sparkles className="w-8 h-8 text-indigo-400 mx-auto mb-3" />
@@ -288,6 +303,7 @@ export default function Editor() {
                           templateId={activeLayout?.theme?.templateId}
                           viewportMode={viewportMode}
                           accentColor={accentColor}
+                          theme={theme}
                         />
                       ))
                     )}
@@ -307,7 +323,10 @@ export default function Editor() {
                   </div>
 
                   {/* Device Inner Content with isolated scrolling */}
-                  <div className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] bg-slate-950">
+                  <div 
+                    className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] portfolio-theme-root transition-colors duration-300"
+                    style={themeCssVariables}
+                  >
                     {activeLayout?.components?.length === 0 ? (
                       <div className="py-20 text-center px-6">
                         <Sparkles className="w-8 h-8 text-indigo-400 mx-auto mb-4" />
@@ -325,6 +344,7 @@ export default function Editor() {
                           templateId={activeLayout?.theme?.templateId}
                           viewportMode={viewportMode}
                           accentColor={accentColor}
+                          theme={theme}
                         />
                       ))
                     )}
@@ -337,7 +357,10 @@ export default function Editor() {
                 </div>
               ) : (
                 /* ─── Desktop Standard View ─── */
-                <div className="w-full max-w-6xl mx-auto transition-all duration-300">
+                <div 
+                  className="w-full max-w-6xl mx-auto portfolio-theme-root rounded-3xl p-4 md:p-8 transition-colors duration-300 shadow-2xl"
+                  style={themeCssVariables}
+                >
                   {activeLayout?.components?.length === 0 ? (
                     <div className="py-20 text-center">
                       <div className="w-20 h-20 rounded-3xl glass flex items-center justify-center mx-auto mb-6">
@@ -359,6 +382,7 @@ export default function Editor() {
                         templateId={activeLayout?.theme?.templateId}
                         viewportMode={viewportMode}
                         accentColor={accentColor}
+                        theme={theme}
                       />
                     ))
                   )}

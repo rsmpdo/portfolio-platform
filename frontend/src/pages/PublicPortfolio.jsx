@@ -81,7 +81,19 @@ export default function PublicPortfolio() {
   }, [seo, title]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div 
+      className="min-h-screen flex flex-col portfolio-theme-root transition-colors duration-300"
+      style={{
+        backgroundColor: theme?.backgroundColor || '#050811',
+        color: theme?.textColor || '#f8fafc',
+        '--theme-primary': theme?.primaryColor || '#6366f1',
+        '--theme-secondary': theme?.secondaryColor || '#a855f7',
+        '--theme-bg': theme?.backgroundColor || '#050811',
+        '--theme-surface': theme?.surfaceColor || '#111827',
+        '--theme-text': theme?.textColor || '#f8fafc',
+        '--theme-muted': theme?.textMutedColor || '#94a3b8'
+      }}
+    >
       {/* Top Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-4 md:mx-8 mt-4">
@@ -141,6 +153,7 @@ export default function PublicPortfolio() {
               isEditing={false} 
               templateId={layoutToRender.theme?.templateId} 
               accentColor={layoutToRender.theme?.primaryColor || '#6366f1'}
+              theme={layoutToRender.theme || {}}
             />
           ))}
       </main>

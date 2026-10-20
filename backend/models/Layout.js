@@ -31,7 +31,9 @@ const LayoutSchema = new mongoose.Schema(
       primaryColor: { type: String, default: '#6366f1' },
       secondaryColor: { type: String, default: '#a855f7' },
       backgroundColor: { type: String, default: '#0f172a' },
+      surfaceColor: { type: String, default: '#111827' },
       textColor: { type: String, default: '#f8fafc' },
+      textMutedColor: { type: String, default: '#94a3b8' },
       fontFamily: { type: String, default: 'Inter' },
       templateId: { type: String, default: 'minimalist-editorial' },
       hideBranding: { type: Boolean, default: false }
