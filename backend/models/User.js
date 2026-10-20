@@ -79,10 +79,10 @@ const UserSchema = new mongoose.Schema({
     maxlength: 200,
     default: ''
   },
-  avatarUrl: {
+  twitter: {
     type: String,
     trim: true,
-    maxlength: 500,
+    maxlength: 200,
     default: ''
   },
   planExpiresAt: Date,

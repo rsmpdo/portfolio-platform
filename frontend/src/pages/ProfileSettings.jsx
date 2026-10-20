@@ -743,7 +743,7 @@ export default function ProfileSettings() {
     website: '',
     github: '',
     linkedin: '',
-    avatarUrl: ''
+    twitter: ''
   });
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState('');
@@ -778,7 +778,7 @@ export default function ProfileSettings() {
         website: user.website || '',
         github: user.github || '',
         linkedin: user.linkedin || '',
-        avatarUrl: user.avatarUrl || ''
+        twitter: user.twitter || ''
       });
     }
   }, [user]);
@@ -941,17 +941,9 @@ export default function ProfileSettings() {
         <div className="glass-card gradient-border rounded-3xl p-6 md:p-8 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
-              {user.avatarUrl ? (
-                <img
-                  src={user.avatarUrl}
-                  alt={user.fullName || user.username}
-                  className="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-500/40 shrink-0"
-                />
-              ) : (
-                <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 border-2 border-indigo-500/40 flex items-center justify-center font-heading font-black text-2xl text-indigo-400 shrink-0">
-                  {(user.fullName || user.username)?.[0]?.toUpperCase() || 'U'}
-                </div>
-              )}
+              <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 border-2 border-indigo-500/40 flex items-center justify-center font-heading font-black text-2xl text-indigo-400 shrink-0">
+                {(user.fullName || user.username)?.[0]?.toUpperCase() || 'U'}
+              </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h2 className="font-heading font-bold text-xl text-white">
@@ -992,6 +984,39 @@ export default function ProfileSettings() {
                     >
                       <Globe className="w-3.5 h-3.5" />
                       <span>Website</span>
+                    </a>
+                  )}
+                  {user.github && (
+                    <a
+                      href={user.github.startsWith('http') ? user.github : `https://${user.github}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 text-indigo-400 hover:underline"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>GitHub</span>
+                    </a>
+                  )}
+                  {user.linkedin && (
+                    <a
+                      href={user.linkedin.startsWith('http') ? user.linkedin : `https://${user.linkedin}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 text-indigo-400 hover:underline"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>LinkedIn</span>
+                    </a>
+                  )}
+                  {user.twitter && (
+                    <a
+                      href={user.twitter.startsWith('http') ? user.twitter : `https://${user.twitter}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 text-indigo-400 hover:underline"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <span>X / Twitter</span>
                     </a>
                   )}
                 </div>
@@ -1192,19 +1217,6 @@ export default function ProfileSettings() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                      Profile Avatar Image URL
-                    </label>
-                    <input
-                      type="url"
-                      value={profileForm.avatarUrl}
-                      onChange={(e) => setProfileForm({ ...profileForm, avatarUrl: e.target.value })}
-                      placeholder="https://images.unsplash.com/..."
-                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
                       Personal Website URL
                     </label>
                     <input
@@ -1238,6 +1250,19 @@ export default function ProfileSettings() {
                       value={profileForm.linkedin}
                       onChange={(e) => setProfileForm({ ...profileForm, linkedin: e.target.value })}
                       placeholder="https://linkedin.com/in/username"
+                      className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                      X / Twitter Profile URL
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.twitter}
+                      onChange={(e) => setProfileForm({ ...profileForm, twitter: e.target.value })}
+                      placeholder="https://x.com/username"
                       className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs font-mono"
                     />
                   </div>

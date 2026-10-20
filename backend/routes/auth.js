@@ -48,7 +48,7 @@ const sendTokenResponse = (user, statusCode, res) => {
       website: user.website || '',
       github: user.github || '',
       linkedin: user.linkedin || '',
-      avatarUrl: user.avatarUrl || '',
+      twitter: user.twitter || '',
       email: user.email,
       role: user.role,
       plan: user.plan || 'free',
@@ -381,7 +381,7 @@ router.put(
         website,
         github,
         linkedin,
-        avatarUrl
+        twitter
       } = req.body;
 
       if (username !== undefined && username.trim() !== user.username) {
@@ -412,7 +412,7 @@ router.put(
       if (website !== undefined) user.website = String(website).trim();
       if (github !== undefined) user.github = String(github).trim();
       if (linkedin !== undefined) user.linkedin = String(linkedin).trim();
-      if (avatarUrl !== undefined) user.avatarUrl = String(avatarUrl).trim();
+      if (twitter !== undefined) user.twitter = String(twitter).trim();
 
       await user.save();
 
@@ -430,7 +430,7 @@ router.put(
           website: user.website || '',
           github: user.github || '',
           linkedin: user.linkedin || '',
-          avatarUrl: user.avatarUrl || '',
+          twitter: user.twitter || '',
           email: user.email,
           role: user.role,
           plan: user.plan || 'free',
