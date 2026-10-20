@@ -1060,10 +1060,11 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
 
-  // Section 1: User Accounts & Plan Control Filters
+  // Section 1: User Accounts & Plan Control Filters & Selected User Inspector
   const [userPlanFilter, setUserPlanFilter] = useState('all'); // 'all' | 'free' | 'pro' | 'studio'
   const [userRoleFilter, setUserRoleFilter] = useState('all'); // 'all' | 'standard' | 'admin'
   const [userSearch, setUserSearch] = useState('');
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   // Section 2: Portfolio Content Moderation Filters
   const [layoutStatusFilter, setLayoutStatusFilter] = useState('all'); // 'all' | 'published' | 'unpublished' | 'banned' | 'showcase'
@@ -1280,9 +1281,17 @@ export default function AdminDashboard() {
     const matchesSearch =
       !q ||
       (u.username || '').toLowerCase().includes(q) ||
+      (u.fullName || '').toLowerCase().includes(q) ||
       (u.email || '').toLowerCase().includes(q);
     return matchesPlan && matchesRole && matchesSearch;
   });
+
+  const selectedUser = usersList.find((u) => u && u._id === selectedUserId) || null;
+  const selectedUserLayouts = selectedUser
+    ? layoutsList.filter(
+        (l) => l && String(l.userId?._id || l.userId || '') === String(selectedUser._id)
+      )
+    : [];
 
   const filteredLayouts = layoutsList.filter((l) => {
     if (!l) return false;
@@ -1607,13 +1616,29 @@ export default function AdminDashboard() {
                         <tbody className="divide-y divide-white/[0.06]">
                           {filteredUsers.map((u) => {
                             if (!u) return null;
+                            const isSelected = selectedUserId === u._id;
                             return (
-                              <tr key={u._id || Math.random()} className="hover:bg-white/[0.02] transition">
+                              <tr
+                                key={u._id || Math.random()}
+                                onClick={() => setSelectedUserId((prev) => (prev === u._id ? null : u._id))}
+                                className={`cursor-pointer transition ${
+                                  isSelected
+                                    ? 'bg-indigo-500/15 border-l-2 border-indigo-400'
+                                    : 'hover:bg-white/[0.03]'
+                                }`}
+                              >
                                 <td className="p-4 font-bold text-white flex items-center gap-2">
-                                  <span className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-mono">
+                                  <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-mono ${
+                                    isSelected ? 'bg-indigo-500 text-white' : 'bg-indigo-500/20 text-indigo-400'
+                                  }`}>
                                     {(u.username || u.email || 'U')[0].toUpperCase()}
                                   </span>
-                                  <span>{u.username || u.email?.split('@')[0] || 'User'}</span>
+                                  <div>
+                                    <span className="block">{u.username || u.email?.split('@')[0] || 'User'}</span>
+                                    {u.fullName && (
+                                      <span className="block text-[10px] font-normal text-slate-400">{u.fullName}</span>
+                                    )}
+                                  </div>
                                 </td>
                                 <td className="p-4 text-slate-300 font-mono">{u.email}</td>
                                 <td className="p-4">
@@ -1623,7 +1648,7 @@ export default function AdminDashboard() {
                                     {u.role}
                                   </span>
                                 </td>
-                                <td className="p-4">
+                                <td className="p-4" onClick={(e) => e.stopPropagation()}>
                                   <select
                                     value={u.plan || 'free'}
                                     onChange={(e) => handlePlanChange(u._id, e.target.value)}
@@ -1635,14 +1660,28 @@ export default function AdminDashboard() {
                                   </select>
                                 </td>
                                 <td className="p-4 text-slate-500">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}</td>
-                                <td className="p-4 text-right space-x-2">
+                                <td className="p-4 text-right space-x-2 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                                   <button
+                                    type="button"
+                                    onClick={() => setSelectedUserId((prev) => (prev === u._id ? null : u._id))}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition ${
+                                      isSelected
+                                        ? 'bg-indigo-500/25 text-indigo-300 border border-indigo-500/40'
+                                        : 'btn-ghost text-indigo-400 hover:text-indigo-300'
+                                    }`}
+                                  >
+                                    <Eye className="w-3.5 h-3.5" />
+                                    <span>{isSelected ? 'Selected' : 'View Details'}</span>
+                                  </button>
+                                  <button
+                                    type="button"
                                     onClick={() => setWarnUser(u)}
                                     className="px-3 py-1.5 rounded-lg btn-ghost text-amber-400 hover:text-amber-300 text-xs font-semibold"
                                   >
                                     Warn User
                                   </button>
                                   <button
+                                    type="button"
                                     onClick={() => handleDeleteUser(u)}
                                     className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400"
                                     title="Delete User (Requires Admin Password)"
@@ -1657,6 +1696,223 @@ export default function AdminDashboard() {
                       </table>
                     </div>
                   )}
+                </div>
+
+                {/* ─── Selected User Profile, Bio & Social Links Table Component ─── */}
+                <div className="mt-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-indigo-400" />
+                      <span>
+                        Selected User Profile, Bio & Links
+                        {selectedUser ? ` — @${selectedUser.username || selectedUser.email?.split('@')[0]}` : ''}
+                      </span>
+                    </h3>
+                    {selectedUser && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedUserId(null)}
+                        className="text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1 self-start sm:self-auto"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Clear Selection</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="glass gradient-border rounded-3xl overflow-hidden">
+                    {!selectedUser ? (
+                      <div className="py-12 px-6 text-center">
+                        <Users className="w-8 h-8 text-slate-600 mx-auto mb-3" />
+                        <p className="text-slate-300 font-semibold text-sm mb-1">
+                          No user selected
+                        </p>
+                        <p className="text-slate-500 text-xs">
+                          Click any user row or the <span className="text-indigo-400 font-semibold">View Details</span> button in the table above to inspect their full profile, bio, social URLs, and portfolios.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-white/[0.02] border-b border-white/[0.06] text-slate-400 uppercase tracking-wider font-bold">
+                            <tr>
+                              <th className="p-4 w-56">Profile Field</th>
+                              <th className="p-4">Value / Details</th>
+                              <th className="p-4 w-64">Additional Metadata</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/[0.06]">
+                            <tr className="hover:bg-white/[0.02] transition">
+                              <td className="p-4 font-bold text-slate-300">Username & Full Name</td>
+                              <td className="p-4">
+                                <div className="flex items-center gap-2.5">
+                                  <span className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-mono font-bold text-sm">
+                                    {(selectedUser.username || selectedUser.email || 'U')[0].toUpperCase()}
+                                  </span>
+                                  <div>
+                                    <p className="font-bold text-white text-sm">
+                                      {selectedUser.fullName || <span className="text-slate-500 italic font-normal">Full name not set</span>}
+                                    </p>
+                                    <p className="font-mono text-indigo-400 text-[11px]">
+                                      @{selectedUser.username || selectedUser.email?.split('@')[0] || 'user'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="p-4 font-mono text-[11px] text-slate-500">
+                                ID: {selectedUser._id}
+                              </td>
+                            </tr>
+
+                            <tr className="hover:bg-white/[0.02] transition">
+                              <td className="p-4 font-bold text-slate-300">Email & Verification</td>
+                              <td className="p-4 font-mono text-slate-200">{selectedUser.email}</td>
+                              <td className="p-4">
+                                <span
+                                  className={`px-2.5 py-1 rounded-full font-bold text-[10px] uppercase inline-flex items-center gap-1 ${
+                                    selectedUser.isVerified
+                                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                      : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                  }`}
+                                >
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  <span>{selectedUser.isVerified ? 'Verified Email' : 'Unverified'}</span>
+                                </span>
+                              </td>
+                            </tr>
+
+                            <tr className="hover:bg-white/[0.02] transition">
+                              <td className="p-4 font-bold text-slate-300">Headline & Location</td>
+                              <td className="p-4 text-slate-200">
+                                {selectedUser.headline ? (
+                                  <span className="font-semibold text-white">{selectedUser.headline}</span>
+                                ) : (
+                                  <span className="text-slate-500 italic">No headline provided</span>
+                                )}
+                              </td>
+                              <td className="p-4 text-slate-300">
+                                <span className="text-slate-500 mr-1.5">Location:</span>
+                                {selectedUser.location ? (
+                                  <span className="text-slate-200 font-semibold">{selectedUser.location}</span>
+                                ) : (
+                                  <span className="text-slate-500 italic">Not specified</span>
+                                )}
+                              </td>
+                            </tr>
+
+                            <tr className="hover:bg-white/[0.02] transition">
+                              <td className="p-4 font-bold text-slate-300">Personal Bio / About</td>
+                              <td className="p-4 text-slate-200 leading-relaxed whitespace-pre-wrap" colSpan={2}>
+                                {selectedUser.bio ? (
+                                  selectedUser.bio
+                                ) : (
+                                  <span className="text-slate-500 italic">No bio written by this user yet.</span>
+                                )}
+                              </td>
+                            </tr>
+
+                            <tr className="hover:bg-white/[0.02] transition">
+                              <td className="p-4 font-bold text-slate-300">Social & External Links</td>
+                              <td className="p-4" colSpan={2}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                  {[
+                                    { label: 'Personal Website', url: selectedUser.website },
+                                    { label: 'GitHub', url: selectedUser.github },
+                                    { label: 'LinkedIn', url: selectedUser.linkedin },
+                                    { label: 'Instagram / Social URL', url: selectedUser.twitter }
+                                  ].map((item) => (
+                                    <div
+                                      key={item.label}
+                                      className="p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between gap-1"
+                                    >
+                                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                        {item.label}
+                                      </span>
+                                      {item.url ? (
+                                        <a
+                                          href={item.url.startsWith('http') ? item.url : `https://${item.url}`}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-indigo-400 hover:text-indigo-300 font-mono text-[11px] truncate inline-flex items-center gap-1"
+                                          title={item.url}
+                                        >
+                                          <span className="truncate">{item.url}</span>
+                                          <ExternalLink className="w-3 h-3 shrink-0" />
+                                        </a>
+                                      ) : (
+                                        <span className="text-slate-600 italic text-[11px]">Not linked</span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
+                            </tr>
+
+                            <tr className="hover:bg-white/[0.02] transition">
+                              <td className="p-4 font-bold text-slate-300">Plan & Account Status</td>
+                              <td className="p-4">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="px-2.5 py-1 rounded-full font-bold text-[10px] uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                    Plan: {(selectedUser.plan || 'free').toUpperCase()}
+                                  </span>
+                                  <span className="px-2.5 py-1 rounded-full font-bold text-[10px] uppercase bg-slate-800 text-slate-300">
+                                    Role: {(selectedUser.role || 'standard').toUpperCase()}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="p-4 text-slate-400">
+                                Joined: {selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleString() : 'N/A'}
+                              </td>
+                            </tr>
+
+                            <tr className="hover:bg-white/[0.02] transition">
+                              <td className="p-4 font-bold text-slate-300">
+                                Owned Portfolios ({selectedUserLayouts.length})
+                              </td>
+                              <td className="p-4" colSpan={2}>
+                                {selectedUserLayouts.length === 0 ? (
+                                  <span className="text-slate-500 italic">This user has not created any portfolios yet.</span>
+                                ) : (
+                                  <div className="flex flex-wrap gap-2.5">
+                                    {selectedUserLayouts.map((l) => (
+                                      <div
+                                        key={l._id}
+                                        className="px-3.5 py-2 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center gap-3"
+                                      >
+                                        <div>
+                                          <p className="font-bold text-white text-xs">{l.title || 'Untitled'}</p>
+                                          <p className="font-mono text-[11px] text-indigo-400">/p/{l.handle}</p>
+                                        </div>
+                                        <span
+                                          className={`px-2 py-0.5 rounded-full font-bold text-[10px] uppercase ${
+                                            l.isBanned
+                                              ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                              : l.isPublished
+                                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                              : 'bg-slate-800 text-slate-400'
+                                          }`}
+                                        >
+                                          {l.isBanned ? 'Banned' : l.isPublished ? 'Published' : 'Draft'}
+                                        </span>
+                                        <Link
+                                          to={`/p/${l.handle}`}
+                                          target="_blank"
+                                          className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-indigo-400 hover:text-indigo-300 transition"
+                                          title="Open Live Portfolio"
+                                        >
+                                          <ExternalLink className="w-3.5 h-3.5" />
+                                        </Link>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
