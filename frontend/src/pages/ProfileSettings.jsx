@@ -1143,7 +1143,7 @@ export default function ProfileSettings() {
                   </div>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold">
-                  Section 1 • Profile Info
+                  Profile Info
                 </span>
               </div>
 
