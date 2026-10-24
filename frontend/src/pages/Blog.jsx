@@ -341,14 +341,9 @@ export default function Blog() {
             The PortfolioCraft<br />
             <span className="gradient-text">Blog & Guides</span>
           </h1>
-          <div className="space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed text-center max-w-3xl mx-auto">
-            <p>
-              In a crowded market of generic portfolio templates and AI-generated text, superficial advice no longer works. Modern hiring committees at top-tier technology companies and executive design studios evaluate portfolios on narrative coherence, systems thinking, and verifiable business impact.
-            </p>
-            <p className="text-slate-400 text-sm sm:text-base">
-              The guides below are not quick listicles. They are exhaustive, practitioner-authored masterclasses detailing the exact section structures, positioning frameworks, and visual engineering principles used by Senior, Staff, and Principal creators who consistently secure high-ticket retainers and competing executive offers.
-            </p>
-          </div>
+          <p className="text-slate-300 text-base sm:text-lg leading-relaxed text-center max-w-2xl mx-auto">
+            In-depth masterclasses on portfolio architecture, career positioning, and design systems to help you stand out.
+          </p>
         </div>
 
         <div className="flex items-center justify-center gap-3 mb-12">

@@ -50,7 +50,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = `${creator.name} — Showcase Portfolio | PortfolioCraft`;
+    document.title = `${creator.name} | Showcase Portfolio | PortfolioCraft`;
     setMessageSent(false);
   }, [creator]);
 

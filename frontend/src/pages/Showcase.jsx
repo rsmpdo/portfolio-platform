@@ -36,14 +36,9 @@ export default function Showcase() {
             <span className="gradient-text">PortfolioCraft</span>
           </h1>
 
-          <div className="space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed text-center max-w-3xl mx-auto">
-            <p>
-              In high-stakes hiring loops and executive agency pitches, hiring directors spend less than 45 seconds scanning a candidate's portfolio before deciding whether to advance them or pass. Traditional static portfolios—burdened by uncompressed screenshots, passive lists of programming languages, and vague descriptions—fail because they treat the portfolio as a digital archive rather than a persuasive product demonstration.
-            </p>
-            <p className="text-slate-400 text-sm sm:text-base">
-              The portfolios featured below represent the top 1% of independent creators, senior product designers, distributed systems engineers, and creative directors worldwide. Every layout has been engineered with real-time CSS theme tokens, quantified KPI case studies, and live sandboxed prototypes that turn passive visitors into immediate interview invitations and multi-thousand-dollar retainers.
-            </p>
-          </div>
+          <p className="text-slate-300 text-base sm:text-lg leading-relaxed text-center max-w-2xl mx-auto">
+            Explore live interactive portfolios and case studies built by designers and engineers getting hired worldwide.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
