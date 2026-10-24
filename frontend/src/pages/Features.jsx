@@ -89,7 +89,6 @@ export default function Features() {
       <Header />
 
       <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full space-y-24">
-        {/* Header section */}
         <div className="text-center max-w-3xl mx-auto">
           <div className="badge badge-indigo inline-flex mb-4">
             <Layers className="w-3.5 h-3.5" />
@@ -107,7 +106,6 @@ export default function Features() {
           </p>
         </div>
 
-        {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featureCategories.map((item, idx) => (
             <motion.div
@@ -136,7 +134,6 @@ export default function Features() {
           ))}
         </div>
 
-        {/* Deep-Dive Editorial Section 1: Visual Engine & Non-Destructive Template Switching */}
         <section className="glass gradient-border rounded-3xl p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-5">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-400">
@@ -195,7 +192,6 @@ export default function Features() {
           </div>
         </section>
 
-        {/* Deep-Dive Section 2: Tailored for Every Creative Discipline */}
         <section>
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-400 mb-3">
@@ -235,7 +231,6 @@ export default function Features() {
           </div>
         </section>
 
-        {/* CTA banner */}
         <div className="glass gradient-border rounded-[2rem] p-12 text-center relative overflow-hidden">
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="font-heading font-black text-3xl md:text-4xl text-white mb-4">

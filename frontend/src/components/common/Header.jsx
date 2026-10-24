@@ -38,7 +38,6 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50">
       <div className="mx-3 sm:mx-4 md:mx-8 mt-3 sm:mt-4">
         <div className="glass-dark rounded-2xl px-4 sm:px-6 h-14 flex items-center justify-between shadow-xl shadow-black/20 border border-white/[0.08]">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group shrink-0">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl glass border border-indigo-500/30 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <LogoIcon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -48,7 +47,6 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop Nav Links (lg and up) */}
           <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
             {NAV_ITEMS.map((item) => (
               <Link
@@ -65,7 +63,6 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Desktop & Mobile Right Actions */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             {isAuthenticated ? (
               <>
@@ -121,7 +118,6 @@ export default function Header() {
               </>
             )}
 
-            {/* Mobile & Tablet Hamburger Menu Button (< lg) */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -133,7 +129,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile & Tablet Dropdown Navigation Menu (< lg) */}
         {mobileMenuOpen && (
           <div className="lg:hidden mt-2 glass-dark rounded-2xl p-4 shadow-2xl border border-white/10 animate-fadeIn">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
@@ -157,7 +152,6 @@ export default function Header() {
               })}
             </div>
 
-            {/* Mobile Auth & Quick Actions Footer */}
             <div className="pt-3 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-2">
               {isAuthenticated ? (
                 <>

@@ -317,7 +317,6 @@ export default function Blog() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
 
-      {/* Floating Toast Notification */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
@@ -333,7 +332,6 @@ export default function Blog() {
       </AnimatePresence>
 
       <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full">
-        {/* Page Header */}
         <div className="text-center max-w-4xl mx-auto mb-14">
           <div className="badge badge-indigo inline-flex mb-4">
             <BookOpen className="w-3.5 h-3.5" />
@@ -353,7 +351,6 @@ export default function Blog() {
           </div>
         </div>
 
-        {/* Filter Bar: All Articles vs Saved Bookmarks */}
         <div className="flex items-center justify-center gap-3 mb-12">
           <button
             onClick={() => setFilterMode('all')}
@@ -383,7 +380,6 @@ export default function Blog() {
           </button>
         </div>
 
-        {/* Empty Bookmarks State */}
         {displayedPosts.length === 0 ? (
           <div className="glass gradient-border rounded-3xl p-12 text-center max-w-lg mx-auto mb-20">
             <Bookmark className="w-10 h-10 text-indigo-400 mx-auto mb-3 opacity-80" />
@@ -413,7 +409,6 @@ export default function Blog() {
                   className="glass-card gradient-border rounded-3xl overflow-hidden flex flex-col justify-between group relative"
                 >
                   <div>
-                    {/* Cover Image with HIGH CONTRAST SOLID BADGE & Quick Bookmark/Share */}
                     <div className="h-52 overflow-hidden relative">
                       <img
                         src={post.image}
@@ -421,13 +416,11 @@ export default function Blog() {
                         className="w-full h-full object-cover transition-transform duration-700"
                       />
 
-                      {/* High contrast badge overlay over image */}
                       <div className="absolute top-4 left-4 px-3.5 py-1.5 rounded-full bg-slate-950/95 border border-indigo-500/50 text-indigo-300 font-bold text-xs shadow-2xl backdrop-blur-md flex items-center gap-1.5">
                         <BookOpen className="w-3 h-3 text-indigo-400" />
                         <span>{post.category}</span>
                       </div>
 
-                      {/* Quick Bookmark & Share Actions on Card */}
                       <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5">
                         <button
                           type="button"
@@ -455,7 +448,6 @@ export default function Blog() {
                     </div>
 
                     <div className="p-6">
-                      {/* Date & Read Time */}
                       <div className="flex items-center gap-2 text-xs text-slate-300 font-medium mb-3">
                         <Calendar className="w-3.5 h-3.5 text-indigo-400" />
                         <span>{post.date}</span>
@@ -464,28 +456,23 @@ export default function Blog() {
                         <span>{post.readTime}</span>
                       </div>
 
-                      {/* Title */}
                       <h3 className="font-heading font-bold text-xl text-white mb-3 leading-snug">
                         {post.title}
                       </h3>
 
-                      {/* Excerpt */}
                       <p className="text-slate-300 text-xs leading-relaxed mb-4">
                         {post.excerpt}
                       </p>
 
-                      {/* Chapter count & author preview */}
                       <div className="flex items-center justify-between pt-3 border-t border-white/[0.06] text-[11px] text-slate-400">
                         <span className="flex items-center gap-1.5 font-semibold text-indigo-300">
                           <Layers className="w-3.5 h-3.5" />
-                          {post.content.length} In-Depth Chapters
                         </span>
                         <span>By {post.author}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Read Button — ONLY clicking this button opens the blog article */}
                   <div className="p-6 pt-0">
                     <button
                       type="button"
@@ -501,7 +488,6 @@ export default function Blog() {
             })}
           </div>
         )}
-        {/* ─── EDITORIAL MANIFESTO: PARAGRAPH CONTENT ─── */}
         <section className="mt-24 pt-20 border-t border-white/[0.07]">
           <div className="max-w-4xl mx-auto text-center mb-14">
             <div className="badge badge-indigo inline-flex mb-3">
@@ -521,7 +507,6 @@ export default function Blog() {
             </div>
           </div>
 
-          {/* 3 Core Curriculum Pillars */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             <div className="glass-card gradient-border rounded-3xl p-7 space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
@@ -569,7 +554,6 @@ export default function Blog() {
             </div>
           </div>
 
-          {/* Peer-Review Board Standards */}
           <div className="glass rounded-3xl p-8 sm:p-12 border border-white/[0.08] max-w-4xl mx-auto space-y-5 text-left">
             <div className="flex items-center gap-3">
               <Award className="w-6 h-6 text-indigo-400" />
@@ -587,7 +571,6 @@ export default function Blog() {
         </section>
       </main>
 
-      {/* Comprehensive Masterclass Article Reader Modal */}
       <AnimatePresence>
         {selectedPost && (
           <motion.div
@@ -605,7 +588,6 @@ export default function Blog() {
               className="glass gradient-border rounded-3xl max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto p-6 md:p-12 shadow-2xl relative"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
               <button
                 onClick={handleClosePost}
                 className="absolute top-6 right-6 p-2.5 rounded-2xl glass text-slate-400 hover:text-white transition"
@@ -613,7 +595,6 @@ export default function Blog() {
                 <X className="w-5 h-5" />
               </button>
 
-              {/* Category & Metadata */}
               <div className="flex flex-wrap items-center gap-3 mb-6">
                 <span className="px-3.5 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 font-bold text-xs">
                   {selectedPost.category}
@@ -629,12 +610,10 @@ export default function Blog() {
                 <span className="text-xs text-slate-400 font-medium">{selectedPost.readTime}</span>
               </div>
 
-              {/* Title */}
               <h1 className="font-heading font-black text-3xl md:text-5xl text-white leading-tight mb-6">
                 {selectedPost.title}
               </h1>
 
-              {/* Author Info + Working Bookmark & Share Controls */}
               <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-white/[0.08] relative">
                 <div className="flex items-center gap-3">
                   <img
@@ -656,7 +635,6 @@ export default function Blog() {
                 </div>
 
                 <div className="flex items-center gap-2.5 relative">
-                  {/* Working Bookmark Button */}
                   <button
                     onClick={(e) => toggleBookmark(e, selectedPost.id)}
                     className={`px-3.5 py-2 rounded-xl border text-xs font-bold flex items-center gap-2 transition ${
@@ -680,7 +658,6 @@ export default function Blog() {
                     </span>
                   </button>
 
-                  {/* Working Share Button + Dropdown */}
                   <div className="relative">
                     <button
                       onClick={(e) => handleShareClick(e, selectedPost)}
@@ -725,7 +702,6 @@ export default function Blog() {
                 </div>
               </div>
 
-              {/* Cover Image */}
               <div className="h-72 md:h-96 rounded-3xl overflow-hidden mb-8 border border-white/10 shadow-2xl">
                 <img
                   src={selectedPost.image}
@@ -734,7 +710,6 @@ export default function Blog() {
                 />
               </div>
 
-              {/* Executive Overview Box */}
               {selectedPost.overview && (
                 <div className="p-6 md:p-8 rounded-3xl bg-indigo-500/10 border border-indigo-500/25 mb-8 space-y-3">
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-300">
@@ -747,7 +722,6 @@ export default function Blog() {
                 </div>
               )}
 
-              {/* Before vs After Practical Comparison */}
               {selectedPost.beforeAfter && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
                   <div className="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/25 space-y-2">
@@ -769,7 +743,6 @@ export default function Blog() {
                 </div>
               )}
 
-              {/* Article Content Sections */}
               <div className="space-y-8 mb-12 text-slate-200 leading-relaxed">
                 {selectedPost.content.map((sec, i) => (
                   <div
@@ -787,7 +760,6 @@ export default function Blog() {
                 ))}
               </div>
 
-              {/* Key Takeaways */}
               <div className="glass gradient-border rounded-3xl p-8 border border-indigo-500/30 bg-indigo-500/5 mb-10">
                 <h4 className="font-heading font-bold text-xl text-white mb-4 flex items-center gap-2">
                   <CheckCircle2 className="w-6 h-6 text-emerald-400" />
@@ -806,7 +778,6 @@ export default function Blog() {
                 </ul>
               </div>
 
-              {/* Bottom Reader Bar */}
               <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/[0.08]">
                 <div className="flex items-center gap-2">
                   <button

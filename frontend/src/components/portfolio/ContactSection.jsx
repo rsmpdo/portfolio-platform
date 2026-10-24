@@ -83,7 +83,6 @@ export default function ContactSection({ props = {}, viewportMode }) {
       <div className="max-w-5xl mx-auto">
         <div className="glass gradient-border rounded-[2rem] overflow-hidden">
           <div className={`grid ${isSmall ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-5'}`}>
-            {/* Left Panel */}
             <div className={`${isSmall ? 'p-6' : 'lg:col-span-2 p-6 sm:p-10'} ${
               isEnterprise
                 ? 'bg-gradient-to-br from-purple-600/20 via-indigo-600/15 to-amber-500/10'
@@ -156,7 +155,6 @@ export default function ContactSection({ props = {}, viewportMode }) {
               </div>
             </div>
 
-            {/* Right Form */}
             <div className="lg:col-span-3 p-6 sm:p-10">
               {submitted ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12">

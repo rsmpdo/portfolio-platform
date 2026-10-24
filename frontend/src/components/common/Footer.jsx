@@ -9,7 +9,6 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
           
-          {/* Brand & Description */}
           <div className="max-w-xs">
             <Link to="/" className="flex items-center gap-2.5 mb-4 group">
               <div className="w-9 h-9 rounded-xl glass border border-indigo-500/30 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
@@ -20,14 +19,12 @@ export default function Footer() {
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
               Where talent meets opportunity. Build an Adobe Portfolio-grade showcase that makes people stop scrolling and start reaching out.
             </p>
-            {/* Live System Operational Status Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span>All Systems Operational</span>
             </div>
           </div>
 
-          {/* Nav Columns */}
           <div className="grid grid-cols-2 gap-x-16 gap-y-4">
             <div>
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Platform</h4>
@@ -65,7 +62,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Contact Information Widget */}
           <div className="max-w-xs w-full">
             <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Get In Touch</h4>
             
@@ -93,7 +89,6 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Social Icons */}
             <div className="flex items-center gap-2 pt-4 border-t border-white/[0.06]">
               <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
                 <Twitter className="w-3.5 h-3.5" />
@@ -111,7 +106,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Sub-footer */}
         <div className="pt-8 border-t border-white/[0.06] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} PortfolioCraft. All rights reserved.</p>
           <p className="text-xs text-slate-600">Designed for creators who mean business.</p>

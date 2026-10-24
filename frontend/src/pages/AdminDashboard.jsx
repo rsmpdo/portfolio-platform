@@ -172,7 +172,6 @@ function AdminMessagesSection() {
 
   return (
     <div className="space-y-8">
-      {/* 1. Recipient Contact Analytics Table (Who & How Many Times Contacted) */}
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
           <div>
@@ -221,7 +220,6 @@ function AdminMessagesSection() {
           </div>
         </div>
 
-        {/* Analytics Filters Bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4 p-3.5 rounded-2xl glass border border-white/[0.06]">
           <div className="flex flex-wrap items-center gap-1.5">
             {[
@@ -361,7 +359,6 @@ function AdminMessagesSection() {
         </div>
       </div>
 
-      {/* 2. Chronological Contact Event Log (With Password Authorization for Message Bodies) */}
       <div>
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
@@ -387,7 +384,6 @@ function AdminMessagesSection() {
           )}
         </div>
 
-        {/* Message Events Filter Bar */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-3.5 rounded-2xl glass border border-white/[0.06]">
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center p-1 rounded-xl bg-slate-900/90 border border-white/10 text-xs">
@@ -548,7 +544,6 @@ function AdminMessagesSection() {
                     </div>
                   </div>
 
-                  {/* Unlocked Message Body */}
                   {isUnlocked && unlockedBodies[msg._id] !== undefined && (
                     <div className="p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/25 text-xs text-slate-200 whitespace-pre-wrap leading-relaxed">
                       <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 mb-1 flex items-center gap-1">
@@ -565,7 +560,6 @@ function AdminMessagesSection() {
         </div>
       </div>
 
-      {/* Delete Contact Log Entry Popup Modal */}
       {deleteMsgTarget && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
@@ -625,7 +619,6 @@ function AdminMessagesSection() {
         document.body
       )}
 
-      {/* Password Authorization Modal to Unlock Message Bodies */}
       {showUnlockModal && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
@@ -814,7 +807,6 @@ function JobApplicationsSection() {
         </button>
       </div>
 
-      {/* Job Applications & CVs Filter Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-6 p-3.5 rounded-2xl glass border border-white/[0.06]">
         <div className="flex flex-wrap items-center gap-1.5">
           {[
@@ -982,7 +974,6 @@ function JobApplicationsSection() {
         </div>
       )}
 
-      {/* Delete Job Application Popup Modal */}
       {deleteAppTarget && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
@@ -1372,7 +1363,6 @@ export default function AdminDashboard() {
       <Header />
 
       <main className="flex-1 pt-32 pb-20 px-6 max-w-7xl mx-auto w-full">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 pb-6 border-b border-white/[0.06]">
           <div>
             <div className="badge badge-indigo inline-flex mb-3">
@@ -1403,7 +1393,6 @@ export default function AdminDashboard() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* System Metrics Cards (Click to filter & jump to section) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <button
                 type="button"
@@ -1463,7 +1452,6 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* ─── Section Navigation Tabs (Below Statistics) ─── */}
             <div className="flex flex-wrap items-center gap-2 p-2 rounded-2xl glass border border-white/[0.08]">
               {adminSections.map((sec) => {
                 const Icon = sec.icon;
@@ -1502,7 +1490,6 @@ export default function AdminDashboard() {
               })}
             </div>
 
-            {/* ─── SECTION 1: User Accounts & Plan Control ────────────────────────── */}
             {activeTab === 'users' && (
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -1526,7 +1513,6 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {/* User Plan, Role & Search Filter Bar */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-4 rounded-2xl glass border border-white/[0.06]">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1 mr-1">
@@ -1697,7 +1683,6 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {/* ─── Selected User Profile, Bio & Social Links Table Component ─── */}
                 <div className="mt-8">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                     <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
@@ -1916,7 +1901,6 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* ─── SECTION 2: Portfolio Content Moderation ────────────────────────── */}
             {activeTab === 'portfolios' && (
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -1939,7 +1923,6 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {/* Portfolio Status & Search Filter Bar */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-4 rounded-2xl glass border border-white/[0.06]">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1 mr-1">
@@ -2103,10 +2086,8 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* ─── SECTION 3: Platform Contact Messages Inbox & Analytics ────────────────────────── */}
             {activeTab === 'messages' && <AdminMessagesSection />}
 
-            {/* ─── SECTION 4: Manual Payment Requests ─────────────────────────────────── */}
             {activeTab === 'payments' && (
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -2135,7 +2116,6 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {/* Payment Requests Filter Bar */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-4 p-4 rounded-2xl glass border border-white/[0.06]">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1 mr-1">
@@ -2304,12 +2284,10 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* ─── SECTION 5: Careers Job Applications & CVs Management ────────────────────────── */}
             {activeTab === 'careers' && <JobApplicationsSection />}
           </div>
         )}
       </main>
-      {/* Payment Request Review Modal */}
       {reviewingRequest && (
         <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6">
           <div className="glass gradient-border rounded-3xl max-w-md w-full p-8 shadow-2xl">
@@ -2370,7 +2348,6 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Moderation Warning Modal */}
       {warnUser && (
         <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6">
           <div className="glass gradient-border rounded-3xl max-w-md w-full p-8 shadow-2xl relative">
@@ -2414,7 +2391,6 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Admin Password Authorization Modal for User Deletion & Portfolio Ban/Unban */}
       {adminAuthModal && (
         <div
           className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6"

@@ -335,9 +335,7 @@ export default function Home() {
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       <Header />
 
-      {/* ─── 1. CINEMATIC HERO & INTERACTIVE STUDIO SHOWCASE ────────────────── */}
       <section className="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 overflow-hidden">
-        {/* Multi-layered Aurora Ambient Lighting */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div
             className="absolute top-12 left-1/2 -translate-x-1/2 w-[850px] h-[500px] rounded-full blur-[150px] transition-colors duration-700 opacity-25"
@@ -350,7 +348,6 @@ export default function Home() {
           <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[120px]" />
         </div>
 
-        {/* Architectural Grid Overlay */}
         <div
           className="absolute inset-0 opacity-[0.025] pointer-events-none"
           style={{
@@ -361,14 +358,12 @@ export default function Home() {
         />
 
         <div className="relative z-10 max-w-6xl mx-auto">
-          {/* Top Hero Copy */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto mb-14"
           >
-            {/* Announcement Pill: removed '2.0' and arrow */}
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-7 shadow-lg">
               <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider">
                 NEW
@@ -376,19 +371,16 @@ export default function Home() {
               <span>PortfolioCraft · Visual CMS & Global Edge Publishing</span>
             </div>
 
-            {/* Main Headline */}
             <h1 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] text-white leading-[1.04] tracking-tight mb-6">
               Your Craft Is Extraordinary.
               <br />
               <span className="gradient-text">Give It the Stage It Deserves.</span>
             </h1>
 
-            {/* Subheadline */}
             <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
               Build an executive-grade, interactive portfolio in minutes—without writing a single line of code. Engineered with real-time theme tokens, KPI case study cards, and instant edge publishing to turn recruiters and high-ticket clients into inbound opportunities.
             </p>
 
-            {/* Primary & Secondary CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
               <Link
                 to="/register"
@@ -407,7 +399,6 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Creator Trust Strip */}
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
@@ -441,14 +432,12 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* ─── Interactive Live Studio Window Mockup ─── */}
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
             className="relative mx-auto max-w-5xl"
           >
-            {/* Persona Switcher Bar Above Browser Frame */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4 px-2">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400">
                 <Layers className="w-4 h-4 text-indigo-400" />
@@ -484,9 +473,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Browser Studio Window */}
             <div className="glass gradient-border rounded-3xl overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.75)] border border-white/15">
-              {/* Top Browser Chrome Bar */}
               <div className="bg-slate-900/90 border-b border-white/[0.08] px-4 py-3 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-rose-500/80" />
@@ -494,7 +481,6 @@ export default function Home() {
                   <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
                 </div>
 
-                {/* Live URL Bar */}
                 <div className="flex-1 max-w-md mx-auto px-3.5 py-1 rounded-xl bg-slate-950/90 border border-white/10 flex items-center justify-between text-xs font-mono text-slate-300">
                   <div className="flex items-center gap-2 truncate">
                     <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
@@ -505,7 +491,6 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* Device Viewport Indicator */}
                 <div className="hidden sm:flex items-center gap-2 text-slate-400">
                   <Monitor className="w-3.5 h-3.5 text-indigo-400" />
                   <Tablet className="w-3.5 h-3.5" />
@@ -513,7 +498,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Inside Studio Canvas */}
               <div className="p-6 sm:p-10 bg-slate-950/95 relative overflow-hidden">
                 <div
                   className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-[120px] opacity-20 pointer-events-none transition-colors duration-500"
@@ -521,7 +505,6 @@ export default function Home() {
                 />
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                  {/* Left: Creator Profile & KPI Metrics */}
                   <div className="lg:col-span-7 space-y-5">
                     <div
                       className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold border"
@@ -556,7 +539,6 @@ export default function Home() {
                       {activePersona.headline}
                     </p>
 
-                    {/* 3 KPI Impact Pills */}
                     <div className="grid grid-cols-3 gap-3 pt-1">
                       {activePersona.metrics.map((m, i) => (
                         <div
@@ -597,7 +579,6 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Right: Featured Case Study Cards Preview */}
                   <div className="lg:col-span-5 space-y-3.5">
                     <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider px-1">
                       <span>Featured Case Studies</span>
@@ -641,7 +622,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 2. QUANTIFIED IMPACT STATS STRIP ─────────────────────────── */}
       <section className="border-y border-white/[0.07] py-16 px-6 bg-white/[0.01]">
         <div className="max-w-6xl mx-auto">
           <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-slate-500 mb-10">
@@ -668,7 +648,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 3. BENTO GRID ARCHITECTURE (WHY PORTFOLIOCRAFT) ──────────── */}
       <section className="py-24 sm:py-28 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -685,9 +664,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Asymmetrical Bento Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Bento Card 1: 7 Columns — Visual CMS & Color Token Engine */}
             <div className="lg:col-span-7 glass-card gradient-border rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-br from-indigo-500/15 via-slate-900/40 to-purple-500/10">
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-bold">
@@ -702,7 +679,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Mini Visual Color Swatch Bar */}
               <div className="mt-8 p-4 rounded-2xl bg-slate-950/80 border border-white/10 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5">
                   <Palette className="w-4 h-4 text-indigo-400" />
@@ -728,7 +704,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Bento Card 2: 5 Columns — Hiring Manager KPI Proof */}
             <div className="lg:col-span-5 glass-card gradient-border rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-br from-purple-500/15 via-slate-900/40 to-pink-500/10">
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold">
@@ -755,7 +730,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Bento Card 3: 4 Columns — Cloudinary CDN */}
             <div className="lg:col-span-4 glass-card rounded-3xl p-7 border border-white/[0.08] space-y-3">
               <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                 <Upload className="w-5 h-5" />
@@ -768,7 +742,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Bento Card 4: 4 Columns — Interactive Embeds */}
             <div className="lg:col-span-4 glass-card rounded-3xl p-7 border border-white/[0.08] space-y-3">
               <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
                 <Code2 className="w-5 h-5" />
@@ -781,7 +754,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Bento Card 5: 4 Columns — Privacy-First Inquiry Routing */}
             <div className="lg:col-span-4 glass-card rounded-3xl p-7 border border-white/[0.08] space-y-3">
               <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                 <ShieldCheck className="w-5 h-5" />
@@ -797,7 +769,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 4. HANDCRAFTED TEMPLATES PREVIEW SECTION ────────────────── */}
       <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
@@ -865,7 +836,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 5. HOW IT WORKS (3-STEP WORKFLOW) ────────────────────────── */}
       <section className="py-24 px-6 border-t border-white/[0.06]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -901,7 +871,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 6. CREATOR STORIES & VERIFIED OUTCOMES ───────────────────── */}
       <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -961,7 +930,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 7. INTERACTIVE ECOSYSTEM & EMBEDS SECTION ────────────────── */}
       <section className="py-24 px-6 border-t border-white/[0.06]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -1014,7 +982,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 8. FEATURE COMPARISON MATRIX ─────────────────────────────── */}
       <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -1082,7 +1049,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 9. FREQUENTLY ASKED QUESTIONS (FAQ) ──────────────────────── */}
       <section className="py-24 px-6 border-t border-white/[0.06]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
@@ -1140,7 +1106,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 10. FINAL FLAGSHIP CTA ───────────────────────────────────── */}
       <section className="py-24 sm:py-28 px-6 border-t border-white/[0.06] bg-white/[0.01]">
         <div className="max-w-5xl mx-auto text-center">
           <motion.div

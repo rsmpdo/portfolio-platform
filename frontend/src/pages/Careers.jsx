@@ -223,7 +223,6 @@ export default function Careers() {
       <Header />
 
       <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full space-y-24">
-        {/* Header Hero */}
         <div className="text-center max-w-3xl mx-auto">
           <div className="badge badge-indigo inline-flex mb-4">
             <Briefcase className="w-3.5 h-3.5" />
@@ -241,7 +240,6 @@ export default function Careers() {
           </p>
         </div>
 
-        {/* Why Work With Us Narrative & Culture */}
         <section className="glass gradient-border rounded-3xl p-8 md:p-12 space-y-8">
           <div className="max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-400">
@@ -275,7 +273,6 @@ export default function Careers() {
           </div>
         </section>
 
-        {/* Perks & Benefits Section */}
         <section>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <div className="badge badge-indigo inline-flex mb-3">
@@ -309,7 +306,6 @@ export default function Careers() {
           </div>
         </section>
 
-        {/* Open Job Listings */}
         <section>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
@@ -362,7 +358,6 @@ export default function Careers() {
           </div>
         </section>
 
-        {/* How We Hire Process */}
         <section className="glass-card gradient-border rounded-3xl p-8 md:p-12">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h2 className="font-heading font-black text-2xl md:text-4xl text-white mb-3">
@@ -390,11 +385,9 @@ export default function Careers() {
         </section>
       </main>
 
-      {/* ─── Job Application Modal ────────────────────────── */}
       {selectedJob && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
           <div className="glass gradient-border rounded-3xl max-w-2xl w-full p-6 md:p-8 relative shadow-2xl my-8">
-            {/* Close Button */}
             <button
               onClick={() => setSelectedJob(null)}
               className="absolute top-5 right-5 p-2 rounded-xl glass text-slate-400 hover:text-white transition"

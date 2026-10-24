@@ -238,7 +238,6 @@ export default function ComponentInspector() {
 
   return (
     <aside className="w-80 h-full glass-dark border-l border-white/[0.06] flex flex-col z-30">
-      {/* Header */}
       <div className="p-4 border-b border-white/[0.06] flex flex-col gap-1.5 bg-white/[0.01]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -256,10 +255,8 @@ export default function ComponentInspector() {
         </p>
       </div>
 
-      {/* Properties Stream */}
       <div className="flex-1 overflow-y-auto p-4 space-y-5">
 
-        {/* ─── HeroBanner ────────────────────────── */}
         {selectedComp.type === 'HeroBanner' && (
           <>
             <Field label="Template Tagline / Badge" tip="Small highlight pill displayed above the headline">
@@ -333,7 +330,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── AboutMe ────────────────────────────── */}
         {selectedComp.type === 'AboutMe' && (
           <>
             <Field label="Section Heading">
@@ -395,7 +391,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── ProjectsGrid ──────────────────────── */}
         {selectedComp.type === 'ProjectsGrid' && (
           <>
             <Field label="Section Title">
@@ -545,7 +540,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── ExperienceTimeline ────────────────── */}
         {selectedComp.type === 'ExperienceTimeline' && (
           <>
             <Field label="Section Heading">
@@ -681,7 +675,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── SkillsCloud ───────────────────────── */}
         {selectedComp.type === 'SkillsCloud' && (
           <>
             <Field label="Section Heading">
@@ -772,7 +765,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── TestimonialsCarousel ───────────────── */}
         {selectedComp.type === 'TestimonialsCarousel' && (
           <>
             <Field label="Section Heading">
@@ -891,7 +883,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── ContactSection ────────────────────── */}
         {selectedComp.type === 'ContactSection' && (
           <>
             <Field label="Section Title">
@@ -946,7 +937,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── MediaGallery ──────────────────────── */}
         {selectedComp.type === 'MediaGallery' && (
           <>
             <Field label="Section Heading">
@@ -1060,7 +1050,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── PremiumEmbed (Pro / Studio Feature) ─ */}
         {selectedComp.type === 'PremiumEmbed' && (
           <>
             <Field label="Section Title">
@@ -1127,7 +1116,6 @@ export default function ComponentInspector() {
           </>
         )}
 
-        {/* ─── AdvancedMetrics (Studio Feature) ───── */}
         {selectedComp.type === 'AdvancedMetrics' && (
           <>
             <Field label="Section Heading">

@@ -2,7 +2,6 @@
 // Used by: Editor (applyTemplate), TemplatePreview/Demo, EditorSidebar theming.
 export const templateLayouts = {
 
-  // ─── 1. MINIMALIST EDITORIAL ────────────────────────────────────────────────
   "minimalist-editorial": {
     editorTheme: {
       canvasBg: '#e8ecf0',
@@ -48,7 +47,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 2. DARK CYBER ──────────────────────────────────────────────────────────
   "dark-cyber": {
     editorTheme: {
       canvasBg: '#000000',
@@ -105,7 +103,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 3. CREATIVE DIRECTOR ───────────────────────────────────────────────────
   "creative-director": {
     editorTheme: {
       canvasBg: '#0a0a0a',
@@ -164,7 +161,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 4. INTERACTIVE SHOWCASE ────────────────────────────────────────────────
   "interactive-showcase": {
     editorTheme: {
       canvasBg: '#030712',
@@ -212,7 +208,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 5. LUXURY MOTION PRO ───────────────────────────────────────────────────
   "luxury-motion-pro": {
     editorTheme: {
       canvasBg: '#0a0908',
@@ -272,7 +267,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 6. FINTECH SAAS PRO ────────────────────────────────────────────────────
   "fintech-saas-pro": {
     editorTheme: {
       canvasBg: '#f1f5f9',
@@ -329,7 +323,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 7. AI NEURAL LABS PRO ──────────────────────────────────────────────────
   "ai-neural-labs-pro": {
     editorTheme: {
       canvasBg: '#0a0a0f',
@@ -388,7 +381,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 8. GLOBAL AGENCY STUDIO ────────────────────────────────────────────────
   "global-agency-studio": {
     editorTheme: {
       canvasBg: '#0f172a',
@@ -451,7 +443,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 9. HAUTE COUTURE STUDIO ────────────────────────────────────────────────
   "haute-couture-studio": {
     editorTheme: {
       canvasBg: '#fdfbf7',
@@ -502,7 +493,6 @@ export const templateLayouts = {
     ]
   },
 
-  // ─── 10. SPATIAL ARCHITECT STUDIO ───────────────────────────────────────────
   "spatial-architect-studio": {
     editorTheme: {
       canvasBg: '#1e293b',

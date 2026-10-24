@@ -93,7 +93,6 @@ export default function Editor() {
     <div className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
       <Header />
 
-      {/* ─── Editor Toolbar ────────────────────────── */}
       <div className="min-h-[56px] py-2 border-b border-white/[0.06] glass-dark px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2 mt-[68px] sm:mt-[72px] z-30">
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-2">
@@ -101,7 +100,6 @@ export default function Editor() {
             <span className="font-heading font-bold text-xs sm:text-sm text-white">Portfolio Editor</span>
           </div>
 
-          {/* Mobile Drawer Toggles (< lg) */}
           {!isPreviewMode && (
             <div className="flex lg:hidden items-center gap-1.5">
               <button
@@ -131,7 +129,6 @@ export default function Editor() {
             </div>
           )}
 
-          {/* Active Template Badge */}
           {templateLabel && (
             <div className="hidden md:flex items-center gap-2">
               <div className="h-5 w-px bg-white/10" />
@@ -175,7 +172,6 @@ export default function Editor() {
             </div>
           )}
 
-          {/* Publication Status Badge */}
           {activeLayout && (
             <div className="hidden sm:flex items-center gap-2">
               <div className="h-5 w-px bg-white/10" />
@@ -191,7 +187,6 @@ export default function Editor() {
           )}
 
           <div className="h-5 w-px bg-white/10 hidden sm:block" />
-          {/* Viewport Switcher */}
           <div className="hidden sm:flex items-center glass p-1 rounded-xl">
             {[
               { mode: 'desktop', icon: Monitor, label: 'Desktop' },
@@ -214,7 +209,6 @@ export default function Editor() {
           </div>
         </div>
 
-        {/* Action Controls */}
         <div className="flex items-center gap-2 sm:gap-3">
           {activeLayout?.handle && (
             <a
@@ -228,7 +222,6 @@ export default function Editor() {
             </a>
           )}
 
-          {/* Save Draft Button */}
           <button
             onClick={handleSaveDraft}
             disabled={isSaving}
@@ -239,7 +232,6 @@ export default function Editor() {
             <span className="hidden xs:inline">Save Draft</span>
           </button>
 
-          {/* Publish / Unpublish Toggle */}
           <button
             onClick={handleTogglePublish}
             disabled={isSaving}
@@ -281,16 +273,13 @@ export default function Editor() {
         </div>
       </div>
 
-      {/* ─── Main Workspace ────────────────────────── */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Desktop Left Sidebar */}
         {!isPreviewMode && (
           <div className="hidden lg:block h-full">
             <EditorSidebar accentColor={accentColor} templateLabel={templateLabel} />
           </div>
         )}
 
-        {/* Mobile Left Sidebar Drawer (< lg) */}
         {!isPreviewMode && mobilePanel === 'sidebar' && (
           <div className="lg:hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex">
             <div className="relative h-full max-w-[85vw]">
@@ -309,7 +298,6 @@ export default function Editor() {
           </div>
         )}
 
-        {/* Canvas — bg driven by active template */}
         <main
           className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col items-center transition-colors duration-500"
           style={{ background: canvasBg }}
@@ -326,9 +314,7 @@ export default function Editor() {
           ) : (
             <div className="w-full flex justify-center">
               {viewportMode === 'mobile' ? (
-                /* ─── Mobile Phone Frame (390px) ─── */
                 <div className="w-[390px] max-w-full my-4 bg-slate-950 rounded-[44px] border-[10px] border-slate-800 shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10 flex flex-col overflow-hidden transition-all duration-300">
-                  {/* Phone Top Status Bar / Dynamic Island */}
                   <div className="h-8 bg-slate-900 border-b border-white/5 flex items-center justify-between px-6 flex-shrink-0 select-none">
                     <span className="text-[11px] font-semibold text-slate-400">9:41</span>
                     <div className="w-20 h-4 bg-slate-950 rounded-full border border-slate-800 flex items-center justify-center gap-1.5">
@@ -338,7 +324,6 @@ export default function Editor() {
                     <span className="text-[10px] font-bold text-slate-400 tracking-wider">5G</span>
                   </div>
 
-                  {/* Device Inner Content with isolated scrolling */}
                   <div 
                     className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] portfolio-theme-root transition-colors duration-300"
                     style={themeCssVariables}
@@ -366,20 +351,16 @@ export default function Editor() {
                     )}
                   </div>
 
-                  {/* Phone Bottom Home Indicator */}
                   <div className="h-5 bg-slate-900 border-t border-white/5 flex items-center justify-center flex-shrink-0">
                     <div className="w-28 h-1 bg-slate-600 rounded-full" />
                   </div>
                 </div>
               ) : viewportMode === 'tablet' ? (
-                /* ─── Tablet Frame (768px) ─── */
                 <div className="w-[768px] max-w-full my-4 bg-slate-950 rounded-[32px] border-[12px] border-slate-800 shadow-[0_25px_70px_rgba(0,0,0,0.85)] ring-1 ring-white/10 flex flex-col overflow-hidden transition-all duration-300">
-                  {/* Tablet Top Camera Bezel */}
                   <div className="h-6 bg-slate-900 border-b border-white/5 flex items-center justify-center flex-shrink-0 select-none">
                     <div className="w-2.5 h-2.5 rounded-full bg-slate-950 border border-slate-700/60" />
                   </div>
 
-                  {/* Device Inner Content with isolated scrolling */}
                   <div 
                     className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] portfolio-theme-root transition-colors duration-300"
                     style={themeCssVariables}
@@ -407,13 +388,11 @@ export default function Editor() {
                     )}
                   </div>
 
-                  {/* Tablet Bottom Home Indicator */}
                   <div className="h-4 bg-slate-900 border-t border-white/5 flex items-center justify-center flex-shrink-0">
                     <div className="w-36 h-1 bg-slate-600 rounded-full" />
                   </div>
                 </div>
               ) : (
-                /* ─── Desktop Standard View ─── */
                 <div 
                   className="w-full max-w-6xl mx-auto portfolio-theme-root rounded-3xl p-4 md:p-8 transition-colors duration-300 shadow-2xl"
                   style={themeCssVariables}
@@ -449,14 +428,12 @@ export default function Editor() {
           )}
         </main>
 
-        {/* Desktop Right Inspector */}
         {!isPreviewMode && (
           <div className="hidden lg:block h-full">
             <ComponentInspector />
           </div>
         )}
 
-        {/* Mobile Right Inspector Drawer (< lg) */}
         {!isPreviewMode && mobilePanel === 'inspector' && (
           <div className="lg:hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex justify-end">
             <button

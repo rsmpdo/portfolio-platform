@@ -26,7 +26,6 @@ export default function Showcase() {
       <Header />
 
       <main className="flex-1 pt-32 pb-24 px-6 max-w-6xl mx-auto w-full">
-        {/* ─── 1. PAGE HEADER & CURATORIAL MANIFESTO ──────────────────────── */}
         <div className="max-w-4xl mx-auto text-center mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
             <Award className="w-3.5 h-3.5" />
@@ -47,7 +46,6 @@ export default function Showcase() {
           </div>
         </div>
 
-        {/* ─── 2. CREATOR CARDS WITH INTERACTIVE PROJECTS ─────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           {SHOWCASE_CREATORS.map((s, idx) => (
             <motion.div
@@ -58,7 +56,6 @@ export default function Showcase() {
               className="glass-card gradient-border rounded-3xl p-6 flex flex-col justify-between group"
             >
               <div>
-                {/* Creator Header with Avatar & Details */}
                 <Link
                   to={`/showcase/${s.handle}`}
                   className="flex items-center gap-3 mb-5 pb-4 border-b border-white/[0.06] hover:opacity-90 transition"
@@ -77,7 +74,6 @@ export default function Showcase() {
                   </div>
                 </Link>
 
-                {/* 3 Featured Projects Inside Card */}
                 <div className="mb-5">
                   <div className="flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider mb-3">
                     <div className="flex items-center gap-1.5">
@@ -107,7 +103,6 @@ export default function Showcase() {
                   </div>
                 </div>
 
-                {/* Testimonial Quote */}
                 <div className="mb-6 bg-white/[0.02] p-3.5 rounded-2xl border border-white/[0.04]">
                   <div className="flex gap-1 mb-2">
                     {[...Array(5)].map((_, i) => (
@@ -118,7 +113,6 @@ export default function Showcase() {
                 </div>
               </div>
 
-              {/* View Live Portfolio Button */}
               <div>
                 <Link
                   to={`/showcase/${s.handle}`}
@@ -132,7 +126,6 @@ export default function Showcase() {
           ))}
         </div>
 
-        {/* ─── 3. THE 4 EVALUATION STANDARDS (IN-DEPTH PARAGRAPHS) ─────────── */}
         <section className="mb-24 border-t border-white/[0.07] pt-20">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="badge badge-emerald inline-flex mb-3">
@@ -148,7 +141,6 @@ export default function Showcase() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Pillar 1 */}
             <div className="glass-card gradient-border rounded-3xl p-8 space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                 <BarChart3 className="w-6 h-6" />
@@ -164,7 +156,6 @@ export default function Showcase() {
               </p>
             </div>
 
-            {/* Pillar 2 */}
             <div className="glass-card gradient-border rounded-3xl p-8 space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                 <Code2 className="w-6 h-6" />
@@ -180,7 +171,6 @@ export default function Showcase() {
               </p>
             </div>
 
-            {/* Pillar 3 */}
             <div className="glass-card gradient-border rounded-3xl p-8 space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
                 <Layers className="w-6 h-6" />
@@ -196,7 +186,6 @@ export default function Showcase() {
               </p>
             </div>
 
-            {/* Pillar 4 */}
             <div className="glass-card gradient-border rounded-3xl p-8 space-y-4">
               <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                 <ShieldCheck className="w-6 h-6" />
@@ -214,7 +203,6 @@ export default function Showcase() {
           </div>
         </section>
 
-        {/* ─── 4. CREATOR STRATEGY DEEP-DIVES (PARAGRAPH SPOTLIGHTS) ──────── */}
         <section className="mb-24 border-t border-white/[0.07] pt-20">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="badge badge-indigo inline-flex mb-3">
@@ -230,7 +218,6 @@ export default function Showcase() {
           </div>
 
           <div className="space-y-8">
-            {/* Deep-Dive 1: Alex Morgan */}
             <div className="glass rounded-3xl p-8 sm:p-10 border border-white/[0.08] relative overflow-hidden">
               <div className="flex flex-col md:flex-row gap-6 items-start">
                 <img
@@ -266,7 +253,6 @@ export default function Showcase() {
               </div>
             </div>
 
-            {/* Deep-Dive 2: Marcus Vance */}
             <div className="glass rounded-3xl p-8 sm:p-10 border border-white/[0.08] relative overflow-hidden">
               <div className="flex flex-col md:flex-row gap-6 items-start">
                 <img
@@ -302,7 +288,6 @@ export default function Showcase() {
               </div>
             </div>
 
-            {/* Deep-Dive 3: Elena Rostova */}
             <div className="glass rounded-3xl p-8 sm:p-10 border border-white/[0.08] relative overflow-hidden">
               <div className="flex flex-col md:flex-row gap-6 items-start">
                 <img
@@ -340,7 +325,6 @@ export default function Showcase() {
           </div>
         </section>
 
-        {/* ─── 5. HOW TO SUBMIT YOUR PORTFOLIO (PARAGRAPH SECTION) ────────── */}
         <section className="glass gradient-border rounded-3xl p-8 sm:p-12 text-center max-w-4xl mx-auto border border-white/10">
           <div className="badge badge-indigo inline-flex mb-4">
             <Globe className="w-3.5 h-3.5" />

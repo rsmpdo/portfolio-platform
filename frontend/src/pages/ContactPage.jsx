@@ -51,7 +51,6 @@ export default function ContactPage() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
       <main className="flex-1 pt-32 pb-20">
-        {/* ─── Top Hero & Introductory Content ─── */}
         <section className="px-6 max-w-5xl mx-auto text-center mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
             <Headphones className="w-3.5 h-3.5" />
@@ -69,7 +68,6 @@ export default function ContactPage() {
           </p>
         </section>
 
-        {/* ─── 4 Inquiry Channels Grid ─── */}
         <section className="px-6 max-w-5xl mx-auto mb-16">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {inquiryChannels.map((channel, idx) => {
@@ -100,7 +98,6 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ─── US Hubs & Direct Commitment Banner ─── */}
         <section className="px-6 max-w-5xl mx-auto mb-10">
           <div className="glass gradient-border rounded-3xl p-8 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-3">
@@ -134,7 +131,6 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ─── 1. General Support & Platform Inquiries Form ─── */}
         <ContactSection
           props={{
             badgeText: "General Inquiries & Support",
@@ -151,7 +147,6 @@ export default function ContactPage() {
           }}
         />
 
-        {/* ─── Enterprise Introduction Divider ─── */}
         <section className="px-6 max-w-5xl mx-auto pt-8 pb-2">
           <div className="glass-card rounded-3xl p-8 border border-white/[0.08] space-y-3">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-400">
@@ -167,7 +162,6 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ─── 2. Enterprise & Custom Solutions — Contact Sales Form ─── */}
         <div id="enterprise-sales">
           <ContactSection
             props={{
