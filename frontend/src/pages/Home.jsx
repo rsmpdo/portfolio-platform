@@ -1,236 +1,844 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { ArrowRight, Star, Zap, Eye, Award, MousePointer2, CheckCircle } from 'lucide-react';
+import {
+  ArrowRight,
+  Star,
+  Zap,
+  Eye,
+  Award,
+  MousePointer2,
+  CheckCircle2,
+  Layers,
+  Palette,
+  Globe,
+  ShieldCheck,
+  Monitor,
+  Tablet,
+  Smartphone,
+  Upload,
+  BarChart3,
+  ExternalLink,
+  Code2,
+  Briefcase,
+  Building2,
+  Lock
+} from 'lucide-react';
 
-const stats = [
-  { value: '10K+', label: 'Portfolios Created' },
-  { value: '94%', label: 'Interview Rate Boost' },
-  { value: '3x', label: 'More Client Inquiries' },
-  { value: '< 5min', label: 'Setup Time' }
-];
-
-const features = [
+const HERO_PERSONAS = [
   {
-    icon: Eye,
-    title: 'Make a Lasting First Impression',
-    description: 'Your work deserves more than a PDF. Create a visual story that keeps potential clients and employers glued to the screen.',
-    gradient: 'from-indigo-500/20 to-purple-500/10'
+    id: 'alex',
+    label: 'Product Designer',
+    name: 'Alex Morgan',
+    role: 'Principal Product Designer · San Francisco',
+    handle: 'portfoliocraft.io/p/alex',
+    route: '/showcase/alex',
+    accent: '#6366f1',
+    secondary: '#a855f7',
+    badge: 'Available for Q4 Advisory & Principal Roles',
+    headline: 'Designing spatial interfaces & multi-brand design systems at scale.',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80',
+    metrics: [
+      { value: '+34%', label: '30-Day Retention' },
+      { value: '$1.4B', label: 'Assets Tracked' },
+      { value: '4.9★', label: 'App Store Rating' }
+    ],
+    projects: [
+      {
+        title: 'Aura Spatial Banking OS',
+        tag: 'Fintech · Design System',
+        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        title: 'Kinetix Generative Studio',
+        tag: 'AI Workflow · WebGL',
+        image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80'
+      }
+    ]
   },
   {
-    icon: MousePointer2,
-    title: 'Click to Customize. No Code.',
-    description: 'Drag sections. Swap images. Tweak colors. Publish. Your portfolio, your rules — all from a beautifully simple editor.',
-    gradient: 'from-purple-500/20 to-pink-500/10'
+    id: 'marcus',
+    label: 'Full-Stack Architect',
+    name: 'Marcus Vance',
+    role: 'Staff Cloud & Distributed Systems Engineer · Austin',
+    handle: 'portfoliocraft.io/p/marcus',
+    route: '/showcase/marcus',
+    accent: '#10b981',
+    secondary: '#06b6d4',
+    badge: 'Open to Principal Architecture Consulting',
+    headline: 'Engineering sub-millisecond edge runtimes and zero-downtime cloud platforms.',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+    metrics: [
+      { value: '99.99%', label: 'Edge SLA Uptime' },
+      { value: '1.2M', label: 'Req / Sec Peak' },
+      { value: '-62%', label: 'Cloud Infra Cost' }
+    ],
+    projects: [
+      {
+        title: 'Hyperion Mesh Telemetry',
+        tag: 'Rust · Kubernetes · eBPF',
+        image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        title: 'Nexus Distributed KV Store',
+        tag: 'Go · Raft Consensus',
+        image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80'
+      }
+    ]
   },
   {
-    icon: Zap,
-    title: 'Live in Under 5 Minutes',
-    description: 'While others are still setting up templates, your portfolio is already live and getting views. Speed is your superpower.',
-    gradient: 'from-amber-500/20 to-orange-500/10'
-  },
-  {
-    icon: Award,
-    title: 'Designed to Get You Hired',
-    description: 'Every layout, font, and animation is crafted to signal one thing: you are the best person for the job.',
-    gradient: 'from-emerald-500/20 to-teal-500/10'
+    id: 'elena',
+    label: 'Creative Director',
+    name: 'Elena Rostova',
+    role: 'VP of Brand & Creative Direction · New York & London',
+    handle: 'portfoliocraft.io/p/elena',
+    route: '/showcase/elena',
+    accent: '#f59e0b',
+    secondary: '#ec4899',
+    badge: 'Booking Global Brand Campaigns · 2027',
+    headline: 'Crafting monumental editorial identities, luxury motion, and 3D digital exhibitions.',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
+    metrics: [
+      { value: '+65%', label: 'Brand Recall Lift' },
+      { value: '28', label: 'Global Markets' },
+      { value: '14x', label: 'Award Winner' }
+    ],
+    projects: [
+      {
+        title: 'Aethelgard Cultural Identity',
+        tag: 'Variable Typography · 3D',
+        image: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=600&q=80'
+      },
+      {
+        title: 'Maison Lumière Runway',
+        tag: 'Haute Couture · Direction',
+        image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80'
+      }
+    ]
   }
 ];
 
-const testimonials = [
+const IMPACT_STATS = [
+  { value: '10,000+', label: 'Active Creator Portfolios', sub: 'Across 140+ countries worldwide' },
+  { value: '94%', label: 'Recruiter Response Lift', sub: 'Compared to static PDF resumes' },
+  { value: '$45M+', label: 'Client Retainers Won', sub: 'Through direct portfolio inquiries' },
+  { value: '< 5 min', label: 'Average Launch Time', sub: 'Zero coding or setup required' }
+];
+
+const FEATURED_TEMPLATES = [
   {
-    quote: "I sent my portfolio link instead of a resume. Got three offers in a week.",
-    author: "Jordan K.",
-    role: "Product Designer at Figma"
+    id: 'minimalist-editorial',
+    name: 'Minimalist Editorial',
+    category: 'Product & UI Designers',
+    tier: 'Free Tier',
+    tierColor: 'text-indigo-400 border-indigo-500/30 bg-indigo-500/10',
+    image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80',
+    desc: 'Architectural grid precision, bold editorial typography, and structured case study storytelling.'
   },
   {
-    quote: "It looks like I spent months designing it. I built it in an afternoon.",
-    author: "Priya M.",
-    role: "Senior Developer at Stripe"
+    id: 'fintech-saas-pro',
+    name: 'Fintech & SaaS Product Lead',
+    category: 'Engineers & Product Leaders',
+    tier: 'Pro Creator',
+    tierColor: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
+    image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=80',
+    desc: 'Built-in ARR impact scorecards, interactive Figma embeds, and system architecture timelines.'
   },
   {
-    quote: "Clients message me directly from my portfolio. It's my best salesperson.",
-    author: "Carlos R.",
-    role: "Creative Director & Freelancer"
+    id: 'global-agency-studio',
+    name: 'Global Agency & Design Studio',
+    category: 'Boutique Studios & Directors',
+    tier: 'Studio Plan',
+    tierColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
+    desc: 'Cinematic video headers, full white-label branding removal, and multi-portfolio management.'
+  }
+];
+
+const WORKFLOW_STEPS = [
+  {
+    step: '01',
+    title: 'Select an Industry-Validated Template',
+    description:
+      'Start with one of 10 handcrafted layouts co-designed with hiring managers and creative directors from top US tech companies. Switch templates anytime without losing your content.'
+  },
+  {
+    step: '02',
+    title: 'Customize Sections & Color Tokens Visually',
+    description:
+      'Reorder modular sections, upload 4K visuals via Cloudinary CDN, embed live Figma or Spline prototypes, and fine-tune 6 granular CSS color tokens with live Desktop, Tablet, and Mobile preview.'
+  },
+  {
+    step: '03',
+    title: 'Publish Instantly to Your Custom Handle',
+    description:
+      'Go live on your dedicated `/p/yourname` URL in one click. Capture recruiter messages and client briefs directly inside your privacy-protected inquiry inbox.'
+  }
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      'I replaced my static PDF resume with my PortfolioCraft link and landed three Staff Product Designer interviews in a single week. Hiring managers specifically praised how clearly the KPI metrics stood out.',
+    author: 'Jordan Kensington',
+    role: 'Principal Product Designer · San Francisco, CA',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+    metric: '3 Executive Offers in 7 Days'
+  },
+  {
+    quote:
+      'It looks like I hired a bespoke design agency for $15,000, yet I built and published my entire site on a Sunday afternoon. The dark cyberpunk theme and architecture timeline are unmatched.',
+    author: 'Priya Madhavan',
+    role: 'Senior Distributed Systems Engineer · New York, NY',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80',
+    metric: 'Published in 25 Minutes'
+  },
+  {
+    quote:
+      'Our boutique studio runs four tailored vertical portfolios under one Studio account with white-label branding enabled. Prospective enterprise clients message us directly from our case studies.',
+    author: 'Carlos Rivera',
+    role: 'Founding Partner, Rivera Digital Studio · Austin, TX',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+    metric: '$180K+ New Client Retainers'
   }
 ];
 
 export default function Home() {
+  const [activePersonaIdx, setActivePersonaIdx] = useState(0);
+  const activePersona = HERO_PERSONAS[activePersonaIdx];
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       <Header />
 
-      {/* ─── Hero Section ─────────────────────────── */}
-      <section className="relative min-h-screen flex items-center justify-center pt-24 pb-16 px-6 overflow-hidden">
-        {/* Ambient Background */}
+      {/* ─── 1. CINEMATIC HERO & INTERACTIVE STUDIO SHOWCASE ────────────────── */}
+      <section className="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 overflow-hidden">
+        {/* Multi-layered Aurora Ambient Lighting */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-indigo-600/10 blur-[120px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-purple-600/8 blur-[100px]" />
-          <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-blue-600/6 blur-[80px]" />
+          <div
+            className="absolute top-12 left-1/2 -translate-x-1/2 w-[850px] h-[500px] rounded-full blur-[150px] transition-colors duration-700 opacity-25"
+            style={{ backgroundColor: activePersona.accent }}
+          />
+          <div
+            className="absolute top-1/3 right-1/4 w-[450px] h-[450px] rounded-full blur-[130px] transition-colors duration-700 opacity-15"
+            style={{ backgroundColor: activePersona.secondary }}
+          />
+          <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[120px]" />
         </div>
 
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-[0.015]" style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-          backgroundSize: '60px 60px'
-        }} />
+        {/* Architectural Grid Overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.025] pointer-events-none"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
+            backgroundSize: '64px 64px'
+          }}
+        />
 
-        <div className="relative z-10 max-w-5xl mx-auto text-center">
+        <div className="relative z-10 max-w-6xl mx-auto">
+          {/* Top Hero Copy */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-4xl mx-auto mb-14"
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 badge badge-indigo mb-8">
-              <Award className="w-3.5 h-3.5" />
-              <span>The Portfolio Platform Creators Trust</span>
+            {/* Announcement Pill */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-7 shadow-lg">
+              <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider">
+                NEW
+              </span>
+              <span>PortfolioCraft 2.0 · Visual CMS & Global Edge Publishing</span>
+              <ArrowRight className="w-3.5 h-3.5 text-indigo-400" />
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-heading font-black text-5xl md:text-7xl lg:text-8xl text-white leading-[1.05] tracking-tight mb-8">
-              Your work is{' '}
-              <span className="relative">
-                <span className="gradient-text">extraordinary.</span>
-              </span>
+            <h1 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] text-white leading-[1.04] tracking-tight mb-6">
+              Your Craft Is Extraordinary.
               <br />
-              <span className="text-slate-400 font-light italic font-display">
-                Does your portfolio say that?
-              </span>
+              <span className="gradient-text">Give It the Stage It Deserves.</span>
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed font-normal">
-              Stop losing opportunities to a boring portfolio. Build one that makes people lean forward — then reach out.
+            <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+              Build an executive-grade, interactive portfolio in minutes—without writing a single line of code. Engineered with real-time theme tokens, KPI case study cards, and instant edge publishing to turn recruiters and high-ticket clients into inbound opportunities.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            {/* Primary & Secondary CTAs */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
               <Link
                 to="/register"
-                className="group btn-primary inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-base"
+                className="w-full sm:w-auto group btn-primary inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-base shadow-xl"
               >
                 <span>Build My Portfolio Free</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
 
               <Link
-                to="/p/alex"
-                className="btn-ghost inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-slate-300 font-semibold text-base"
+                to="/showcase"
+                className="w-full sm:w-auto btn-ghost inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-slate-200 hover:text-white font-semibold text-base border border-white/10"
               >
-                <Eye className="w-4 h-4" />
-                <span>See a Live Example</span>
+                <Eye className="w-4 h-4 text-indigo-400" />
+                <span>Explore Live Showcases</span>
               </Link>
             </div>
 
-            {/* Social Proof */}
-            <div className="mt-10 flex items-center justify-center gap-3">
-              <div className="flex -space-x-2">
-                {['https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=40&h=40&fit=crop',
-                  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop',
-                  'https://images.unsplash.com/photo-1494790108755-2616b612b1e2?w=40&h=40&fit=crop',
-                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop'
-                ].map((src, i) => (
-                  <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-slate-950 object-cover" />
-                ))}
-              </div>
-              <div className="text-left">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
+            {/* Creator Trust Strip */}
+            <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[
+                    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=60&h=60&fit=crop',
+                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop',
+                    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=60&h=60&fit=crop',
+                    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop'
+                  ].map((src, i) => (
+                    <img
+                      key={i}
+                      src={src}
+                      alt="Creator"
+                      className="w-7 h-7 rounded-full border-2 border-slate-950 object-cover"
+                    />
+                  ))}
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">Loved by 10,000+ creators worldwide</p>
+                <div className="flex items-center gap-0.5 text-amber-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+                  ))}
+                </div>
+                <span className="text-slate-300 font-semibold">4.9/5</span>
+                <span>from 10,000+ creators</span>
+              </div>
+              <span className="hidden sm:inline text-slate-700">•</span>
+              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Free Forever Plan · No Credit Card Required</span>
+              </span>
+            </div>
+          </motion.div>
+
+          {/* ─── Interactive Live Studio Window Mockup ─── */}
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="relative mx-auto max-w-5xl"
+          >
+            {/* Persona Switcher Bar Above Browser Frame */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4 px-2">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400">
+                <Layers className="w-4 h-4 text-indigo-400" />
+                <span>Interactive Live Preview — Click a Creator Persona:</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl glass border border-white/10">
+                {HERO_PERSONAS.map((p, idx) => {
+                  const isActive = idx === activePersonaIdx;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setActivePersonaIdx(idx)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                        isActive
+                          ? 'text-white shadow-lg'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                      style={
+                        isActive
+                          ? { background: `linear-gradient(135deg, ${p.accent}, ${p.secondary})` }
+                          : undefined
+                      }
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: isActive ? '#fff' : p.accent }}
+                      />
+                      <span>{p.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Browser Studio Window */}
+            <div className="glass gradient-border rounded-3xl overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.75)] border border-white/15">
+              {/* Top Browser Chrome Bar */}
+              <div className="bg-slate-900/90 border-b border-white/[0.08] px-4 py-3 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-rose-500/80" />
+                  <span className="w-3 h-3 rounded-full bg-amber-500/80" />
+                  <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                </div>
+
+                {/* Live URL Bar */}
+                <div className="flex-1 max-w-md mx-auto px-3.5 py-1 rounded-xl bg-slate-950/90 border border-white/10 flex items-center justify-between text-xs font-mono text-slate-300">
+                  <div className="flex items-center gap-2 truncate">
+                    <Lock className="w-3 h-3 text-emerald-400 shrink-0" />
+                    <span className="truncate">{activePersona.handle}</span>
+                  </div>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-sans font-bold shrink-0">
+                    SSL LIVE
+                  </span>
+                </div>
+
+                {/* Device Viewport Indicator */}
+                <div className="hidden sm:flex items-center gap-2 text-slate-400">
+                  <Monitor className="w-3.5 h-3.5 text-indigo-400" />
+                  <Tablet className="w-3.5 h-3.5" />
+                  <Smartphone className="w-3.5 h-3.5" />
+                </div>
+              </div>
+
+              {/* Inside Studio Canvas */}
+              <div className="p-6 sm:p-10 bg-slate-950/95 relative overflow-hidden">
+                <div
+                  className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-[120px] opacity-20 pointer-events-none transition-colors duration-500"
+                  style={{ backgroundColor: activePersona.accent }}
+                />
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                  {/* Left: Creator Profile & KPI Metrics */}
+                  <div className="lg:col-span-7 space-y-5">
+                    <div
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold border"
+                      style={{
+                        backgroundColor: `${activePersona.accent}18`,
+                        borderColor: `${activePersona.accent}45`,
+                        color: activePersona.accent
+                      }}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: activePersona.accent }} />
+                      <span>{activePersona.badge}</span>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={activePersona.avatar}
+                        alt={activePersona.name}
+                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2"
+                        style={{ borderColor: activePersona.accent }}
+                      />
+                      <div>
+                        <h3 className="font-heading font-black text-2xl sm:text-3xl text-white">
+                          {activePersona.name}
+                        </h3>
+                        <p className="text-xs sm:text-sm font-semibold" style={{ color: activePersona.accent }}>
+                          {activePersona.role}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-slate-200 text-base sm:text-xl font-medium leading-snug">
+                      {activePersona.headline}
+                    </p>
+
+                    {/* 3 KPI Impact Pills */}
+                    <div className="grid grid-cols-3 gap-3 pt-1">
+                      {activePersona.metrics.map((m, i) => (
+                        <div
+                          key={i}
+                          className="p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08]"
+                        >
+                          <div
+                            className="font-heading font-black text-lg sm:text-2xl"
+                            style={{ color: activePersona.accent }}
+                          >
+                            {m.value}
+                          </div>
+                          <div className="text-[11px] text-slate-400 font-medium mt-0.5">
+                            {m.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="pt-2 flex flex-wrap items-center gap-3">
+                      <Link
+                        to={activePersona.route}
+                        className="px-5 py-2.5 rounded-xl text-white text-xs font-bold inline-flex items-center gap-2 shadow-lg transition hover:opacity-95"
+                        style={{
+                          background: `linear-gradient(135deg, ${activePersona.accent}, ${activePersona.secondary})`
+                        }}
+                      >
+                        <span>Open Full Interactive Showcase</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Link>
+                      <Link
+                        to="/templates"
+                        className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-200 transition"
+                      >
+                        Use This Layout
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Right: Featured Case Study Cards Preview */}
+                  <div className="lg:col-span-5 space-y-3.5">
+                    <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider px-1">
+                      <span>Featured Case Studies</span>
+                      <span style={{ color: activePersona.accent }}>Interactive Proof</span>
+                    </div>
+                    {activePersona.projects.map((proj, pIdx) => (
+                      <Link
+                        key={pIdx}
+                        to={activePersona.route}
+                        className="group block p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] transition"
+                      >
+                        <div className="flex items-center gap-3.5">
+                          <img
+                            src={proj.image}
+                            alt={proj.title}
+                            className="w-20 h-16 rounded-xl object-cover shrink-0 group-hover:scale-105 transition-transform"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <span
+                              className="text-[10px] font-mono font-bold uppercase tracking-wider block mb-0.5"
+                              style={{ color: activePersona.accent }}
+                            >
+                              {proj.tag}
+                            </span>
+                            <h4 className="font-heading font-bold text-sm text-white truncate group-hover:text-indigo-300 transition">
+                              {proj.title}
+                            </h4>
+                            <span className="text-[11px] text-slate-400 inline-flex items-center gap-1 mt-1">
+                              <span>Inspect KPI Case Study</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ─── Stats Strip ──────────────────────────── */}
-      <section className="border-y border-white/[0.06] py-14 px-6 bg-white/[0.01]">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="text-center"
-            >
-              <div className="font-heading font-black text-4xl gradient-text mb-1">{stat.value}</div>
-              <div className="text-sm text-slate-500">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── Features Grid ────────────────────────── */}
-      <section className="py-28 px-6">
+      {/* ─── 2. QUANTIFIED IMPACT STATS STRIP ─────────────────────────── */}
+      <section className="border-y border-white/[0.07] py-16 px-6 bg-white/[0.01]">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <p className="badge badge-indigo inline-flex mb-4">Why PortfolioCraft</p>
-            <h2 className="font-heading font-black text-4xl md:text-5xl text-white mb-5">
-              Everything your portfolio needs<br />
-              <span className="gradient-text">to do the heavy lifting.</span>
-            </h2>
-            <p className="text-slate-400 text-lg max-w-xl mx-auto">
-              While you focus on great work, your portfolio works 24/7 turning visitors into opportunities.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {features.map((feat, i) => (
+          <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-slate-500 mb-10">
+            Trusted by Designers, Engineers & Creative Directors at World-Class Teams
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {IMPACT_STATS.map((stat, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className={`glass-card gradient-border rounded-3xl p-8 bg-gradient-to-br ${feat.gradient}`}
+                transition={{ delay: i * 0.08 }}
+                className="glass-card rounded-3xl p-6 text-center border border-white/[0.07]"
               >
-                <div className="w-12 h-12 rounded-2xl glass flex items-center justify-center mb-6">
-                  <feat.icon className="w-6 h-6 text-indigo-400" />
+                <div className="font-heading font-black text-3xl sm:text-4xl gradient-text mb-1.5">
+                  {stat.value}
                 </div>
-                <h3 className="font-heading font-bold text-2xl text-white mb-3">{feat.title}</h3>
-                <p className="text-slate-400 text-base leading-relaxed">{feat.description}</p>
+                <div className="text-sm font-bold text-white mb-1">{stat.label}</div>
+                <div className="text-xs text-slate-500">{stat.sub}</div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── Testimonials ─────────────────────────── */}
+      {/* ─── 3. BENTO GRID ARCHITECTURE (WHY PORTFOLIOCRAFT) ──────────── */}
+      <section className="py-24 sm:py-28 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="badge badge-indigo inline-flex mb-4">
+              <Layers className="w-3.5 h-3.5" />
+              <span>Engineered for Unfair Career Advantage</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-5 leading-tight">
+              Everything Your Portfolio Needs to{' '}
+              <span className="gradient-text">Do the Heavy Lifting</span>
+            </h2>
+            <p className="text-slate-400 text-base sm:text-lg leading-relaxed">
+              Recruiters spend less than 15 seconds scanning a portfolio before deciding whether to schedule an interview. Every component in PortfolioCraft is architected to capture attention immediately and prove your impact.
+            </p>
+          </div>
+
+          {/* Asymmetrical Bento Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Bento Card 1: 7 Columns — Visual CMS & Color Token Engine */}
+            <div className="lg:col-span-7 glass-card gradient-border rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-br from-indigo-500/15 via-slate-900/40 to-purple-500/10">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-bold">
+                  <MousePointer2 className="w-3.5 h-3.5" />
+                  <span>Zero-Code Visual CMS</span>
+                </div>
+                <h3 className="font-heading font-black text-2xl sm:text-3xl text-white">
+                  Real-Time Canvas Editor & 6-Token Theme Engine
+                </h3>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  Reorder sections, toggle visibility, and preview your site inside interactive Desktop, Tablet, and Mobile frames. Switch between 8 curated color palettes—like <strong className="text-white">Emerald Matrix</strong>, <strong className="text-white">Obsidian Gold</strong>, or <strong className="text-white">Nordic Light</strong>—or fine-tune every CSS variable in real time.
+                </p>
+              </div>
+
+              {/* Mini Visual Color Swatch Bar */}
+              <div className="mt-8 p-4 rounded-2xl bg-slate-950/80 border border-white/10 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-2.5">
+                  <Palette className="w-4 h-4 text-indigo-400" />
+                  <span className="text-xs font-bold text-slate-200">Live CSS Theme Tokens:</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {[
+                    { name: 'Indigo', color: '#6366f1' },
+                    { name: 'Emerald', color: '#10b981' },
+                    { name: 'Amber', color: '#f59e0b' },
+                    { name: 'Cyan', color: '#06b6d4' },
+                    { name: 'Rose', color: '#f43f5e' }
+                  ].map((sw) => (
+                    <span
+                      key={sw.name}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold border border-white/15 flex items-center gap-1.5 bg-white/[0.03]"
+                    >
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: sw.color }} />
+                      <span className="text-slate-300">{sw.name}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Bento Card 2: 5 Columns — Hiring Manager KPI Proof */}
+            <div className="lg:col-span-5 glass-card gradient-border rounded-3xl p-8 flex flex-col justify-between bg-gradient-to-br from-purple-500/15 via-slate-900/40 to-pink-500/10">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold">
+                  <BarChart3 className="w-3.5 h-3.5" />
+                  <span>Executive Impact Proof</span>
+                </div>
+                <h3 className="font-heading font-black text-2xl sm:text-3xl text-white">
+                  Built for Case Studies & Quantified KPIs
+                </h3>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  Move beyond static image grids. Highlight revenue generated, latency reductions, and conversion lifts with dedicated Data Metrics cards and Experience Timelines.
+                </p>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-white/10">
+                  <div className="font-heading font-black text-xl text-emerald-400">+42%</div>
+                  <div className="text-[11px] text-slate-400">Checkout Conversion</div>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-white/10">
+                  <div className="font-heading font-black text-xl text-indigo-400">99.99%</div>
+                  <div className="text-[11px] text-slate-400">Global Uptime SLA</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bento Card 3: 4 Columns — Cloudinary CDN */}
+            <div className="lg:col-span-4 glass-card rounded-3xl p-7 border border-white/[0.08] space-y-3">
+              <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <Upload className="w-5 h-5" />
+              </div>
+              <h3 className="font-heading font-bold text-xl text-white">
+                Cloudinary 4K Media & Video Pipeline
+              </h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                Upload high-res screenshots, architectural renders, and looping MP4 video backgrounds with automatic edge compression and instant delivery.
+              </p>
+            </div>
+
+            {/* Bento Card 4: 4 Columns — Interactive Embeds */}
+            <div className="lg:col-span-4 glass-card rounded-3xl p-7 border border-white/[0.08] space-y-3">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                <Code2 className="w-5 h-5" />
+              </div>
+              <h3 className="font-heading font-bold text-xl text-white">
+                Live Figma, YouTube & 3D Spline Embeds
+              </h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                Let visitors interact directly with your Figma prototypes, 3D WebGL Spline scenes, and product demos without ever leaving your portfolio page.
+              </p>
+            </div>
+
+            {/* Bento Card 5: 4 Columns — Privacy-First Inquiry Routing */}
+            <div className="lg:col-span-4 glass-card rounded-3xl p-7 border border-white/[0.08] space-y-3">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h3 className="font-heading font-bold text-xl text-white">
+                Privacy-First Inquiry Inbox & SEO Control
+              </h3>
+              <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                Receive recruiter messages and client briefs straight in your dashboard with custom `/p/handle` slugs, OpenGraph meta tags, and white-label options.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 4. HANDCRAFTED TEMPLATES PREVIEW SECTION ────────────────── */}
+      <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+            <div>
+              <div className="badge badge-indigo inline-flex mb-3">
+                <Palette className="w-3.5 h-3.5" />
+                <span>10 Industry-Specialized Layouts</span>
+              </div>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl text-white">
+                Start From a <span className="gradient-text">Masterpiece</span>
+              </h2>
+            </div>
+            <Link
+              to="/templates"
+              className="btn-ghost px-6 py-3 rounded-xl text-xs sm:text-sm font-bold text-slate-200 hover:text-white inline-flex items-center gap-2 self-start md:self-auto"
+            >
+              <span>Browse All 10 Templates</span>
+              <ArrowRight className="w-4 h-4 text-indigo-400" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
+            {FEATURED_TEMPLATES.map((tpl, idx) => (
+              <motion.div
+                key={tpl.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="glass-card gradient-border rounded-3xl overflow-hidden flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="relative h-56 overflow-hidden">
+                    <img
+                      src={tpl.image}
+                      alt={tpl.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute top-3.5 left-3.5">
+                      <span className={`px-3 py-1 rounded-full text-[11px] font-bold border backdrop-blur-md ${tpl.tierColor}`}>
+                        {tpl.tier}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="text-[11px] font-bold uppercase tracking-widest text-indigo-400 mb-1.5">
+                      {tpl.category}
+                    </div>
+                    <h3 className="font-heading font-bold text-xl text-white mb-2">{tpl.name}</h3>
+                    <p className="text-slate-400 text-xs leading-relaxed">{tpl.desc}</p>
+                  </div>
+                </div>
+                <div className="px-6 pb-6 pt-2 flex items-center gap-2.5">
+                  <Link
+                    to={`/preview/${tpl.id}`}
+                    className="btn-ghost flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-center gap-1.5"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Live Demo</span>
+                  </Link>
+                  <Link
+                    to="/templates"
+                    className="btn-primary flex-1 py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5"
+                  >
+                    <span>Use Template</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 5. HOW IT WORKS (3-STEP WORKFLOW) ────────────────────────── */}
       <section className="py-24 px-6 border-t border-white/[0.06]">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="badge badge-indigo inline-flex mb-4">Real Results</p>
-            <h2 className="font-heading font-black text-4xl md:text-5xl text-white">
-              People got hired.<br />
-              <span className="font-display italic text-slate-400 font-normal">Here's what they said.</span>
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="badge badge-indigo inline-flex mb-3">
+              <Zap className="w-3.5 h-3.5" />
+              <span>Effortless Workflow</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-4">
+              From Blank Canvas to Live in <span className="gradient-text">3 Simple Steps</span>
             </h2>
+            <p className="text-slate-400 text-sm sm:text-base">
+              Spend your time crafting great projects—not debugging CSS grids or configuring deployment pipelines.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
+            {WORKFLOW_STEPS.map((w, idx) => (
+              <div
+                key={idx}
+                className="glass rounded-3xl p-8 border border-white/[0.08] relative space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="px-3.5 py-1.5 rounded-xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-mono font-black text-xs">
+                    STEP {w.step}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500">0{idx + 1} / 03</span>
+                </div>
+                <h3 className="font-heading font-bold text-xl text-white">{w.title}</h3>
+                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">{w.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 6. CREATOR STORIES & VERIFIED OUTCOMES ───────────────────── */}
+      <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="badge badge-indigo inline-flex mb-3">
+              <Award className="w-3.5 h-3.5" />
+              <span>Verified Creator Outcomes</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-4">
+              Creators Got Hired.<br />
+              <span className="gradient-text">Here Is What Happened.</span>
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base">
+              See how designers, engineers, and studio founders use PortfolioCraft to win interviews and close retainers.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((t, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="glass-card gradient-border rounded-3xl p-8"
+                transition={{ delay: i * 0.12 }}
+                className="glass-card gradient-border rounded-3xl p-8 flex flex-col justify-between"
               >
-                <div className="flex gap-1 mb-6">
-                  {[...Array(5)].map((_, si) => <Star key={si} className="w-4 h-4 fill-amber-400 text-amber-400" />)}
-                </div>
-                <p className="text-slate-200 text-lg font-medium leading-relaxed mb-6">
-                  "{t.quote}"
-                </p>
                 <div>
-                  <div className="font-semibold text-white text-sm">{t.author}</div>
-                  <div className="text-slate-500 text-xs mt-0.5">{t.role}</div>
+                  <div className="flex items-center justify-between gap-2 mb-6">
+                    <div className="flex gap-1">
+                      {[...Array(5)].map((_, si) => (
+                        <Star key={si} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold">
+                      {t.metric}
+                    </span>
+                  </div>
+                  <p className="text-slate-200 text-sm sm:text-base leading-relaxed mb-6">
+                    "{t.quote}"
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+                  <img
+                    src={t.avatar}
+                    alt={t.author}
+                    className="w-10 h-10 rounded-full object-cover border border-indigo-500/40"
+                  />
+                  <div>
+                    <div className="font-bold text-white text-xs sm:text-sm">{t.author}</div>
+                    <div className="text-slate-400 text-[11px]">{t.role}</div>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -238,36 +846,47 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── Final CTA ────────────────────────────── */}
-      <section className="py-28 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* ─── 7. FINAL FLAGSHIP CTA ────────────────────────────────────── */}
+      <section className="py-24 sm:py-28 px-6">
+        <div className="max-w-5xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="glass gradient-border rounded-[2rem] p-14 relative overflow-hidden"
+            className="glass gradient-border rounded-[2.25rem] p-8 sm:p-14 relative overflow-hidden"
           >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 bg-indigo-600/15 blur-[80px] pointer-events-none" />
-            <div className="relative z-10">
-              <p className="badge badge-emerald inline-flex mb-6">
-                <CheckCircle className="w-3 h-3" />
-                <span>Free Forever Plan Available</span>
-              </p>
-              <h2 className="font-heading font-black text-4xl md:text-6xl text-white mb-6">
-                Your next big opportunity<br />
-                <span className="gradient-text">starts with a great portfolio.</span>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-64 bg-indigo-600/20 blur-[100px] pointer-events-none" />
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <div className="badge badge-emerald inline-flex mb-6">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Free Forever Plan · Instant Setup</span>
+              </div>
+              <h2 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl text-white mb-6 leading-tight">
+                Your Next Big Opportunity<br />
+                <span className="gradient-text">Starts With Your Portfolio.</span>
               </h2>
-              <p className="text-slate-400 text-lg mb-10 max-w-xl mx-auto">
-                Join thousands of creators who stopped blending in and started standing out.
+              <p className="text-slate-300 text-base sm:text-lg mb-10 leading-relaxed">
+                Join over 10,000+ designers, engineers, and creative directors building their personal brand on PortfolioCraft. Launch free today or talk to our US Enterprise team for multi-seat studio licensing.
               </p>
-              <Link
-                to="/register"
-                className="group btn-primary inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-white font-bold text-lg"
-              >
-                <span>Start Building Now — It's Free</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <p className="text-slate-600 text-xs mt-5">No credit card required. Live in minutes.</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link
+                  to="/register"
+                  className="w-full sm:w-auto group btn-primary inline-flex items-center justify-center gap-3 px-9 py-4 rounded-2xl text-white font-bold text-base shadow-xl"
+                >
+                  <span>Start Building Now — It's Free</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/contact#enterprise-sales"
+                  className="w-full sm:w-auto btn-ghost inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl text-slate-200 hover:text-white font-semibold text-sm border border-white/10"
+                >
+                  <Building2 className="w-4 h-4 text-indigo-400" />
+                  <span>Contact Enterprise Sales</span>
+                </Link>
+              </div>
+              <p className="text-slate-500 text-xs mt-5">
+                No credit card required · Custom `/p/handle` included · Upgrade anytime
+              </p>
             </div>
           </motion.div>
         </div>
