@@ -341,7 +341,7 @@ export default function Blog() {
             The PortfolioCraft<br />
             <span className="gradient-text">Blog & Guides</span>
           </h1>
-          <div className="space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed text-left sm:text-center max-w-3xl mx-auto">
+          <div className="space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed text-center max-w-3xl mx-auto">
             <p>
               In a crowded market of generic portfolio templates and AI-generated text, superficial advice no longer works. Modern hiring committees at top-tier technology companies and executive design studios evaluate portfolios on narrative coherence, systems thinking, and verifiable business impact.
             </p>
@@ -497,7 +497,7 @@ export default function Blog() {
             <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-5">
               Why We Write <span className="gradient-text">Exhaustive Masterclasses</span>
             </h2>
-            <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed text-left sm:text-center max-w-3xl mx-auto">
+            <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed text-center max-w-3xl mx-auto">
               <p>
                 The internet is saturated with generic career advice: "keep it brief," "use bright colors," or "add a creative tagline." Yet when senior practitioners apply to Staff-level engineering roles, Principal Product Design positions, or pitch five-figure consulting retainers, those superficial tips fall flat. Executive hiring committees evaluate candidates on systems thinking, commercial literacy, and the ability to articulate trade-offs under real-world constraints.
               </p>

@@ -36,7 +36,7 @@ export default function Showcase() {
             <span className="gradient-text">PortfolioCraft</span>
           </h1>
 
-          <div className="space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed text-left sm:text-center max-w-3xl mx-auto">
+          <div className="space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed text-center max-w-3xl mx-auto">
             <p>
               In high-stakes hiring loops and executive agency pitches, hiring directors spend less than 45 seconds scanning a candidate's portfolio before deciding whether to advance them or pass. Traditional static portfolios—burdened by uncompressed screenshots, passive lists of programming languages, and vague descriptions—fail because they treat the portfolio as a digital archive rather than a persuasive product demonstration.
             </p>
@@ -333,7 +333,7 @@ export default function Showcase() {
           <h2 className="font-heading font-black text-2xl sm:text-4xl text-white mb-4">
             Want Your Portfolio Featured in the Global Showcase?
           </h2>
-          <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-8 text-left sm:text-center">
+          <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-8 text-center">
             <p>
               We continuously review community portfolios published through PortfolioCraft. If your portfolio features thorough case study narratives, verified project telemetry, clean design token execution, and an active inquiry channel, you can submit your handle for feature consideration by our curatorial committee.
             </p>
