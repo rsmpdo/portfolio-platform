@@ -84,7 +84,7 @@ export default function ContactSection({ props = {}, viewportMode }) {
         <div className="glass gradient-border rounded-[2rem] overflow-hidden">
           <div className={`grid ${isSmall ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-5'}`}>
             {/* Left Panel */}
-            <div className={`${isSmall ? 'p-6' : 'lg:col-span-2 p-10'} ${
+            <div className={`${isSmall ? 'p-6' : 'lg:col-span-2 p-6 sm:p-10'} ${
               isEnterprise
                 ? 'bg-gradient-to-br from-purple-600/20 via-indigo-600/15 to-amber-500/10'
                 : 'bg-gradient-to-br from-indigo-600/20 to-purple-600/10'
@@ -157,7 +157,7 @@ export default function ContactSection({ props = {}, viewportMode }) {
             </div>
 
             {/* Right Form */}
-            <div className="lg:col-span-3 p-10">
+            <div className="lg:col-span-3 p-6 sm:p-10">
               {submitted ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-12">
                   <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">

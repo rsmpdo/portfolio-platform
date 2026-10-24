@@ -7,13 +7,14 @@ import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Header from '../components/common/Header';
-import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Layers, Save, Globe } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Layers, Save, Globe, Sliders, X } from 'lucide-react';
 
 export default function Editor() {
   const dispatch = useDispatch();
   const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState(null); // null | 'sidebar' | 'inspector'
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -93,16 +94,46 @@ export default function Editor() {
       <Header />
 
       {/* ─── Editor Toolbar ────────────────────────── */}
-      <div className="h-14 border-b border-white/[0.06] glass-dark px-6 flex items-center justify-between mt-[72px]">
-        <div className="flex items-center gap-4">
+      <div className="min-h-[56px] py-2 border-b border-white/[0.06] glass-dark px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2 mt-[68px] sm:mt-[72px] z-30">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-indigo-400" />
-            <span className="font-heading font-bold text-sm text-white">Portfolio Editor</span>
+            <span className="font-heading font-bold text-xs sm:text-sm text-white">Portfolio Editor</span>
           </div>
+
+          {/* Mobile Drawer Toggles (< lg) */}
+          {!isPreviewMode && (
+            <div className="flex lg:hidden items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setMobilePanel(mobilePanel === 'sidebar' ? null : 'sidebar')}
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 border transition ${
+                  mobilePanel === 'sidebar'
+                    ? 'bg-indigo-600 text-white border-indigo-500'
+                    : 'glass text-slate-300 border-white/10'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Sections</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobilePanel(mobilePanel === 'inspector' ? null : 'inspector')}
+                className={`px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1 border transition ${
+                  mobilePanel === 'inspector'
+                    ? 'bg-indigo-600 text-white border-indigo-500'
+                    : 'glass text-slate-300 border-white/10'
+                }`}
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>Customize</span>
+              </button>
+            </div>
+          )}
 
           {/* Active Template Badge */}
           {templateLabel && (
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <div className="h-5 w-px bg-white/10" />
               <div
                 className="flex items-center gap-1.5 rounded-xl px-2.5 py-1 text-xs font-bold border"
@@ -123,16 +154,16 @@ export default function Editor() {
 
           {userPortfolios?.length > 1 && (
             <div className="flex items-center gap-2">
-              <div className="h-5 w-px bg-white/10" />
+              <div className="h-5 w-px bg-white/10 hidden sm:block" />
               <div className="flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl px-2.5 py-1 text-xs font-bold text-indigo-300">
-                <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                <Layers className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                 <select
                   value={activeLayout?._id || ''}
                   onChange={(e) => {
                     dispatch(fetchUserLayout({ layoutId: e.target.value }));
                     navigate(`/editor?id=${e.target.value}`, { replace: true });
                   }}
-                  className="bg-transparent text-indigo-300 font-bold text-xs border-none cursor-pointer focus:outline-none"
+                  className="bg-transparent text-indigo-300 font-bold text-xs border-none cursor-pointer focus:outline-none max-w-[140px] sm:max-w-none truncate"
                 >
                   {userPortfolios.map((p) => (
                     <option key={p._id} value={p._id} className="bg-slate-900 text-white font-medium">
@@ -146,7 +177,7 @@ export default function Editor() {
 
           {/* Publication Status Badge */}
           {activeLayout && (
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <div className="h-5 w-px bg-white/10" />
               <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
                 activeLayout.isPublished
@@ -159,9 +190,9 @@ export default function Editor() {
             </div>
           )}
 
-          <div className="h-5 w-px bg-white/10" />
+          <div className="h-5 w-px bg-white/10 hidden sm:block" />
           {/* Viewport Switcher */}
-          <div className="flex items-center glass p-1 rounded-xl">
+          <div className="hidden sm:flex items-center glass p-1 rounded-xl">
             {[
               { mode: 'desktop', icon: Monitor, label: 'Desktop' },
               { mode: 'tablet', icon: Tablet, label: 'Tablet (768px)' },
@@ -184,16 +215,16 @@ export default function Editor() {
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {activeLayout?.handle && (
             <a
               href={`/p/${activeLayout.handle}`}
               target="_blank"
               rel="noreferrer"
-              className="btn-ghost px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5"
+              className="btn-ghost px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white flex items-center gap-1.5"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>View Live</span>
+              <span className="hidden sm:inline">View Live</span>
             </a>
           )}
 
@@ -201,18 +232,18 @@ export default function Editor() {
           <button
             onClick={handleSaveDraft}
             disabled={isSaving}
-            className="px-3.5 py-1.5 rounded-xl glass border border-white/10 hover:border-white/20 text-xs font-semibold text-slate-200 hover:text-white flex items-center gap-1.5 transition disabled:opacity-60"
+            className="px-2.5 sm:px-3.5 py-1.5 rounded-xl glass border border-white/10 hover:border-white/20 text-xs font-semibold text-slate-200 hover:text-white flex items-center gap-1.5 transition disabled:opacity-60"
             title="Save changes as unpublished draft"
           >
             {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5 text-indigo-400" />}
-            <span>Save Draft</span>
+            <span className="hidden xs:inline">Save Draft</span>
           </button>
 
           {/* Publish / Unpublish Toggle */}
           <button
             onClick={handleTogglePublish}
             disabled={isSaving}
-            className={`px-4 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-lg ${
+            className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-lg ${
               activeLayout?.isPublished
                 ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-amber-500/10'
                 : 'btn-primary text-white shadow-indigo-500/20'
@@ -234,23 +265,49 @@ export default function Editor() {
           </button>
 
           <button
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={`px-4 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all ${
+            onClick={() => {
+              setIsPreviewMode(!isPreviewMode);
+              setMobilePanel(null);
+            }}
+            className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
               isPreviewMode
                 ? 'btn-primary text-white'
                 : 'btn-ghost text-slate-300 hover:text-white'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span>{isPreviewMode ? 'Exit Preview' : 'Preview'}</span>
+            <span className="hidden sm:inline">{isPreviewMode ? 'Exit Preview' : 'Preview'}</span>
           </button>
         </div>
       </div>
 
       {/* ─── Main Workspace ────────────────────────── */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar */}
-        {!isPreviewMode && <EditorSidebar accentColor={accentColor} templateLabel={templateLabel} />}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Desktop Left Sidebar */}
+        {!isPreviewMode && (
+          <div className="hidden lg:block h-full">
+            <EditorSidebar accentColor={accentColor} templateLabel={templateLabel} />
+          </div>
+        )}
+
+        {/* Mobile Left Sidebar Drawer (< lg) */}
+        {!isPreviewMode && mobilePanel === 'sidebar' && (
+          <div className="lg:hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex">
+            <div className="relative h-full max-w-[85vw]">
+              <EditorSidebar accentColor={accentColor} templateLabel={templateLabel} />
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobilePanel(null)}
+              className="flex-1 h-full flex items-start justify-end p-4 text-white"
+              aria-label="Close sidebar"
+            >
+              <span className="p-2 rounded-xl glass border border-white/15">
+                <X className="w-5 h-5" />
+              </span>
+            </button>
+          </div>
+        )}
 
         {/* Canvas — bg driven by active template */}
         <main
@@ -392,8 +449,31 @@ export default function Editor() {
           )}
         </main>
 
-        {/* Right Inspector */}
-        {!isPreviewMode && <ComponentInspector />}
+        {/* Desktop Right Inspector */}
+        {!isPreviewMode && (
+          <div className="hidden lg:block h-full">
+            <ComponentInspector />
+          </div>
+        )}
+
+        {/* Mobile Right Inspector Drawer (< lg) */}
+        {!isPreviewMode && mobilePanel === 'inspector' && (
+          <div className="lg:hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex justify-end">
+            <button
+              type="button"
+              onClick={() => setMobilePanel(null)}
+              className="flex-1 h-full flex items-start justify-start p-4 text-white"
+              aria-label="Close inspector"
+            >
+              <span className="p-2 rounded-xl glass border border-white/15">
+                <X className="w-5 h-5" />
+              </span>
+            </button>
+            <div className="relative h-full max-w-[85vw]">
+              <ComponentInspector />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
