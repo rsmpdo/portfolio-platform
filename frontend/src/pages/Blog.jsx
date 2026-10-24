@@ -17,7 +17,11 @@ import {
   ExternalLink,
   Award,
   Layers,
-  Lightbulb
+  Lightbulb,
+  BarChart3,
+  Code2,
+  ShieldCheck,
+  Zap
 } from 'lucide-react';
 
 const STORAGE_KEY = 'portfoliocraft_bookmarked_blogs';
@@ -330,18 +334,23 @@ export default function Blog() {
 
       <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full">
         {/* Page Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
+        <div className="text-center max-w-4xl mx-auto mb-14">
           <div className="badge badge-indigo inline-flex mb-4">
             <BookOpen className="w-3.5 h-3.5" />
             <span>Masterclass Guides & Insights</span>
           </div>
-          <h1 className="font-heading font-black text-4xl md:text-6xl text-white mb-6">
+          <h1 className="font-heading font-black text-4xl md:text-6xl text-white mb-6 leading-tight">
             The PortfolioCraft<br />
             <span className="gradient-text">Blog & Guides</span>
           </h1>
-          <p className="text-slate-400 text-lg leading-relaxed">
-            In-depth masterclasses on portfolio architecture, technical positioning, and visual design systems. Click "Read In-Depth Masterclass" on any guide below to open the full article.
-          </p>
+          <div className="space-y-4 text-slate-300 text-base sm:text-lg leading-relaxed text-left sm:text-center max-w-3xl mx-auto">
+            <p>
+              In a crowded market of generic portfolio templates and AI-generated text, superficial advice no longer works. Modern hiring committees at top-tier technology companies and executive design studios evaluate portfolios on narrative coherence, systems thinking, and verifiable business impact.
+            </p>
+            <p className="text-slate-400 text-sm sm:text-base">
+              The guides below are not quick listicles. They are exhaustive, practitioner-authored masterclasses detailing the exact section structures, positioning frameworks, and visual engineering principles used by Senior, Staff, and Principal creators who consistently secure high-ticket retainers and competing executive offers.
+            </p>
+          </div>
         </div>
 
         {/* Filter Bar: All Articles vs Saved Bookmarks */}
@@ -492,6 +501,90 @@ export default function Blog() {
             })}
           </div>
         )}
+        {/* ─── EDITORIAL MANIFESTO: PARAGRAPH CONTENT ─── */}
+        <section className="mt-24 pt-20 border-t border-white/[0.07]">
+          <div className="max-w-4xl mx-auto text-center mb-14">
+            <div className="badge badge-indigo inline-flex mb-3">
+              <Lightbulb className="w-3.5 h-3.5" />
+              <span>Editorial Philosophy</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-5">
+              Why We Write <span className="gradient-text">Exhaustive Masterclasses</span>
+            </h2>
+            <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed text-left sm:text-center max-w-3xl mx-auto">
+              <p>
+                The internet is saturated with generic career advice: "keep it brief," "use bright colors," or "add a creative tagline." Yet when senior practitioners apply to Staff-level engineering roles, Principal Product Design positions, or pitch five-figure consulting retainers, those superficial tips fall flat. Executive hiring committees evaluate candidates on systems thinking, commercial literacy, and the ability to articulate trade-offs under real-world constraints.
+              </p>
+              <p className="text-slate-400 text-xs sm:text-sm">
+                Every guide published in the PortfolioCraft masterclass series is authored by active industry practitioners who have sat on hiring panels at unicorn technology firms and tier-one design agencies. We write long-form, deeply technical playbooks because career-defining outcomes are never won through shortcuts; they are earned by mastering the architecture of proof.
+              </p>
+            </div>
+          </div>
+
+          {/* 3 Core Curriculum Pillars */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <div className="glass-card gradient-border rounded-3xl p-7 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <BarChart3 className="w-6 h-6" />
+              </div>
+              <h3 className="font-heading font-bold text-xl text-white">
+                Pillar 01: Narrative & KPI Framing
+              </h3>
+              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                Learn how to structure case studies around the 4-act executive arc: Context & Problem, Discovery & Telemetry, Explorations & Trade-Offs, and Quantified Business Impact.
+              </p>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                By presenting quantifiable telemetry—such as activation lift, latency reductions, or customer support savings—your case studies prove real business returns rather than decorative aesthetics.
+              </p>
+            </div>
+
+            <div className="glass-card gradient-border rounded-3xl p-7 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="font-heading font-bold text-xl text-white">
+                Pillar 02: Positioning & Inbound Conversion
+              </h3>
+              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                Stop listing raw programming languages without business context. Learn how reframing your technical skills around risk reduction and commercial speed attracts high-ticket inbound clients.
+              </p>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                Discover how displaying clear booking windows, expected response times, and structured inquiry forms directly inside your portfolio eliminates friction for busy hiring managers and founders.
+              </p>
+            </div>
+
+            <div className="glass-card gradient-border rounded-3xl p-7 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <Layers className="w-6 h-6" />
+              </div>
+              <h3 className="font-heading font-bold text-xl text-white">
+                Pillar 03: Visual Optics & Design Tokens
+              </h3>
+              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                Master the optical physics of modern dark mode: 3-tier elevation hierarchies, specular 1px borders, ambient radial light blooms, and fluid 60fps micro-interaction choreography.
+              </p>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                Understand how a unified 6-token CSS architecture empowers you to switch entire palettes while strictly maintaining WCAG AAA contrast and instant cross-device responsiveness.
+              </p>
+            </div>
+          </div>
+
+          {/* Peer-Review Board Standards */}
+          <div className="glass rounded-3xl p-8 sm:p-12 border border-white/[0.08] max-w-4xl mx-auto space-y-5 text-left">
+            <div className="flex items-center gap-3">
+              <Award className="w-6 h-6 text-indigo-400" />
+              <h3 className="font-heading font-black text-2xl text-white">
+                The PortfolioCraft Peer-Review Standard
+              </h3>
+            </div>
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Before any masterclass is published on our platform, it undergoes a multi-stage review process by our Practitioner Advisory Board. We verify that every formula, case study structure, and code example has been tested in real interview loops or validated in production environments.
+            </p>
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+              We reject sponsored product placements, superficial listicles, and unsubstantiated claims. Our singular benchmark is utility: whether reading a guide directly equips a creator to communicate their value with greater precision, negotiate higher compensation, and land career-defining opportunities.
+            </p>
+          </div>
+        </section>
       </main>
 
       {/* Comprehensive Masterclass Article Reader Modal */}
