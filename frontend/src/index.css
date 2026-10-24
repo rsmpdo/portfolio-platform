@@ -273,6 +273,27 @@
 .portfolio-theme-root {
   background-color: var(--theme-bg, #050811);
   color: var(--theme-text, #f8fafc);
+  font-family: var(--theme-font, 'Plus Jakarta Sans', sans-serif);
+}
+
+.portfolio-theme-root h1,
+.portfolio-theme-root h2,
+.portfolio-theme-root h3,
+.portfolio-theme-root h4,
+.portfolio-theme-root h5,
+.portfolio-theme-root h6,
+.portfolio-theme-root p,
+.portfolio-theme-root a,
+.portfolio-theme-root button,
+.portfolio-theme-root input,
+.portfolio-theme-root textarea {
+  font-family: var(--theme-font, inherit);
+}
+
+.portfolio-theme-root .font-heading,
+.portfolio-theme-root .font-display,
+.portfolio-theme-root .font-sans {
+  font-family: var(--theme-font, inherit) !important;
 }
 
 .portfolio-theme-root section {

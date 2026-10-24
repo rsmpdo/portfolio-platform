@@ -35,6 +35,7 @@ import {
   ShieldCheck,
   Search,
   CheckCircle2,
+  Type,
   X
 } from 'lucide-react';
 
@@ -539,6 +540,50 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                   <option value="haute-couture-studio">Haute Couture Studio</option>
                   <option value="spatial-architect-studio">Spatial Architect Studio</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Typography & Font Family Selection */}
+            <div className="p-3.5 rounded-2xl glass border border-white/[0.08] space-y-3 bg-white/[0.01]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Type className="w-4 h-4 text-indigo-400" />
+                  <span className="text-xs font-bold text-white">Typography & Fonts</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                  {activeLayout.theme?.fontFamily || 'Plus Jakarta Sans'}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Choose the primary font family for your portfolio. Changes apply across all titles, body text, and project descriptions.
+              </p>
+
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-semibold text-slate-300">Change Font</label>
+                <select
+                  value={activeLayout.theme?.fontFamily || 'Plus Jakarta Sans'}
+                  onChange={(e) => dispatch(updateTheme({ fontFamily: e.target.value }))}
+                  className="w-full bg-slate-900 text-xs font-semibold text-white border border-white/15 rounded-xl px-3 py-2.5 cursor-pointer focus:outline-none focus:border-indigo-500 hover:border-white/30 transition shadow-inner"
+                >
+                  <option value="Plus Jakarta Sans">Plus Jakarta Sans (Modern Clean)</option>
+                  <option value="Outfit">Outfit (Geometric Tech)</option>
+                  <option value="Inter">Inter (System Minimalist)</option>
+                  <option value="Space Grotesk">Space Grotesk (Neo-Grotesque)</option>
+                  <option value="Playfair Display">Playfair Display (Luxury Editorial Serif)</option>
+                  <option value="Syne">Syne (Avant-Garde Display)</option>
+                  <option value="Cinzel">Cinzel (Classical Sophistication)</option>
+                  <option value="DM Sans">DM Sans (Crisp Contemporary)</option>
+                  <option value="JetBrains Mono">JetBrains Mono (Developer Code)</option>
+                </select>
+              </div>
+
+              {/* Live typography specimen preview */}
+              <div
+                className="p-3 rounded-xl bg-slate-950/70 border border-white/5 text-center transition-all"
+                style={{ fontFamily: `'${activeLayout.theme?.fontFamily || 'Plus Jakarta Sans'}', sans-serif` }}
+              >
+                <p className="text-sm font-bold text-white mb-0.5">The quick brown fox jumps</p>
+                <p className="text-[11px] text-slate-400">0123456789 • Selected Font Preview</p>
               </div>
             </div>
 

@@ -85,8 +85,10 @@ export default function Editor() {
     '--theme-surface': theme.surfaceColor || '#111827',
     '--theme-text': theme.textColor || '#f8fafc',
     '--theme-muted': theme.textMutedColor || '#94a3b8',
+    '--theme-font': theme.fontFamily ? `'${theme.fontFamily}', sans-serif` : "'Plus Jakarta Sans', sans-serif",
     backgroundColor: theme.backgroundColor || '#070a10',
-    color: theme.textColor || '#f8fafc'
+    color: theme.textColor || '#f8fafc',
+    fontFamily: theme.fontFamily ? `'${theme.fontFamily}', sans-serif` : 'inherit'
   };
 
   return (

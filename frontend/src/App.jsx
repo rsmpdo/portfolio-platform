@@ -25,6 +25,8 @@ import VerifyPending from './pages/VerifyPending';
 import PaymentSuccess from './pages/PaymentSuccess';
 import TemplatePreview from './pages/TemplatePreview';
 import PaymentForm from './pages/PaymentForm';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, token, user } = useSelector((state) => state.auth);
@@ -186,6 +188,9 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/features" element={<Features />} />
         <Route path="/templates" element={<Templates />} />
         <Route path="/preview/:templateId" element={<TemplatePreview />} />

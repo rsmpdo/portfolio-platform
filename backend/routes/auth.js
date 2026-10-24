@@ -255,6 +255,126 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// @route   POST /api/auth/forgot-password
+// @desc    Send password reset token link via email
+// @access  Public
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Please provide an email address' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No account found with that email address' });
+    }
+
+    // Generate reset token
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    // Build reset URL
+    const clientUrl = getClientUrl(req);
+    const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
+
+    const message = `You requested a password reset for your PortfolioCraft account.\n\nPlease reset your password by clicking the link below (valid for 10 minutes):\n\n${resetUrl}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.`;
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 28px; background-color: #0b0f19; color: #f8fafc; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h2 style="color: #6366f1; margin: 0; font-size: 24px; font-weight: 800;">PortfolioCraft</h2>
+          <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Password Reset Request</p>
+        </div>
+        <p style="color: #cbd5e1; font-size: 15px; line-height: 1.6;">Hello <strong>${user.fullName || user.username}</strong>,</p>
+        <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">
+          We received a request to reset your PortfolioCraft account password. Click the button below to choose a new password. This link is valid for <strong>10 minutes</strong>.
+        </p>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${resetUrl}" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: #ffffff; padding: 14px 28px; border-radius: 10px; font-weight: bold; text-decoration: none; display: inline-block; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">
+            Reset Password
+          </a>
+        </div>
+        <p style="color: #64748b; font-size: 12px; line-height: 1.5;">
+          If the button doesn't work, copy and paste this link into your browser:<br>
+          <a href="${resetUrl}" style="color: #818cf8; word-break: break-all;">${resetUrl}</a>
+        </p>
+        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 24px 0;" />
+        <p style="color: #64748b; font-size: 11px; text-align: center; margin: 0;">
+          If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.
+        </p>
+      </div>
+    `;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Reset your PortfolioCraft password',
+        message,
+        html
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Password reset link sent to your email address.'
+      });
+    } catch (err) {
+      console.error('Password reset email failed:', err);
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(500).json({ success: false, message: 'Could not send reset email. Please try again.' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   POST /api/auth/reset-password/:token
+// @desc    Reset password using token
+// @access  Public
+router.post('/reset-password/:token', async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password || String(password).length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long'
+      });
+    }
+
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired password reset link. Please request a new one.'
+      });
+    }
+
+    // Set new password
+    user.password = String(password);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successful! You can now log in with your new password.'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // @route   GET /api/auth/me
 // @desc    Get logged in user profile
 // @access  Private

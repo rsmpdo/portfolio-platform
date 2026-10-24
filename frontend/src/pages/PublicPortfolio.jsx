@@ -84,12 +84,14 @@ export default function PublicPortfolio() {
       style={{
         backgroundColor: theme?.backgroundColor || '#050811',
         color: theme?.textColor || '#f8fafc',
+        fontFamily: theme?.fontFamily ? `'${theme.fontFamily}', sans-serif` : 'inherit',
         '--theme-primary': theme?.primaryColor || '#6366f1',
         '--theme-secondary': theme?.secondaryColor || '#a855f7',
         '--theme-bg': theme?.backgroundColor || '#050811',
         '--theme-surface': theme?.surfaceColor || '#111827',
         '--theme-text': theme?.textColor || '#f8fafc',
-        '--theme-muted': theme?.textMutedColor || '#94a3b8'
+        '--theme-muted': theme?.textMutedColor || '#94a3b8',
+        '--theme-font': theme?.fontFamily ? `'${theme.fontFamily}', sans-serif` : "'Plus Jakarta Sans', sans-serif"
       }}
     >
       {/* Top Navbar */}
