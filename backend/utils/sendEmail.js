@@ -1,7 +1,17 @@
 const nodemailer = require('nodemailer');
 const sgMail = require('@sendgrid/mail');
+const { createBrandedEmailTemplate } = require('./emailTemplate');
 
 const sendEmail = async (options) => {
+  const renderedHtml =
+    options.html ||
+    createBrandedEmailTemplate({
+      subtitle: options.subject || '',
+      recipientName: options.recipientName || '',
+      contentHtml: `<p style="margin: 0; line-height: 1.6;">${(options.message || '').replace(/\n/g, '<br>')}</p>`,
+      footerNote: options.footerNote || ''
+    });
+
   // Option 1: Gmail Direct SMTP (App Password)
   if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
     try {
@@ -21,7 +31,7 @@ const sendEmail = async (options) => {
         to: options.email,
         subject: options.subject,
         text: options.message,
-        html: options.html || `<p>${options.message.replace(/\n/g, '<br>')}</p>`
+        html: renderedHtml
       };
 
       const info = await transporter.sendMail(message);
@@ -41,7 +51,7 @@ const sendEmail = async (options) => {
       from: process.env.FROM_EMAIL || 'noreply@portfolioplatform.com',
       subject: options.subject,
       text: options.message,
-      html: options.html || `<p>${options.message.replace(/\n/g, '<br>')}</p>`,
+      html: renderedHtml,
     };
 
     try {

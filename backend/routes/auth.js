@@ -7,6 +7,7 @@ const User = require('../models/User');
 const Layout = require('../models/Layout');
 const Message = require('../models/Message');
 const sendEmail = require('../utils/sendEmail');
+const { getEmailVerificationTemplate, getPasswordResetTemplate } = require('../utils/emailTemplate');
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
 
@@ -106,12 +107,17 @@ router.post('/register', async (req, res) => {
       const clientUrl = getClientUrl(req);
       const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
       const message = `You are receiving this email because you (or someone else) registered a new account on PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
+      const html = getEmailVerificationTemplate({
+        recipientName: user.fullName || user.username,
+        verifyUrl
+      });
 
       try {
         await sendEmail({
           email: user.email,
           subject: 'Email Verification - PortfolioCraft',
-          message
+          message,
+          html
         });
       } catch (error) {
         console.log('Email send error:', error);
@@ -280,31 +286,11 @@ router.post('/forgot-password', async (req, res) => {
 
     const message = `You requested a password reset for your PortfolioCraft account.\n\nPlease reset your password by clicking the link below (valid for 10 minutes):\n\n${resetUrl}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.`;
 
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 28px; background-color: #0b0f19; color: #f8fafc; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
-        <div style="text-align: center; margin-bottom: 24px;">
-          <h2 style="color: #6366f1; margin: 0; font-size: 24px; font-weight: 800;">PortfolioCraft</h2>
-          <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Password Reset Request</p>
-        </div>
-        <p style="color: #cbd5e1; font-size: 15px; line-height: 1.6;">Hello <strong>${user.fullName || user.username}</strong>,</p>
-        <p style="color: #94a3b8; font-size: 14px; line-height: 1.6;">
-          We received a request to reset your PortfolioCraft account password. Click the button below to choose a new password. This link is valid for <strong>10 minutes</strong>.
-        </p>
-        <div style="text-align: center; margin: 32px 0;">
-          <a href="${resetUrl}" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: #ffffff; padding: 14px 28px; border-radius: 10px; font-weight: bold; text-decoration: none; display: inline-block; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);">
-            Reset Password
-          </a>
-        </div>
-        <p style="color: #64748b; font-size: 12px; line-height: 1.5;">
-          If the button doesn't work, copy and paste this link into your browser:<br>
-          <a href="${resetUrl}" style="color: #818cf8; word-break: break-all;">${resetUrl}</a>
-        </p>
-        <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 24px 0;" />
-        <p style="color: #64748b; font-size: 11px; text-align: center; margin: 0;">
-          If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.
-        </p>
-      </div>
-    `;
+    const html = getPasswordResetTemplate({
+      recipientName: user.fullName || user.username,
+      resetUrl,
+      expiresIn: '10 minutes'
+    });
 
     try {
       await sendEmail({
@@ -415,12 +401,17 @@ router.post(
       const clientUrl = getClientUrl(req);
       const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
       const message = `You requested a new verification link for PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
+      const html = getEmailVerificationTemplate({
+        recipientName: user.fullName || user.username,
+        verifyUrl
+      });
 
       try {
         await sendEmail({
           email: user.email,
           subject: 'Resend: Email Verification - PortfolioCraft',
-          message
+          message,
+          html
         });
         res.status(200).json({ success: true, message: 'Verification email sent' });
       } catch (error) {

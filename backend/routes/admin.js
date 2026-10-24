@@ -8,8 +8,28 @@ const PaymentRequest = require('../models/PaymentRequest');
 const Subscriber = require('../models/Subscriber');
 const Message = require('../models/Message');
 const sendEmail = require('../utils/sendEmail');
+const {
+  getPaymentApprovedTemplate,
+  getPaymentRejectedTemplate,
+  getModerationWarningTemplate
+} = require('../utils/emailTemplate');
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
+
+const getClientUrl = (req) => {
+  if (process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost')) {
+    return process.env.CLIENT_URL.replace(/\/$/, '');
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  const host = req?.headers?.['x-forwarded-host'] || req?.get?.('host') || '';
+  const protocol = req?.headers?.['x-forwarded-proto'] || req?.protocol || 'https';
+  if (host && !host.includes('localhost') && !host.includes('127.0.0.1') && !host.includes('vercel.com')) {
+    return `${protocol}://${host}`;
+  }
+  return process.env.PUBLIC_CLIENT_URL || 'https://portfoliocraftlk.vercel.app';
+};
 
 // Helper to verify Admin Password or Admin Secret Code
 const verifyAdminAuthPassword = async (req, password) => {
@@ -98,10 +118,18 @@ router.put(
         return res.status(404).json({ success: false, message: 'User not found' });
       }
 
+      const clientUrl = getClientUrl(req);
+      const html = getModerationWarningTemplate({
+        recipientName: user.fullName || user.username,
+        warningMessage: warningMessage || 'Please ensure all content in your portfolio complies with community guidelines.',
+        clientUrl
+      });
+
       await sendEmail({
         email: user.email,
         subject: '⚠️ PortfolioCraft Admin Moderation Warning',
-        message: `Hello ${user.username},\n\nOur platform administration team has reviewed your portfolio and issued the following notice:\n\n"${warningMessage || 'Please ensure all content in your portfolio complies with community guidelines.'}"\n\nPlease update your portfolio content accordingly.\n\nPortfolioCraft Admin Team`
+        message: `Hello ${user.username},\n\nOur platform administration team has reviewed your portfolio and issued the following notice:\n\n"${warningMessage || 'Please ensure all content in your portfolio complies with community guidelines.'}"\n\nPlease update your portfolio content accordingly.\n\nPortfolioCraft Admin Team`,
+        html
       });
 
       res.status(200).json({ success: true, message: `Warning sent to ${user.email}` });
@@ -314,11 +342,21 @@ router.put(
 
       // Send approval email
       try {
+        const clientUrl = getClientUrl(req);
         const noteMsg = req.body.adminNote ? `\n\nNote from Admin: "${req.body.adminNote}"` : '';
+        const html = getPaymentApprovedTemplate({
+          recipientName: user.fullName || user.username,
+          plan: request.plan,
+          amount: request.amount,
+          adminNote: req.body.adminNote,
+          clientUrl
+        });
+
         await sendEmail({
           email: user.email,
           subject: `✅ PortfolioCraft ${request.plan.toUpperCase()} Plan — Payment Approved!`,
-          message: `Hi ${user.username || user.email},\n\nGreat news! Your payment of $${request.amount} USD for the PortfolioCraft ${request.plan.toUpperCase()} Plan has been verified and approved.${noteMsg}\n\nYour account has been upgraded to ${request.plan.toUpperCase()}. You can now log in and enjoy all the premium features.\n\nThis is a one-time purchase — no recurring charges.\n\nThank you for joining PortfolioCraft!\n\n— The PortfolioCraft Team`
+          message: `Hi ${user.username || user.email},\n\nGreat news! Your payment of $${request.amount} USD for the PortfolioCraft ${request.plan.toUpperCase()} Plan has been verified and approved.${noteMsg}\n\nYour account has been upgraded to ${request.plan.toUpperCase()}. You can now log in and enjoy all the premium features.\n\nThis is a one-time purchase — no recurring charges.\n\nThank you for joining PortfolioCraft!\n\n— The PortfolioCraft Team`,
+          html
         });
       } catch (emailErr) {
         console.error('Approval email error:', emailErr.message);
@@ -364,10 +402,19 @@ router.put(
       try {
         const user = await User.findById(request.userId);
         if (user) {
+          const clientUrl = getClientUrl(req);
+          const html = getPaymentRejectedTemplate({
+            recipientName: user.fullName || user.username,
+            plan: request.plan,
+            reason: adminNote,
+            clientUrl
+          });
+
           await sendEmail({
             email: user.email,
             subject: `❌ PortfolioCraft Payment Request — Update Required`,
-            message: `Hi ${user.username || user.email},\n\nWe were unable to verify your payment request for the PortfolioCraft ${request.plan.toUpperCase()} Plan.\n\nReason: ${adminNote}\n\nPlease visit our pricing page to resubmit your payment with the correct documents.\n\nIf you believe this is an error, please contact our support team.\n\n— The PortfolioCraft Team`
+            message: `Hi ${user.username || user.email},\n\nWe were unable to verify your payment request for the PortfolioCraft ${request.plan.toUpperCase()} Plan.\n\nReason: ${adminNote}\n\nPlease visit our pricing page to resubmit your payment with the correct documents.\n\nIf you believe this is an error, please contact our support team.\n\n— The PortfolioCraft Team`,
+            html
           });
         }
       } catch (emailErr) {

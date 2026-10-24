@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Subscriber = require('../models/Subscriber');
 const sendEmail = require('../utils/sendEmail');
+const { getNewsletterWelcomeTemplate } = require('../utils/emailTemplate');
 
 // @route   POST /api/newsletter/subscribe
 // @desc    Subscribe to weekly portfolio tips & masterclasses
@@ -30,10 +31,17 @@ router.post('/subscribe', async (req, res) => {
 
     // Send confirmation welcome email with weekly portfolio tips
     try {
+      const clientUrl = process.env.CLIENT_URL || 'https://portfoliocraftlk.vercel.app';
+      const html = getNewsletterWelcomeTemplate({
+        email: cleanEmail,
+        clientUrl
+      });
+
       await sendEmail({
         email: cleanEmail,
         subject: '🎉 Welcome to PortfolioCraft Weekly Tips & Masterclasses!',
-        message: `Welcome to PortfolioCraft Weekly Tips!\n\nThank you for subscribing with ${cleanEmail}.\n\nEvery week, you'll receive actionable insights on portfolio design, case study storytelling, and winning high-value clients.\n\nHappy building,\nThe PortfolioCraft Team`
+        message: `Welcome to PortfolioCraft Weekly Tips!\n\nThank you for subscribing with ${cleanEmail}.\n\nEvery week, you'll receive actionable insights on portfolio design, case study storytelling, and winning high-value clients.\n\nHappy building,\nThe PortfolioCraft Team`,
+        html
       });
     } catch (mailErr) {
       console.log('Email dispatch warning (SMTP sandbox or dev mode):', mailErr.message);
