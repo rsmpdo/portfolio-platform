@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/authSlice';
-import { Sparkles, LayoutTemplate, LogOut, LogIn, UserPlus, ShieldAlert } from 'lucide-react';
+import { LayoutTemplate, LogOut, LogIn, UserPlus, ShieldAlert } from 'lucide-react';
 import LogoIcon from './LogoIcon';
 
 export default function Header() {

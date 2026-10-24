@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { Sparkles, ExternalLink, Star, Layers, ArrowUpRight } from 'lucide-react';
+import { Award, ExternalLink, Star, Layers, ArrowUpRight } from 'lucide-react';
 import { SHOWCASE_CREATORS } from '../data/showcaseData';
 
 export default function Showcase() {
@@ -15,7 +15,7 @@ export default function Showcase() {
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Award className="w-3.5 h-3.5" />
             <span>Community Showcase</span>
           </div>
           <h1 className="font-heading font-black text-4xl md:text-6xl text-white mb-6">

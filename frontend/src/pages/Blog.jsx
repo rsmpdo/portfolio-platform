@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 import {
-  Sparkles,
   BookOpen,
   Clock,
   ArrowRight,
@@ -415,7 +414,7 @@ export default function Blog() {
 
                       {/* High contrast badge overlay over image */}
                       <div className="absolute top-4 left-4 px-3.5 py-1.5 rounded-full bg-slate-950/95 border border-indigo-500/50 text-indigo-300 font-bold text-xs shadow-2xl backdrop-blur-md flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-indigo-400" />
+                        <BookOpen className="w-3 h-3 text-indigo-400" />
                         <span>{post.category}</span>
                       </div>
 

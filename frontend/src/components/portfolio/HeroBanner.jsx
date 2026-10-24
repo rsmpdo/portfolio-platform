@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, MonitorPlay, Sparkles } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, MonitorPlay } from 'lucide-react';
 
 export default function HeroBanner({ props = {}, templateId, viewportMode, theme = {} }) {
   const {
@@ -122,7 +122,7 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
         <div className="max-w-6xl mx-auto w-full relative z-10">
           <div className={`glass-card ${isMobile ? 'p-6 rounded-3xl' : isTablet ? 'p-10 rounded-[2.5rem]' : 'p-12 md:p-20 rounded-[3rem]'} border border-white/10 text-center shadow-2xl backdrop-blur-xl`} style={surfaceColor ? { backgroundColor: surfaceColor } : undefined}>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass border text-xs font-semibold mb-6" style={{ borderColor: `${primaryColor}40`, color: primaryColor }}>
-              <Sparkles className="w-3.5 h-3.5" /> Immersive Digital
+              <MonitorPlay className="w-3.5 h-3.5" /> Immersive Digital
             </div>
             <h1 className={`font-heading font-black ${isMobile ? 'text-3xl' : isTablet ? 'text-5xl' : 'text-5xl md:text-7xl'} text-transparent bg-clip-text mb-4`} style={{ backgroundImage: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}>
               {headline}

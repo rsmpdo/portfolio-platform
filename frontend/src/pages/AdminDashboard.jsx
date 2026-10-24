@@ -9,7 +9,6 @@ import {
   Users,
   DollarSign,
   Crown,
-  Sparkles,
   Layers,
   Mail,
   AlertCircle,
@@ -1458,7 +1457,7 @@ export default function AdminDashboard() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Studio Subscribers</span>
-                  <Sparkles className="w-5 h-5 text-pink-400" />
+                  <Crown className="w-5 h-5 text-pink-400" />
                 </div>
                 <div className="font-heading font-black text-3xl text-white">{stats?.studioUsers || 0}</div>
               </button>

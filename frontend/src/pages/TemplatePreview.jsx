@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { demoLayouts } from '../data/demoLayouts';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
-import { Sparkles, ArrowLeft } from 'lucide-react';
+import { LayoutTemplate, ArrowLeft } from 'lucide-react';
 
 export default function TemplatePreview() {
   const { templateId } = useParams();
@@ -83,7 +83,7 @@ export default function TemplatePreview() {
               </Link>
               <div className="h-6 w-px bg-white/10 hidden sm:block"></div>
               <span className="font-heading font-bold text-sm text-white hidden sm:flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <LayoutTemplate className="w-3.5 h-3.5 text-indigo-400" />
                 Editor Template Preview: <span className="text-indigo-400">{template.name}</span>
               </span>
             </div>

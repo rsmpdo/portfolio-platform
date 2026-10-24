@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { Sparkles, Check, HelpCircle, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2, Crown, X } from 'lucide-react';
+import { CreditCard, Check, HelpCircle, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2, Crown, X } from 'lucide-react';
 
 const plans = [
   {
@@ -106,7 +106,7 @@ export default function Pricing() {
       <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
+            <CreditCard className="w-3.5 h-3.5" />
             <span>Simple Transparent Pricing</span>
           </div>
           <h1 className="font-heading font-black text-4xl md:text-6xl text-white mb-6">

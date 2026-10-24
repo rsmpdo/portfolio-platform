@@ -25,7 +25,7 @@ import {
   Globe,
   Save,
   Check,
-  Sparkles,
+  Zap,
   ExternalLink,
   GripVertical,
   Loader2,
@@ -39,7 +39,7 @@ import {
 } from 'lucide-react';
 
 const AVAILABLE_COMPONENTS = [
-  { type: 'HeroBanner', title: 'Hero Banner', icon: '✨', tier: 'free' },
+  { type: 'HeroBanner', title: 'Hero Banner', icon: '🎯', tier: 'free' },
   { type: 'AboutMe', title: 'About Me', icon: '👤', tier: 'free' },
   { type: 'ProjectsGrid', title: 'Projects Grid', icon: '🚀', tier: 'free' },
   { type: 'ExperienceTimeline', title: 'Experience Timeline', icon: '💼', tier: 'free' },
@@ -279,7 +279,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
             </span>
           ) : currentPlan === 'pro' ? (
             <span className="badge badge-indigo flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-indigo-400" />
+              <Zap className="w-3 h-3 text-indigo-400" />
               <span>Pro Plan</span>
             </span>
           ) : (
@@ -320,7 +320,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
       {/* Top Header & Save Status Indicator */}
       <div className="p-4 border-b border-white/[0.06] flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4" style={{ color: accentColor }} />
+          <Layers className="w-4 h-4" style={{ color: accentColor }} />
           <span className="font-heading font-bold text-sm text-white">Sections</span>
         </div>
         <div className="flex items-center gap-1.5 select-none">

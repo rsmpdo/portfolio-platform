@@ -6,7 +6,7 @@ import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Footer from '../components/common/Footer';
 import Header from '../components/common/Header';
 import ShowcasePortfolio from './ShowcasePortfolio';
-import { Loader2, Sparkles, Lock, Home } from 'lucide-react';
+import { Loader2, Layers, Lock, Home } from 'lucide-react';
 
 export default function PublicPortfolio() {
   const { handle } = useParams();
@@ -42,7 +42,7 @@ export default function PublicPortfolio() {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white gap-4">
         <div className="w-14 h-14 rounded-2xl btn-primary flex items-center justify-center glow-indigo animate-pulse">
-          <Sparkles className="w-6 h-6 text-white" />
+          <Layers className="w-6 h-6 text-white" />
         </div>
         <Loader2 className="w-6 h-6 text-indigo-400 animate-spin" />
         <p className="text-sm text-slate-500">Loading portfolio...</p>
@@ -105,7 +105,7 @@ export default function PublicPortfolio() {
             ) : (
               <Link to="/" className="flex items-center gap-2 group">
                 <div className="w-7 h-7 rounded-lg btn-primary flex items-center justify-center">
-                  <Sparkles className="w-3.5 h-3.5 text-white" />
+                  <Layers className="w-3.5 h-3.5 text-white" />
                 </div>
                 <span className="font-heading font-bold text-sm text-white tracking-tight">
                   Portfolio<span className="gradient-text">Craft</span>

@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 import {
-  Sparkles,
   Users,
   Target,
   Heart,
@@ -120,7 +119,7 @@ export default function About() {
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto">
           <div className="badge badge-indigo inline-flex mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5" />
             <span>Our Mission & Story</span>
           </div>
           <h1 className="font-heading font-black text-4xl md:text-6xl text-white mb-6">

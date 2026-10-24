@@ -7,7 +7,7 @@ import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Header from '../components/common/Header';
-import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Sparkles, Layers, Save, Globe } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Layers, Save, Globe } from 'lucide-react';
 
 export default function Editor() {
   const dispatch = useDispatch();
@@ -96,7 +96,7 @@ export default function Editor() {
       <div className="h-14 border-b border-white/[0.06] glass-dark px-6 flex items-center justify-between mt-[72px]">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
+            <Layers className="w-4 h-4 text-indigo-400" />
             <span className="font-heading font-bold text-sm text-white">Portfolio Editor</span>
           </div>
 
@@ -288,7 +288,7 @@ export default function Editor() {
                   >
                     {activeLayout?.components?.length === 0 ? (
                       <div className="py-16 text-center px-4">
-                        <Sparkles className="w-8 h-8 text-indigo-400 mx-auto mb-3" />
+                        <Layers className="w-8 h-8 text-indigo-400 mx-auto mb-3" />
                         <h3 className="font-heading font-bold text-base text-white mb-1">No Sections Added</h3>
                         <p className="text-slate-500 text-xs">Add sections using the sidebar.</p>
                       </div>
@@ -329,7 +329,7 @@ export default function Editor() {
                   >
                     {activeLayout?.components?.length === 0 ? (
                       <div className="py-20 text-center px-6">
-                        <Sparkles className="w-8 h-8 text-indigo-400 mx-auto mb-4" />
+                        <Layers className="w-8 h-8 text-indigo-400 mx-auto mb-4" />
                         <h3 className="font-heading font-bold text-lg text-white mb-2">No Sections Added</h3>
                         <p className="text-slate-500 text-sm">Add sections using the sidebar.</p>
                       </div>
@@ -364,7 +364,7 @@ export default function Editor() {
                   {activeLayout?.components?.length === 0 ? (
                     <div className="py-20 text-center">
                       <div className="w-20 h-20 rounded-3xl glass flex items-center justify-center mx-auto mb-6">
-                        <Sparkles className="w-8 h-8 text-indigo-400" />
+                        <Layers className="w-8 h-8 text-indigo-400" />
                       </div>
                       <h3 className="font-heading font-bold text-xl text-white mb-2">Start Building Your Portfolio</h3>
                       <p className="text-slate-500 text-sm max-w-sm mx-auto">

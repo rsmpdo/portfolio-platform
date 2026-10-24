@@ -10,7 +10,7 @@ import {
   Mail,
   ShieldCheck,
   Crown,
-  Sparkles,
+  Zap,
   LogOut,
   Trash2,
   ArrowRight,
@@ -1080,7 +1080,7 @@ export default function ProfileSettings() {
                     </>
                   ) : user.plan === 'pro' ? (
                     <>
-                      <Sparkles className="w-4 h-4 text-indigo-400" />
+                      <Zap className="w-4 h-4 text-indigo-400" />
                       <span className="text-indigo-400">Pro Creator (3 Portfolios)</span>
                     </>
                   ) : (

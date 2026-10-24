@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
-import { Sparkles, Eye, ArrowRight, LayoutTemplate, Lock, Crown, ShieldCheck, Check } from 'lucide-react';
+import { Layers, Eye, ArrowRight, LayoutTemplate, Lock, Crown, ShieldCheck, Check } from 'lucide-react';
 
 const templates = [
   {
@@ -277,7 +277,7 @@ export default function Templates() {
           <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
           <div className="relative z-10 max-w-2xl mx-auto">
             <div className="badge badge-indigo inline-flex mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
+              <Layers className="w-3.5 h-3.5" />
               <span>Template Lab · In Active Development</span>
             </div>
             <h2 className="font-heading font-black text-2xl md:text-4xl text-white mb-3">
@@ -297,7 +297,7 @@ export default function Templates() {
                   key={idx}
                   className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/[0.04] border border-white/10 text-slate-300"
                 >
-                  ✨ {upcoming} (Soon)
+                  • {upcoming} (Soon)
                 </span>
               ))}
             </div>

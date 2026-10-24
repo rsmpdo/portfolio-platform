@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Sparkles,
   ArrowLeft,
   ExternalLink,
   MapPin,
@@ -172,7 +171,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                 background: `linear-gradient(135deg, ${creator.accentColor}, ${creator.secondaryColor})`
               }}
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Layers className="w-3.5 h-3.5" />
               <span>Build Yours Free</span>
             </Link>
           </div>
@@ -207,7 +206,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   color: creator.accentColor
                 }}
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Award className="w-3.5 h-3.5" />
                 <span>{creator.role}</span>
               </div>
 

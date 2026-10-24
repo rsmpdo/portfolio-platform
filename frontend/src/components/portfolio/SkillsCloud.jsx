@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Cpu, Sparkles } from 'lucide-react';
+import { Cpu } from 'lucide-react';
 
 const ICONS = {
   Frontend: '🎨',

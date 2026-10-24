@@ -85,7 +85,7 @@ export default function Home() {
           >
             {/* Badge */}
             <div className="inline-flex items-center gap-2 badge badge-indigo mb-8">
-              <Star className="w-3 h-3 fill-current" />
+              <Award className="w-3.5 h-3.5" />
               <span>The Portfolio Platform Creators Trust</span>
             </div>
 

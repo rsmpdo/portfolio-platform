@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, MapPin, Phone, Mail, Github, Twitter, Linkedin, Dribbble } from 'lucide-react';
+import { MapPin, Phone, Mail, Github, Twitter, Linkedin, Dribbble } from 'lucide-react';
 import LogoIcon from './LogoIcon';
 
 export default function Footer() {

@@ -11,7 +11,6 @@ import {
   X, 
   Plus, 
   Trash2, 
-  Sparkles, 
   Crown, 
   Layers, 
   ExternalLink,
