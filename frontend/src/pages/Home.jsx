@@ -468,9 +468,10 @@ export default function Home() {
                       </Link>
                       <Link
                         to="/templates"
-                        className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-200 transition"
+                        className="px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-slate-200 transition inline-flex items-center gap-1.5"
                       >
-                        Use This Layout
+                        <span>Go to Templates</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     </div>
                   </div>
@@ -728,19 +729,12 @@ export default function Home() {
                     <p className="text-slate-400 text-xs leading-relaxed">{tpl.desc}</p>
                   </div>
                 </div>
-                <div className="px-6 pb-6 pt-2 flex items-center gap-2.5">
-                  <Link
-                    to={`/preview/${tpl.id}`}
-                    className="btn-ghost flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:text-white flex items-center justify-center gap-1.5"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Live Demo</span>
-                  </Link>
+                <div className="px-6 pb-6 pt-2">
                   <Link
                     to="/templates"
-                    className="btn-primary flex-1 py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5"
+                    className="btn-primary w-full py-3 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2"
                   >
-                    <span>Use Template</span>
+                    <span>Go to Templates</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
