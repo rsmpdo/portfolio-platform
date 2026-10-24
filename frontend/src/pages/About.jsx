@@ -92,21 +92,21 @@ const leadershipTeam = [
     role: 'Co-Founder & Head of Design Systems',
     bio: 'Former Principal Designer in San Francisco with 7+ years crafting enterprise design systems and multi-brand tokens.',
     avatar:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80'
+      'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80'
   },
   {
     name: 'Devon Mitchell',
     role: 'Co-Founder & Chief Cloud Architect',
     bio: 'Distributed systems engineer specializing in ultra-low-latency edge infrastructure, Node.js, and zero-downtime cloud deployments.',
     avatar:
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80'
+      'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80'
   },
   {
     name: 'Claire Dubois',
     role: 'VP of Creative Direction & Brand',
     bio: 'Award-winning creative director leading editorial typography, motion choreography, and visual storytelling across London and Paris.',
     avatar:
-      'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80'
+      'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?auto=format&fit=crop&w=400&q=80'
   }
 ];
 
