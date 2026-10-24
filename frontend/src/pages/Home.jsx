@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 import {
@@ -24,7 +24,13 @@ import {
   Code2,
   Briefcase,
   Building2,
-  Lock
+  Lock,
+  Check,
+  X,
+  ChevronDown,
+  HelpCircle,
+  Share2,
+  Cpu
 } from 'lucide-react';
 
 const HERO_PERSONAS = [
@@ -205,9 +211,125 @@ const TESTIMONIALS = [
   }
 ];
 
+const ECOSYSTEM_TOOLS = [
+  {
+    name: 'Figma & FigJam',
+    category: 'Interactive Prototypes',
+    color: '#a259ff',
+    desc: 'Embed working UI flows and clickable design prototypes directly so design leads test UX in-context.'
+  },
+  {
+    name: 'GitHub Repositories',
+    category: 'Engineering Proof',
+    color: '#10b981',
+    desc: 'Surface real-time repository cards with primary languages, commit activity, stars, and direct links.'
+  },
+  {
+    name: 'Spline 3D & WebGL',
+    category: 'Spatial Motion',
+    color: '#06b6d4',
+    desc: 'Render interactive 3D objects with camera rotation, hover physics, and zero stutter on mobile.'
+  },
+  {
+    name: 'CodePen & StackBlitz',
+    category: 'Live Code Execution',
+    color: '#f59e0b',
+    desc: 'Run interactive frontend sandboxes where engineering directors can inspect clean source code.'
+  },
+  {
+    name: 'YouTube & Loom Walkthroughs',
+    category: 'Async Presentation',
+    color: '#ef4444',
+    desc: 'Deliver narrated video walkthroughs of complex system architectures and product launches.'
+  },
+  {
+    name: 'Cloudinary 4K Media Pipeline',
+    category: 'Edge Optimization',
+    color: '#6366f1',
+    desc: 'Auto-compress high-res PNG/JPG assets into modern WebP/AVIF with global edge caching.'
+  }
+];
+
+const COMPARISON_ROWS = [
+  {
+    feature: 'Recruiter-Optimized KPI Cards',
+    portfolioCraft: true,
+    generic: 'Manual plugins required',
+    pdf: false,
+    detail: 'Structured metrics for ARR, conversion lift, performance, and impact.'
+  },
+  {
+    feature: 'Live Interactive Prototypes & 3D Embeds',
+    portfolioCraft: true,
+    generic: 'Complex iframe workarounds',
+    pdf: false,
+    detail: 'Figma, Spline 3D, and CodePen interactive viewports natively supported.'
+  },
+  {
+    feature: 'Switch Layouts Without Losing Content',
+    portfolioCraft: true,
+    generic: 'Rebuild entire page from scratch',
+    pdf: false,
+    detail: 'Content is cleanly separated from presentation templates and tokens.'
+  },
+  {
+    feature: 'Instant Custom /p/ Handle on Global CDN',
+    portfolioCraft: true,
+    generic: 'DNS setup & hosting overhead',
+    pdf: 'Requires static file downloads',
+    detail: 'Instant edge publishing with automatic SSL certificates and clean URLs.'
+  },
+  {
+    feature: 'Privacy-Protected Inbound Inbox',
+    portfolioCraft: true,
+    generic: 'Spam-prone mailto links',
+    pdf: 'Personal phone/email fully exposed',
+    detail: 'Capture client budgets and recruiter opportunities safely in your dashboard.'
+  },
+  {
+    feature: 'Real-Time Desktop, Tablet & Mobile Preview',
+    portfolioCraft: true,
+    generic: 'Clunky or inaccurate previews',
+    pdf: false,
+    detail: 'Preview how your craft looks across all device viewports while editing.'
+  }
+];
+
+const FAQS = [
+  {
+    q: 'Can I switch my portfolio template later without losing my content?',
+    a: 'Yes, absolutely. PortfolioCraft separates your portfolio content (projects, experiences, case studies, and bio) from visual presentation styling. You can switch between any of our 10 handcrafted templates at any time with a single click, and all your existing work will automatically adapt to the new visual layout.'
+  },
+  {
+    q: 'How does the custom /p/handle publishing work?',
+    a: 'Every registered creator receives their own instant, clean handle URL such as portfoliocraft.io/p/yourname. Your page is immediately published through our global edge CDN with automated SSL certificates, responsive mobile caching, and search engine optimization (OpenGraph social cards) built in.'
+  },
+  {
+    q: 'How do interactive Figma, 3D Spline, and CodePen embeds work?',
+    a: 'Inside the visual editor, simply paste your public sharing or embed URL into the Embeds section. PortfolioCraft safely mounts a sandboxed viewport so hiring managers, clients, and recruiters can interactively click prototypes, orbit 3D models, or test frontend code without ever leaving your portfolio.'
+  },
+  {
+    q: 'How does the privacy-first client inquiry inbox protect me?',
+    a: 'Instead of forcing you to publish your personal email address or telephone number to scrapers and spammers, visitors submit structured inquiries directly through your portfolio contact form. Messages are securely routed into your authenticated dashboard inbox where you can review client budgets and recruiter offers before responding.'
+  },
+  {
+    q: 'Is there a free plan available, and what is included?',
+    a: 'Yes, our Free Forever plan includes full access to core templates, visual section management, Cloudinary image hosting, responsive mobile preview, and live edge publishing on your custom /p/ handle with zero expiration or trial periods.'
+  },
+  {
+    q: 'Can studios or agencies manage multiple portfolios under one account?',
+    a: 'Yes. Our Studio and Enterprise plans allow boutique creative agencies and multi-disciplinary teams to create and maintain multiple vertical portfolios with white-label branding, priority support, and multi-seat collaboration.'
+  }
+];
+
 export default function Home() {
   const [activePersonaIdx, setActivePersonaIdx] = useState(0);
+  const [openFaqIdx, setOpenFaqIdx] = useState(null);
   const activePersona = HERO_PERSONAS[activePersonaIdx];
+
+  const toggleFaq = (idx) => {
+    setOpenFaqIdx(openFaqIdx === idx ? null : idx);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
@@ -246,13 +368,12 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto mb-14"
           >
-            {/* Announcement Pill */}
+            {/* Announcement Pill: removed '2.0' and arrow */}
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-7 shadow-lg">
               <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider">
                 NEW
               </span>
-              <span>PortfolioCraft 2.0 · Visual CMS & Global Edge Publishing</span>
-              <ArrowRight className="w-3.5 h-3.5 text-indigo-400" />
+              <span>PortfolioCraft · Visual CMS & Global Edge Publishing</span>
             </div>
 
             {/* Main Headline */}
@@ -840,8 +961,187 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 7. FINAL FLAGSHIP CTA ────────────────────────────────────── */}
-      <section className="py-24 sm:py-28 px-6">
+      {/* ─── 7. INTERACTIVE ECOSYSTEM & EMBEDS SECTION ────────────────── */}
+      <section className="py-24 px-6 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="badge badge-indigo inline-flex mb-3">
+              <Share2 className="w-3.5 h-3.5" />
+              <span>Universal Embed Ecosystem</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-4">
+              Bring Your <span className="gradient-text">Living Work</span> to Life
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+              Don't ask hiring managers to imagine your designs or read static screenshots. Embed interactive canvases, working code, and real-time 3D objects with zero plugins.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ECOSYSTEM_TOOLS.map((tool, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.07 }}
+                className="glass-card rounded-3xl p-7 border border-white/[0.08] flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span
+                      className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-xl"
+                      style={{
+                        backgroundColor: `${tool.color}15`,
+                        color: tool.color,
+                        border: `1px solid ${tool.color}35`
+                      }}
+                    >
+                      {tool.category}
+                    </span>
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: tool.color }} />
+                  </div>
+                  <h3 className="font-heading font-bold text-xl text-white mb-2.5">{tool.name}</h3>
+                  <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">{tool.desc}</p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-slate-400 font-medium">
+                  <span>Zero-config integration</span>
+                  <span className="text-emerald-400 font-bold">Native Edge Sandbox</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 8. FEATURE COMPARISON MATRIX ─────────────────────────────── */}
+      <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="badge badge-emerald inline-flex mb-3">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Clear Competitive Value</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-4">
+              Engineered for <span className="gradient-text">Inbound Offers</span>
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+              See why senior designers, staff engineers, and boutique creative studios pick PortfolioCraft over legacy generic website builders and static PDF resumes.
+            </p>
+          </div>
+
+          <div className="glass gradient-border rounded-3xl overflow-x-auto border border-white/10 shadow-2xl">
+            <table className="w-full text-left border-collapse min-w-[640px]">
+              <thead>
+                <tr className="border-b border-white/[0.08] bg-slate-900/60">
+                  <th className="py-5 px-6 font-heading font-bold text-sm text-slate-200">
+                    Core Capability
+                  </th>
+                  <th className="py-5 px-6 font-heading font-black text-base text-indigo-400 bg-indigo-500/10 border-x border-indigo-500/20 text-center">
+                    PortfolioCraft
+                  </th>
+                  <th className="py-5 px-6 font-heading font-bold text-sm text-slate-400 text-center">
+                    Generic Web Builders
+                  </th>
+                  <th className="py-5 px-6 font-heading font-bold text-sm text-slate-400 text-center">
+                    Static PDF Resumes
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.05] text-xs sm:text-sm">
+                {COMPARISON_ROWS.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-white/[0.02] transition">
+                    <td className="py-4 px-6">
+                      <div className="font-semibold text-white">{row.feature}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5">{row.detail}</div>
+                    </td>
+                    <td className="py-4 px-6 text-center bg-indigo-500/5 border-x border-indigo-500/20">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs">
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Included</span>
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-center text-slate-400 font-medium">
+                      {row.generic}
+                    </td>
+                    <td className="py-4 px-6 text-center text-slate-500">
+                      {row.pdf === false ? (
+                        <span className="inline-flex items-center gap-1 text-rose-400">
+                          <X className="w-3.5 h-3.5" />
+                          <span>Unsupported</span>
+                        </span>
+                      ) : (
+                        row.pdf
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 9. FREQUENTLY ASKED QUESTIONS (FAQ) ──────────────────────── */}
+      <section className="py-24 px-6 border-t border-white/[0.06]">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="badge badge-indigo inline-flex mb-3">
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Got Questions?</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-4">
+              Frequently Asked <span className="gradient-text">Questions</span>
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base">
+              Everything you need to know about publishing, privacy, custom domains, and templates.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaqIdx === idx;
+              return (
+                <div
+                  key={idx}
+                  className="glass rounded-2xl border border-white/[0.08] overflow-hidden transition"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleFaq(idx)}
+                    className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 hover:bg-white/[0.02] transition"
+                  >
+                    <span className="font-heading font-bold text-base sm:text-lg text-white">
+                      {faq.q}
+                    </span>
+                    <ChevronDown
+                      className={`w-5 h-5 text-indigo-400 shrink-0 transition-transform duration-300 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="px-5 pb-5 sm:px-6 sm:pb-6 text-slate-300 text-xs sm:text-sm leading-relaxed border-t border-white/[0.05]"
+                      >
+                        {faq.a}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 10. FINAL FLAGSHIP CTA ───────────────────────────────────── */}
+      <section className="py-24 sm:py-28 px-6 border-t border-white/[0.06] bg-white/[0.01]">
         <div className="max-w-5xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
