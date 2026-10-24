@@ -73,15 +73,15 @@ export default function Footer() {
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
                 <p className="text-sm text-slate-400 leading-relaxed">
-                  Galle,<br />
-                  Sri Lanka
+                  548 Market St, Suite 42100,<br />
+                  San Francisco, CA 94104, USA
                 </p>
               </div>
               
               <div className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-indigo-400 shrink-0" />
-                <a href="tel:+94912234567" className="text-sm text-slate-400 hover:text-white transition">
-                  +94 91 223 4567
+                <a href="tel:+14158905400" className="text-sm text-slate-400 hover:text-white transition">
+                  +1 (415) 890-5400
                 </a>
               </div>
               

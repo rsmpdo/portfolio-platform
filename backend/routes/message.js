@@ -178,6 +178,12 @@ router.get(
           recipientName = uName;
           recipientEmail = uEmail;
           route = handle ? `/p/${handle}` : '#';
+        } else if (m.subject && m.subject.toLowerCase().includes('enterprise')) {
+          key = 'platform:sales';
+          recipientType = 'platform';
+          recipientName = 'Enterprise Sales (/contact)';
+          recipientEmail = 'sales@portfoliocraft.io';
+          route = '/contact#enterprise-sales';
         } else {
           key = 'platform:support';
           recipientType = 'platform';
@@ -245,6 +251,8 @@ router.get(
           ? `showcase:${handle}`
           : m.recipientUserId || handle
           ? `user:${handle || m.recipientUserId?._id}`
+          : m.subject && m.subject.toLowerCase().includes('enterprise')
+          ? 'platform:sales'
           : 'platform:support';
 
         const statEntry = statsMap[key];
