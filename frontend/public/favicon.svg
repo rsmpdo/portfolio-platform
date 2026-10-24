@@ -1,14 +1,14 @@
-﻿<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="32" height="32" rx="8" fill="#050811"/>
   <defs>
     <linearGradient id="logo-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#818CF8" />
-      <stop offset="50%" stop-color="#C084FC" />
-      <stop offset="100%" stop-color="#F472B6" />
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="45%" stop-color="#A5B4FC" />
+      <stop offset="100%" stop-color="#6366F1" />
     </linearGradient>
     <linearGradient id="logo-grad-accent" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#6366F1" />
-      <stop offset="100%" stop-color="#38BDF8" />
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#818CF8" />
     </linearGradient>
   </defs>
   <path

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 export default function LogoIcon({ className = "w-5 h-5" }) {
   return (
@@ -10,13 +10,13 @@ export default function LogoIcon({ className = "w-5 h-5" }) {
     >
       <defs>
         <linearGradient id="logo-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#818CF8" />
-          <stop offset="50%" stopColor="#C084FC" />
-          <stop offset="100%" stopColor="#F472B6" />
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="45%" stopColor="#A5B4FC" />
+          <stop offset="100%" stopColor="#6366F1" />
         </linearGradient>
         <linearGradient id="logo-grad-accent" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#6366F1" />
-          <stop offset="100%" stopColor="#38BDF8" />
+          <stop offset="0%" stopColor="#4F46E5" />
+          <stop offset="100%" stopColor="#818CF8" />
         </linearGradient>
         <filter id="logo-glow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#6366F1" floodOpacity="0.4" />
