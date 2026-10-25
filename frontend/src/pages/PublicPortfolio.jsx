@@ -6,7 +6,8 @@ import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Footer from '../components/common/Footer';
 import Header from '../components/common/Header';
 import ShowcasePortfolio from './ShowcasePortfolio';
-import { Loader2, Layers, Lock, Home } from 'lucide-react';
+import { Loader2, Layers, Lock, Home, FileText, Download } from 'lucide-react';
+import { downloadAtsResume } from '../utils/resumeGenerator';
 
 export default function PublicPortfolio() {
   const { handle } = useParams();
@@ -115,22 +116,35 @@ export default function PublicPortfolio() {
               </Link>
             )}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {title && !hideBranding && (
-                <span className="text-xs text-slate-400 font-semibold tracking-wide uppercase truncate max-w-[150px] sm:max-w-none">
+                <span className="text-xs text-slate-400 font-semibold tracking-wide uppercase truncate max-w-[120px] sm:max-w-none hidden md:inline">
                   {title}
                 </span>
               )}
-            </div>
 
-            {!hideBranding && (
-              <Link
-                to="/register"
-                className="btn-primary px-3 py-1.5 rounded-xl text-white text-xs font-bold"
-              >
-                Create Yours Free
-              </Link>
-            )}
+              {theme?.showResumeDownload !== false && (
+                <button
+                  type="button"
+                  onClick={() => downloadAtsResume(publicLayout)}
+                  className="px-2.5 sm:px-3 py-1 rounded-xl glass border border-white/10 hover:border-indigo-500/40 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer shadow-sm"
+                  title="Download clean, ATS-compliant PDF resume"
+                >
+                  <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="hidden xs:inline">ATS Resume</span>
+                  <Download className="w-3 h-3 text-slate-400 hidden sm:inline" />
+                </button>
+              )}
+
+              {!hideBranding && (
+                <Link
+                  to="/register"
+                  className="btn-primary px-3 py-1.5 rounded-xl text-white text-xs font-bold"
+                >
+                  Create Yours Free
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </nav>

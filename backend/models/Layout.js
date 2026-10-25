@@ -36,7 +36,28 @@ const LayoutSchema = new mongoose.Schema(
       textMutedColor: { type: String, default: '#94a3b8' },
       fontFamily: { type: String, default: 'Inter' },
       templateId: { type: String, default: 'minimalist-editorial' },
-      hideBranding: { type: Boolean, default: false }
+      hideBranding: { type: Boolean, default: false },
+      showResumeDownload: { type: Boolean, default: true }
+    },
+    // Creator Analytics Tracking (Views, Unique Visitors, ATS Resume Downloads)
+    analytics: {
+      views: { type: Number, default: 0 },
+      uniqueVisitors: { type: Number, default: 0 },
+      resumeDownloads: { type: Number, default: 0 },
+      dailyViews: [
+        {
+          date: { type: String },
+          views: { type: Number, default: 0 },
+          unique: { type: Number, default: 0 },
+          downloads: { type: Number, default: 0 }
+        }
+      ],
+      referrers: [
+        {
+          source: { type: String },
+          count: { type: Number, default: 0 }
+        }
+      ]
     },
     // Dynamic array of layout components (schema-less / mixed objects for full design flexibility)
     components: [
@@ -56,6 +77,7 @@ const LayoutSchema = new mongoose.Schema(
             'TestimonialsCarousel',
             'PremiumEmbed',
             'AdvancedMetrics',
+            'RichTextSection',
             'CustomHTML'
           ]
         },

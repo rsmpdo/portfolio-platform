@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import API from '../../services/api';
+import { downloadAtsResume } from '../../utils/resumeGenerator';
 import {
   selectComponent,
   updateComponentVisibility,
@@ -36,7 +38,14 @@ import {
   Search,
   CheckCircle2,
   Type,
-  X
+  X,
+  TrendingUp,
+  FileText,
+  Download,
+  Users,
+  BarChart3,
+  RefreshCw,
+  MousePointerClick
 } from 'lucide-react';
 
 const AVAILABLE_COMPONENTS = [
@@ -62,6 +71,31 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
 
   const [activeTab, setActiveTab] = useState('components');
   const [upgradeModalInfo, setUpgradeModalInfo] = useState(null);
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState(null);
+
+  const fetchAnalytics = async () => {
+    if (!activeLayout?._id) return;
+    setAnalyticsLoading(true);
+    setAnalyticsError(null);
+    try {
+      const res = await API.get(`/layouts/analytics/${activeLayout._id}`);
+      if (res.data?.success) {
+        setAnalyticsData(res.data);
+      }
+    } catch (err) {
+      setAnalyticsError(err.response?.data?.message || 'Failed to load analytics');
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'analytics' && activeLayout?._id) {
+      fetchAnalytics();
+    }
+  }, [activeTab, activeLayout?._id]);
 
   if (!activeLayout) return null;
 
@@ -361,21 +395,22 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
       {/* Tabs Navigation */}
       <div className="flex border-b border-white/[0.06] p-1.5 gap-1">
         {[
-          { key: 'components', icon: Layers, label: 'Structure' },
+          { key: 'components', icon: Layers, label: 'Sections' },
           { key: 'theme', icon: Palette, label: 'Theme' },
-          { key: 'settings', icon: Globe, label: 'SEO & URL' }
+          { key: 'settings', icon: Globe, label: 'Settings' },
+          { key: 'analytics', icon: TrendingUp, label: 'Analytics' }
         ].map(({ key, icon: Icon, label }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition ${
+            className={`flex-1 py-2 text-[11px] font-semibold rounded-xl flex items-center justify-center gap-1 transition ${
               activeTab === key
                 ? 'glass border border-indigo-500/30 text-indigo-400 font-bold'
                 : 'text-slate-500 hover:text-white'
             }`}
           >
-            <Icon className="w-3.5 h-3.5" />
-            <span>{label}</span>
+            <Icon className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{label}</span>
           </button>
         ))}
       </div>
@@ -840,6 +875,57 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </p>
             </div>
 
+            {/* 1-Click ATS Resume & PDF Download */}
+            <div className="pt-4 border-t border-white/[0.06] space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <FileText className="w-4 h-4 text-emerald-400" />
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">ATS Resume Download</h3>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  Feature
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Allow visitors, recruiters, and hiring managers to download an instant, ATS-friendly one-page PDF resume generated from your portfolio sections.
+              </p>
+
+              <div className="flex items-center justify-between pt-1">
+                <div>
+                  <span className="text-xs text-slate-200 font-medium block">Show Resume Button</span>
+                  <span className="text-[10px] text-slate-500">Visible in public navigation bar</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => dispatch(updateTheme({ showResumeDownload: activeLayout.theme?.showResumeDownload === false }))}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    activeLayout.theme?.showResumeDownload !== false ? 'bg-emerald-600' : 'bg-slate-800'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      activeLayout.theme?.showResumeDownload !== false ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-900/80 border border-white/5 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-white">Preview ATS Resume</p>
+                  <p className="text-[10px] text-slate-400 truncate">Test the generated PDF print layout</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => downloadAtsResume(activeLayout)}
+                  className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold flex items-center gap-1.5 transition shrink-0"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Test PDF</span>
+                </button>
+              </div>
+            </div>
+
             {/* SEO Meta Optimization (Pro & Studio) */}
             <div className="pt-4 border-t border-white/[0.06] space-y-4">
               <div className="flex items-center justify-between">
@@ -929,6 +1015,247 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="space-y-5">
+            {/* Header with Title and Refresh */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Creator Analytics</h3>
+              </div>
+              <button
+                type="button"
+                onClick={fetchAnalytics}
+                disabled={analyticsLoading}
+                className="p-1 rounded-lg hover:bg-white/[0.08] text-slate-400 hover:text-white transition disabled:opacity-50"
+                title="Refresh Analytics"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${analyticsLoading ? 'animate-spin text-indigo-400' : ''}`} />
+              </button>
+            </div>
+
+            {analyticsLoading && !analyticsData ? (
+              <div className="py-12 flex flex-col items-center justify-center text-center">
+                <Loader2 className="w-6 h-6 text-indigo-400 animate-spin mb-2" />
+                <p className="text-xs text-slate-400">Loading performance data...</p>
+              </div>
+            ) : analyticsError ? (
+              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-center space-y-2">
+                <p className="text-xs text-rose-300 font-semibold">{analyticsError}</p>
+                <button
+                  type="button"
+                  onClick={fetchAnalytics}
+                  className="px-3 py-1.5 rounded-xl bg-white/10 text-white text-xs font-bold hover:bg-white/20 transition"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : isFreePlan && analyticsData?.isLocked ? (
+              /* Free Plan: Teaser + Upgrade Card */
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-3 rounded-xl glass border border-white/[0.08] relative overflow-hidden">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mb-1">Total Views</span>
+                    <span className="text-xl font-heading font-extrabold text-white">{analyticsData?.views ?? 0}</span>
+                    <span className="text-[10px] text-emerald-400 block mt-0.5">Live counter</span>
+                  </div>
+                  <div className="p-3 rounded-xl glass border border-white/[0.08] relative overflow-hidden">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mb-1">Resume Clicks</span>
+                    <span className="text-xl font-heading font-extrabold text-white">{analyticsData?.resumeDownloads ?? 0}</span>
+                    <span className="text-[10px] text-indigo-400 block mt-0.5">Recruiter actions</span>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-gradient-to-b from-indigo-500/10 via-slate-900/60 to-slate-950 border border-indigo-500/20 text-center space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center mx-auto text-white shadow-lg shadow-indigo-500/25">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-heading font-bold text-white text-sm">Unlock Detailed Analytics</h4>
+                    <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                      Gain deep visibility into your audience with recruiter click-through rates, 30-day view velocity, and referrer tracking.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5 text-left text-[11px] text-slate-300 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>Unique visitor tracking & daily velocity</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>ATS Resume conversion & recruiter CTR %</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>Referrer sources (LinkedIn, GitHub, Direct)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>100% Cookieless & privacy compliant</span>
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/pricing"
+                    className="btn-primary w-full py-2.5 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-500/20"
+                  >
+                    <span>Upgrade to Pro ($12)</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              /* Pro & Studio Plan: Full Dashboard */
+              <div className="space-y-4">
+                {/* 4 Stat Cards */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-3 rounded-xl glass border border-white/[0.08]">
+                    <div className="flex items-center justify-between text-slate-400 mb-1">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider">Total Views</span>
+                      <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                    </div>
+                    <p className="text-xl font-heading font-extrabold text-white">
+                      {(analyticsData?.views || 0).toLocaleString()}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">All page loads</p>
+                  </div>
+
+                  <div className="p-3 rounded-xl glass border border-white/[0.08]">
+                    <div className="flex items-center justify-between text-slate-400 mb-1">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider">Unique Visitors</span>
+                      <Users className="w-3.5 h-3.5 text-purple-400" />
+                    </div>
+                    <p className="text-xl font-heading font-extrabold text-white">
+                      {(analyticsData?.uniqueVisitors || 0).toLocaleString()}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Distinct devices</p>
+                  </div>
+
+                  <div className="p-3 rounded-xl glass border border-white/[0.08]">
+                    <div className="flex items-center justify-between text-slate-400 mb-1">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider">Resume Clicks</span>
+                      <Download className="w-3.5 h-3.5 text-emerald-400" />
+                    </div>
+                    <p className="text-xl font-heading font-extrabold text-white">
+                      {(analyticsData?.resumeDownloads || 0).toLocaleString()}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">ATS PDF exports</p>
+                  </div>
+
+                  <div className="p-3 rounded-xl glass border border-white/[0.08]">
+                    <div className="flex items-center justify-between text-slate-400 mb-1">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider">Resume CTR</span>
+                      <MousePointerClick className="w-3.5 h-3.5 text-amber-400" />
+                    </div>
+                    <p className="text-xl font-heading font-extrabold text-white">
+                      {analyticsData?.resumeCtr !== undefined ? `${analyticsData.resumeCtr}%` : '0%'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Downloads / Visitors</p>
+                  </div>
+                </div>
+
+                {/* 14-Day Activity Chart */}
+                <div className="p-3.5 rounded-2xl glass border border-white/[0.08] space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white">Traffic Velocity</span>
+                    <span className="text-[10px] font-mono text-indigo-400">
+                      {analyticsData?.dailyViews?.reduce((acc, curr) => acc + (curr.views || 0), 0) || 0} views (14d)
+                    </span>
+                  </div>
+
+                  {analyticsData?.dailyViews && analyticsData.dailyViews.length > 0 ? (
+                    <div className="pt-2">
+                      <div className="flex items-end justify-between gap-1 h-20 pt-2 border-b border-white/10 pb-1">
+                        {(() => {
+                          const last14 = analyticsData.dailyViews.slice(-14);
+                          const maxViews = Math.max(...last14.map((d) => d.views || 0), 1);
+                          return last14.map((day, idx) => {
+                            const heightPct = Math.round(((day.views || 0) / maxViews) * 100);
+                            const dateLabel = new Date(day.date).toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' });
+                            return (
+                              <div
+                                key={idx}
+                                className="flex-1 flex flex-col items-center gap-1 h-full justify-end group relative"
+                              >
+                                <div className="absolute -top-7 px-1.5 py-0.5 rounded bg-slate-900 border border-white/20 text-[9px] font-mono text-white opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-20 shadow-md">
+                                  {dateLabel}: {day.views || 0}
+                                </div>
+                                <div
+                                  className="w-full rounded-t-sm transition-all bg-gradient-to-t from-indigo-600 to-indigo-400 group-hover:from-indigo-500 group-hover:to-purple-400"
+                                  style={{ height: `${Math.max(heightPct, 6)}%` }}
+                                />
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                      <div className="flex justify-between text-[9px] font-mono text-slate-500 pt-1">
+                        <span>14 days ago</span>
+                        <span>Today</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-slate-500 py-4 text-center">No recent traffic recorded yet.</p>
+                  )}
+                </div>
+
+                {/* Top Referrer Sources Breakdown */}
+                <div className="p-3.5 rounded-2xl glass border border-white/[0.08] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white">Referrer Sources</span>
+                    <span className="text-[10px] text-slate-500">Inbound channels</span>
+                  </div>
+
+                  {(() => {
+                    const refs = analyticsData?.referrers || {};
+                    const totalRefs = (refs.direct || 0) + (refs.linkedin || 0) + (refs.github || 0) + (refs.twitter || 0) + (refs.google || 0);
+                    const sources = [
+                      { name: 'LinkedIn', count: refs.linkedin || 0, color: 'bg-blue-500' },
+                      { name: 'GitHub', count: refs.github || 0, color: 'bg-slate-300' },
+                      { name: 'Twitter / X', count: refs.twitter || 0, color: 'bg-cyan-400' },
+                      { name: 'Google Search', count: refs.google || 0, color: 'bg-emerald-400' },
+                      { name: 'Direct Link', count: refs.direct || 0, color: 'bg-indigo-500' }
+                    ];
+
+                    return (
+                      <div className="space-y-2">
+                        {sources.map((s) => {
+                          const pct = totalRefs > 0 ? Math.round((s.count / totalRefs) * 100) : 0;
+                          return (
+                            <div key={s.name} className="space-y-1">
+                              <div className="flex justify-between text-[11px]">
+                                <span className="text-slate-300 font-medium">{s.name}</span>
+                                <span className="text-slate-400 font-mono text-[10px]">
+                                  {s.count} ({pct}%)
+                                </span>
+                              </div>
+                              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${s.color}`}
+                                  style={{ width: `${pct}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Privacy Guarantee Note */}
+                <div className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span className="text-[10px] text-slate-400">
+                    100% Cookieless, GDPR-compliant anonymized hashing.
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

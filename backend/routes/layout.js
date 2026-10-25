@@ -12,16 +12,63 @@ const checkAdmin = (req, res, next) => {
 };
 
 // @route   GET /api/layouts/public/:handle
-// @desc    Get published layout by handle (Public Portfolio View)
+// @desc    Get published layout by handle (Public Portfolio View & Track Visitor)
 // @access  Public
 router.get('/public/:handle', async (req, res) => {
   try {
     const handle = req.params.handle.toLowerCase();
-    const layout = await Layout.findOne({ handle, isPublished: true, isBanned: { $ne: true } }).populate('userId', 'username email');
+    const layout = await Layout.findOne({ handle, isPublished: true, isBanned: { $ne: true } }).populate('userId', 'username email fullName headline bio location website github linkedin twitter');
 
     if (!layout) {
       return res.status(404).json({ success: false, message: 'Portfolio layout not found' });
     }
+
+    // Asynchronously record visitor & view for Creator Analytics without delaying response
+    (async () => {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        let referrerSource = 'Direct';
+        const ref = (req.headers.referer || req.headers.referrer || '').toLowerCase();
+        if (ref.includes('linkedin')) referrerSource = 'LinkedIn';
+        else if (ref.includes('github')) referrerSource = 'GitHub';
+        else if (ref.includes('twitter') || ref.includes('t.co') || ref.includes('x.com')) referrerSource = 'Twitter / X';
+        else if (ref.includes('google')) referrerSource = 'Google';
+        else if (ref.includes('facebook') || ref.includes('instagram')) referrerSource = 'Social Media';
+
+        const targetLayout = await Layout.findById(layout._id);
+        if (targetLayout) {
+          if (!targetLayout.analytics) {
+            targetLayout.analytics = { views: 0, uniqueVisitors: 0, resumeDownloads: 0, dailyViews: [], referrers: [] };
+          }
+          targetLayout.analytics.views = (targetLayout.analytics.views || 0) + 1;
+          targetLayout.analytics.uniqueVisitors = (targetLayout.analytics.uniqueVisitors || 0) + 1;
+
+          // 30-Day trend entry
+          targetLayout.analytics.dailyViews = targetLayout.analytics.dailyViews || [];
+          let dayEntry = targetLayout.analytics.dailyViews.find((d) => d.date === today);
+          if (!dayEntry) {
+            targetLayout.analytics.dailyViews.push({ date: today, views: 1, unique: 1, downloads: 0 });
+            if (targetLayout.analytics.dailyViews.length > 30) targetLayout.analytics.dailyViews.shift();
+          } else {
+            dayEntry.views = (dayEntry.views || 0) + 1;
+            dayEntry.unique = (dayEntry.unique || 0) + 1;
+          }
+
+          // Referrer tracking
+          targetLayout.analytics.referrers = targetLayout.analytics.referrers || [];
+          let refEntry = targetLayout.analytics.referrers.find((r) => r.source === referrerSource);
+          if (!refEntry) {
+            targetLayout.analytics.referrers.push({ source: referrerSource, count: 1 });
+          } else {
+            refEntry.count = (refEntry.count || 0) + 1;
+          }
+
+          await targetLayout.save();
+        }
+      } catch (trackErr) {
+        console.warn('Analytics tracking error:', trackErr.message);
+      }
+    })();
 
     res.status(200).json({
       success: true,
@@ -308,6 +355,116 @@ router.get(
     try {
       const layouts = await Layout.find().populate('userId', 'username email role');
       res.status(200).json({ success: true, count: layouts.length, layouts });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   POST /api/layouts/track-download/:handle
+// @desc    Increment ATS resume download count for a portfolio
+// @access  Public
+router.post('/track-download/:handle', async (req, res) => {
+  try {
+    const handle = req.params.handle.toLowerCase();
+    const today = new Date().toISOString().split('T')[0];
+    const layout = await Layout.findOne({ handle });
+
+    if (!layout) {
+      return res.status(404).json({ success: false, message: 'Portfolio not found' });
+    }
+
+    if (!layout.analytics) {
+      layout.analytics = { views: 0, uniqueVisitors: 0, resumeDownloads: 0, dailyViews: [], referrers: [] };
+    }
+    layout.analytics.resumeDownloads = (layout.analytics.resumeDownloads || 0) + 1;
+
+    layout.analytics.dailyViews = layout.analytics.dailyViews || [];
+    let dayEntry = layout.analytics.dailyViews.find((d) => d.date === today);
+    if (dayEntry) {
+      dayEntry.downloads = (dayEntry.downloads || 0) + 1;
+    } else {
+      layout.analytics.dailyViews.push({ date: today, views: 0, unique: 0, downloads: 1 });
+    }
+
+    await layout.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Download tracked successfully',
+      downloads: layout.analytics.resumeDownloads
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   GET /api/layouts/analytics/:id
+// @desc    Get creator analytics for layout (Pro / Studio exclusive, gated for Free)
+// @access  Private
+router.get(
+  '/analytics/:id',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const layout = await Layout.findById(req.params.id);
+      if (!layout) {
+        return res.status(404).json({ success: false, message: 'Portfolio layout not found' });
+      }
+
+      // Verify layout ownership or admin
+      if (layout.userId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Unauthorized' });
+      }
+
+      const userPlan = (req.user.plan || 'free').toLowerCase();
+      const isProOrStudio = userPlan === 'pro' || userPlan === 'studio' || req.user.role === 'admin';
+
+      if (!isProOrStudio) {
+        return res.status(200).json({
+          success: true,
+          isLocked: true,
+          plan: userPlan,
+          views: layout.analytics?.views || 0,
+          uniqueVisitors: layout.analytics?.uniqueVisitors || 0,
+          resumeDownloads: layout.analytics?.resumeDownloads || 0,
+          message: 'Creator Analytics is available on Pro Creator and Studio tiers.'
+        });
+      }
+
+      const analytics = layout.analytics || { views: 0, uniqueVisitors: 0, resumeDownloads: 0, dailyViews: [], referrers: [] };
+      const views = analytics.views || 0;
+      const unique = analytics.uniqueVisitors || 0;
+      const downloads = analytics.resumeDownloads || 0;
+      const ctr = unique > 0 ? parseFloat(((downloads / unique) * 100).toFixed(1)) : 0.0;
+
+      // Map referrer list to counts map
+      const referrersMap = { direct: 0, linkedin: 0, github: 0, twitter: 0, google: 0 };
+      (analytics.referrers || []).forEach((r) => {
+        const key = (r.source || '').toLowerCase().replace(/[^a-z]/g, '');
+        if (key.includes('linkedin')) referrersMap.linkedin += r.count || 0;
+        else if (key.includes('github')) referrersMap.github += r.count || 0;
+        else if (key.includes('twitter') || key.includes('x')) referrersMap.twitter += r.count || 0;
+        else if (key.includes('google')) referrersMap.google += r.count || 0;
+        else referrersMap.direct += r.count || 0;
+      });
+
+      const payload = {
+        views,
+        uniqueVisitors: unique,
+        resumeDownloads: downloads,
+        resumeCtr: ctr,
+        dailyViews: analytics.dailyViews || [],
+        referrers: referrersMap
+      };
+
+      res.status(200).json({
+        success: true,
+        isLocked: false,
+        plan: userPlan,
+        ...payload,
+        analytics: payload
+      });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
