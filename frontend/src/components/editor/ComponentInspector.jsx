@@ -1224,6 +1224,107 @@ export default function ComponentInspector() {
           </>
         )}
 
+        {selectedComp.type === 'RichTextSection' && (
+          <>
+            <Field label="Section Badge / Pill" tip="Small highlight tag above the main title">
+              <TextInput
+                value={props.badge}
+                onChange={(e) => handlePropChange('badge', e.target.value)}
+                placeholder="e.g. Technical Case Study / Deep Dive"
+              />
+            </Field>
+
+            <Field label="Section Heading">
+              <TextInput
+                value={props.heading}
+                onChange={(e) => handlePropChange('heading', e.target.value)}
+                placeholder="e.g. Architecture & Problem Breakdown"
+              />
+            </Field>
+
+            <Field label="Subheading / Summary">
+              <TextArea
+                rows={2}
+                value={props.subheading}
+                onChange={(e) => handlePropChange('subheading', e.target.value)}
+                placeholder="Brief summary or context..."
+              />
+            </Field>
+
+            <Field label="Content Alignment">
+              <SelectInput
+                value={props.alignment || 'left'}
+                onChange={(e) => handlePropChange('alignment', e.target.value)}
+                options={[
+                  { value: 'left', label: 'Left Aligned (Editorial)' },
+                  { value: 'center', label: 'Centered (Feature)' }
+                ]}
+              />
+            </Field>
+
+            {/* Template Presets */}
+            <div className="p-3 rounded-2xl glass border border-white/[0.08] bg-white/[0.01] space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Insert Sample Template</span>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handlePropChange('content', `## Engineering Challenge\n\nWhen scaling to over **500K concurrent users**, database connection pooling became the primary bottleneck.\n\n> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra\n\n### Technical Decisions\n\n- **Zero-Copy Buffers**: Reduced latency by 45%.\n- **Distributed Consensus**: Implemented Raft with edge failover.\n\n\`\`\`javascript\n// High-throughput WebSocket dispatcher\nexport function dispatch(socket, data) {\n  return socket.write(Buffer.from(data));\n}\n\`\`\`\n\n### Business Outcome\n\nMaintained **99.99% uptime** during Black Friday traffic surges.`);
+                  }}
+                  className="px-2.5 py-1.5 rounded-xl glass border border-white/10 hover:border-indigo-500/40 text-[11px] text-slate-300 hover:text-white font-semibold text-center transition"
+                >
+                  🚀 System Deep-Dive
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handlePropChange('content', `## Design Philosophy\n\nGreat interfaces feel invisible. Every interaction should give the user confidence and momentum.\n\n### Core Principles\n\n- **Content First**: Remove every decorative element that doesn't aid clarity.\n- **Sub-100ms Feedback**: Animate state changes with physical spring physics.\n- **Universal Access**: WCAG AAA compliant contrast and full screen-reader semantic trees.\n\n> "Good design is as little design as possible." — Dieter Rams`);
+                  }}
+                  className="px-2.5 py-1.5 rounded-xl glass border border-white/10 hover:border-indigo-500/40 text-[11px] text-slate-300 hover:text-white font-semibold text-center transition"
+                >
+                  🎨 Design Philosophy
+                </button>
+              </div>
+            </div>
+
+            {/* Markdown Quick Toolbar */}
+            <Field label="Markdown & Code Editor" tip="Supports ## H2, ### H3, **bold**, *italic*, > quotes, ```code blocks```, lists, and links">
+              <div className="flex flex-wrap gap-1 p-1.5 rounded-xl glass border border-white/[0.08] mb-1.5 bg-slate-900/50">
+                {[
+                  { label: 'H2', insert: '\n## Section Title\n' },
+                  { label: 'H3', insert: '\n### Subsection Title\n' },
+                  { label: 'Bold', insert: '**bold text**' },
+                  { label: 'Italic', insert: '*italic text*' },
+                  { label: 'Quote', insert: '\n> "Quote or highlight text"\n' },
+                  { label: 'Code', insert: '\n```javascript\n// Code snippet here\nconst result = execute();\n```\n' },
+                  { label: 'List', insert: '\n- First key point\n- Second key point\n- Third key point\n' },
+                  { label: 'Link', insert: '[Link Title](https://example.com)' }
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => {
+                      const prev = props.content || '';
+                      handlePropChange('content', prev ? `${prev}\n${item.insert}` : item.insert);
+                    }}
+                    className="px-2 py-1 rounded-lg text-[10px] font-mono font-bold bg-white/5 hover:bg-indigo-500/20 text-slate-300 hover:text-indigo-300 border border-white/10 transition"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              <textarea
+                rows={12}
+                value={props.content ?? ''}
+                onChange={(e) => handlePropChange('content', e.target.value)}
+                placeholder="Write your case study prose, architecture notes, and markdown here..."
+                className="input-field w-full p-3 rounded-xl text-xs font-mono bg-slate-950/80 border border-white/10 text-slate-200 placeholder-slate-600 focus:border-indigo-500 transition resize-y leading-relaxed"
+              />
+            </Field>
+          </>
+        )}
+
       </div>
     </aside>
   );

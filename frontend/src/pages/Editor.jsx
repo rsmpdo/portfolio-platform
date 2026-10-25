@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios, saveUserLayout } from '../store/layoutSlice';
+import { fetchUserLayout, selectComponent, applyTemplate, fetchUserPortfolios, saveUserLayout, undo, redo } from '../store/layoutSlice';
 import { templateLayouts } from '../data/templateLayouts';
 import EditorSidebar from '../components/editor/EditorSidebar';
 import ComponentInspector from '../components/editor/ComponentInspector';
 import ComponentRenderer from '../components/portfolio/ComponentRenderer';
 import Header from '../components/common/Header';
-import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Layers, Save, Globe, Sliders, X } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Eye, EyeOff, Loader2, ExternalLink, Layers, Save, Globe, Sliders, X, Undo2, Redo2 } from 'lucide-react';
 
 export default function Editor() {
   const dispatch = useDispatch();
-  const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error } = useSelector((state) => state.layout);
+  const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error, past = [], future = [] } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [mobilePanel, setMobilePanel] = useState(null); // null | 'sidebar' | 'inspector'
@@ -56,6 +56,37 @@ export default function Editor() {
 
     dispatch(fetchUserPortfolios());
   }, [dispatch, location.search]);
+
+  // Global Undo / Redo keyboard shortcuts (Ctrl+Z, Ctrl+Y, Cmd+Z, Cmd+Shift+Z)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const target = e.target;
+      const isInput =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable;
+      if (isInput) return;
+
+      const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+      const modifier = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modifier && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          e.preventDefault();
+          dispatch(redo());
+        } else {
+          e.preventDefault();
+          dispatch(undo());
+        }
+      } else if (modifier && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        dispatch(redo());
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [dispatch]);
 
   const handleSaveDraft = () => {
     if (!activeLayout) return;
@@ -208,6 +239,31 @@ export default function Editor() {
                 <Icon className="w-3.5 h-3.5" />
               </button>
             ))}
+          </div>
+
+          <div className="h-5 w-px bg-white/10 hidden sm:block" />
+          {/* Undo / Redo History Controls */}
+          <div className="flex items-center glass p-1 rounded-xl">
+            <button
+              type="button"
+              onClick={() => dispatch(undo())}
+              disabled={past.length === 0}
+              className="px-2 sm:px-2.5 py-1.5 rounded-lg flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition cursor-pointer disabled:cursor-not-allowed"
+              title="Undo last action (Ctrl+Z)"
+            >
+              <Undo2 className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline text-[11px]">Undo</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => dispatch(redo())}
+              disabled={future.length === 0}
+              className="px-2 sm:px-2.5 py-1.5 rounded-lg flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition cursor-pointer disabled:cursor-not-allowed"
+              title="Redo action (Ctrl+Y)"
+            >
+              <Redo2 className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline text-[11px]">Redo</span>
+            </button>
           </div>
         </div>
 

@@ -48,6 +48,7 @@ const AVAILABLE_COMPONENTS = [
   { type: 'TestimonialsCarousel', title: 'Testimonials', icon: '⭐', tier: 'free' },
   { type: 'ContactSection', title: 'Contact Section', icon: '✉️', tier: 'free' },
   { type: 'MediaGallery', title: 'Media Gallery', icon: '🖼️', tier: 'free' },
+  { type: 'RichTextSection', title: 'Case Study & Markdown', icon: '📝', tier: 'free' },
   { type: 'PremiumEmbed', title: 'Interactive Embed', icon: '🔮', tier: 'pro', badge: 'Pro' },
   { type: 'AdvancedMetrics', title: 'Data Metrics & Impact', icon: '📈', tier: 'studio', badge: 'Studio' }
 ];
@@ -227,6 +228,14 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
             { id: `m_${ts}_3`, label: 'Global Design Awards', value: '18', icon: 'target' },
             { id: `m_${ts}_4`, label: 'Uptime SLA', value: '99.99%', icon: 'zap' }
           ]
+        };
+      case 'RichTextSection':
+        return {
+          badge: 'Technical Case Study',
+          heading: 'Architecture & Problem Breakdown',
+          subheading: 'An in-depth look into the decisions, constraints, and engineering methodology behind this project.',
+          content: `## The Core Challenge\n\nWhen scaling systems to handle **hundreds of thousands of concurrent operations**, architectural trade-offs become critical.\n\n> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra\n\n### Engineering Decisions\n\n- **Zero-Copy Buffers**: Reduced memory footprint by over 35%.\n- **Stateless Edge Handlers**: Distributed load smoothly across multiple global zones.\n- **Adaptive Circuit Breakers**: Guaranteed sub-50ms latency SLAs even during peak failover events.\n\n\`\`\`javascript\n// Realtime stream processor pipeline\nexport async function processEventStream(events) {\n  return events\n    .filter(e => e.isValid)\n    .map(e => transformPayload(e));\n}\n\`\`\`\n\n### Measuring Impact\n\nBy prioritizing *observability* and *resilience* early, the system maintained 99.99% uptime through consecutive high-traffic launches.`,
+          alignment: 'left'
         };
       default:
         return {};

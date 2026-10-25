@@ -74,10 +74,27 @@ export const fetchPublicLayout = createAsyncThunk(
   }
 );
 
+const MAX_HISTORY = 30;
+
+function pushSnapshot(state) {
+  if (!state.activeLayout) return;
+  try {
+    state.past.push(JSON.parse(JSON.stringify(state.activeLayout)));
+    if (state.past.length > MAX_HISTORY) {
+      state.past.shift();
+    }
+    state.future = [];
+  } catch (err) {
+    console.warn('Could not record layout snapshot:', err);
+  }
+}
+
 const layoutSlice = createSlice({
   name: 'layout',
   initialState: {
     activeLayout: null,
+    past: [],
+    future: [],
     userPortfolios: [],
     maxAllowedPortfolios: 1,
     publicLayout: null,
@@ -88,6 +105,16 @@ const layoutSlice = createSlice({
     saveSuccess: false
   },
   reducers: {
+    undo: (state) => {
+      if (!state.past || state.past.length === 0 || !state.activeLayout) return;
+      state.future.unshift(JSON.parse(JSON.stringify(state.activeLayout)));
+      state.activeLayout = state.past.pop();
+    },
+    redo: (state) => {
+      if (!state.future || state.future.length === 0 || !state.activeLayout) return;
+      state.past.push(JSON.parse(JSON.stringify(state.activeLayout)));
+      state.activeLayout = state.future.shift();
+    },
     selectComponent: (state, action) => {
       state.selectedComponentId = action.payload;
     },
@@ -96,6 +123,7 @@ const layoutSlice = createSlice({
       if (!state.activeLayout) return;
       const comp = state.activeLayout.components.find((c) => c.id === id);
       if (comp) {
+        pushSnapshot(state);
         comp.props = { ...comp.props, ...props };
       }
     },
@@ -104,11 +132,13 @@ const layoutSlice = createSlice({
       if (!state.activeLayout) return;
       const comp = state.activeLayout.components.find((c) => c.id === id);
       if (comp) {
+        pushSnapshot(state);
         comp.isVisible = isVisible;
       }
     },
     addComponent: (state, action) => {
       if (!state.activeLayout) return;
+      pushSnapshot(state);
       const newComp = {
         id: `comp_${Date.now()}`,
         type: action.payload.type,
@@ -122,6 +152,7 @@ const layoutSlice = createSlice({
     },
     removeComponent: (state, action) => {
       if (!state.activeLayout) return;
+      pushSnapshot(state);
       state.activeLayout.components = state.activeLayout.components.filter(
         (c) => c.id !== action.payload
       );
@@ -131,6 +162,7 @@ const layoutSlice = createSlice({
     },
     reorderComponents: (state, action) => {
       if (!state.activeLayout) return;
+      pushSnapshot(state);
       const { sourceIndex, destinationIndex } = action.payload;
       const result = Array.from(state.activeLayout.components);
       const [removed] = result.splice(sourceIndex, 1);
@@ -143,14 +175,17 @@ const layoutSlice = createSlice({
     },
     updateTheme: (state, action) => {
       if (!state.activeLayout) return;
+      pushSnapshot(state);
       state.activeLayout.theme = { ...state.activeLayout.theme, ...action.payload };
     },
     updateSeo: (state, action) => {
       if (!state.activeLayout) return;
+      pushSnapshot(state);
       state.activeLayout.seo = { ...state.activeLayout.seo, ...action.payload };
     },
     updateHandle: (state, action) => {
       if (!state.activeLayout) return;
+      pushSnapshot(state);
       state.activeLayout.handle = action.payload.toLowerCase();
     },
     clearSaveSuccess: (state) => {
@@ -161,6 +196,7 @@ const layoutSlice = createSlice({
       const template = templateLayouts[templateId];
       if (!template || !state.activeLayout) return;
 
+      pushSnapshot(state);
       state.activeLayout.theme = { 
         ...state.activeLayout.theme, 
         ...template.theme,
@@ -189,6 +225,8 @@ const layoutSlice = createSlice({
       })
       .addCase(fetchUserLayout.fulfilled, (state, action) => {
         state.loading = false;
+        state.past = [];
+        state.future = [];
         const { layout, templateId } = action.payload || {};
         state.activeLayout = layout;
 
@@ -257,6 +295,8 @@ const layoutSlice = createSlice({
 });
 
 export const {
+  undo,
+  redo,
   selectComponent,
   updateComponentProps,
   updateComponentVisibility,
