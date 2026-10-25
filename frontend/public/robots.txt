@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /editor
+Disallow: /profile
+Disallow: /api/
+
+Sitemap: https://portfoliocraftlk.vercel.app/sitemap.xml

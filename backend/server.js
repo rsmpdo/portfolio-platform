@@ -73,6 +73,75 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Portfolio API Backend is running smoothly', timestamp: new Date() });
 });
 
+// Dynamic Sitemap Generator for Search Engines
+app.get(['/sitemap.xml', '/api/sitemap.xml'], async (req, res) => {
+  try {
+    const Layout = require('./models/Layout');
+    const baseUrl = process.env.CLIENT_URL || 'https://portfoliocraftlk.vercel.app';
+    const now = new Date().toISOString().split('T')[0];
+
+    const staticPages = [
+      { url: '/', priority: '1.0', changefreq: 'daily' },
+      { url: '/features', priority: '0.9', changefreq: 'weekly' },
+      { url: '/templates', priority: '0.9', changefreq: 'weekly' },
+      { url: '/showcase', priority: '0.9', changefreq: 'daily' },
+      { url: '/pricing', priority: '0.8', changefreq: 'weekly' },
+      { url: '/about', priority: '0.7', changefreq: 'monthly' },
+      { url: '/blog', priority: '0.8', changefreq: 'weekly' },
+      { url: '/careers', priority: '0.6', changefreq: 'monthly' },
+      { url: '/contact', priority: '0.6', changefreq: 'monthly' },
+      { url: '/showcase/alex', priority: '0.8', changefreq: 'weekly' },
+      { url: '/showcase/marcus', priority: '0.8', changefreq: 'weekly' },
+      { url: '/showcase/elena', priority: '0.8', changefreq: 'weekly' }
+    ];
+
+    let dynamicUrls = [];
+    try {
+      const publishedLayouts = await Layout.find(
+        { isPublished: true, isBanned: { $ne: true }, handle: { $exists: true, $ne: '' } },
+        'handle updatedAt'
+      ).lean();
+
+      dynamicUrls = publishedLayouts.map((l) => ({
+        url: `/p/${l.handle}`,
+        lastmod: (l.updatedAt || new Date()).toISOString().split('T')[0],
+        priority: '0.8',
+        changefreq: 'weekly'
+      }));
+    } catch (dbErr) {
+      console.warn('Could not query dynamic sitemap layouts:', dbErr.message);
+    }
+
+    const allUrls = [...staticPages.map((p) => ({ ...p, lastmod: now })), ...dynamicUrls];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allUrls
+  .map(
+    (u) => `  <url>
+    <loc>${baseUrl}${u.url}</loc>
+    <lastmod>${u.lastmod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`
+  )
+  .join('\n')}
+</urlset>`;
+
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+  } catch (error) {
+    res.status(500).send('Error generating sitemap');
+  }
+});
+
+// Robots.txt
+app.get(['/robots.txt', '/api/robots.txt'], (req, res) => {
+  const baseUrl = process.env.CLIENT_URL || 'https://portfoliocraftlk.vercel.app';
+  res.type('text/plain');
+  res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /editor\nDisallow: /profile\nDisallow: /api/\n\nSitemap: ${baseUrl}/sitemap.xml\n`);
+});
+
 // Global 404 Handler
 app.use((req, res, next) => {
   res.status(404).json({ success: false, message: 'API route not found' });

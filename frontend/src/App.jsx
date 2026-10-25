@@ -1,32 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentUser, elevateToAdmin } from './store/authSlice';
 import Header from './components/common/Header';
 import { KeyRound, ShieldAlert, AlertCircle, Loader2, ArrowUp } from 'lucide-react';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Editor from './pages/Editor';
-import PublicPortfolio from './pages/PublicPortfolio';
-import Features from './pages/Features';
-import Templates from './pages/Templates';
-import Showcase from './pages/Showcase';
-import ShowcasePortfolio from './pages/ShowcasePortfolio';
-import Pricing from './pages/Pricing';
-import About from './pages/About';
-import Blog from './pages/Blog';
-import Careers from './pages/Careers';
-import ContactPage from './pages/ContactPage';
-import AdminDashboard from './pages/AdminDashboard';
-import ProfileSettings from './pages/ProfileSettings';
-import VerifyEmail from './pages/VerifyEmail';
 import VerifyPending from './pages/VerifyPending';
-import PaymentSuccess from './pages/PaymentSuccess';
-import TemplatePreview from './pages/TemplatePreview';
-import PaymentForm from './pages/PaymentForm';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
+
+// Lazy-loaded routes for optimal initial bundle size and near-instant load times
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const Features = lazy(() => import('./pages/Features'));
+const Templates = lazy(() => import('./pages/Templates'));
+const TemplatePreview = lazy(() => import('./pages/TemplatePreview'));
+const Showcase = lazy(() => import('./pages/Showcase'));
+const ShowcasePortfolio = lazy(() => import('./pages/ShowcasePortfolio'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const About = lazy(() => import('./pages/About'));
+const Blog = lazy(() => import('./pages/Blog'));
+const Careers = lazy(() => import('./pages/Careers'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
+const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
+const PaymentForm = lazy(() => import('./pages/PaymentForm'));
+const Editor = lazy(() => import('./pages/Editor'));
+const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const PublicPortfolio = lazy(() => import('./pages/PublicPortfolio'));
+
+function PageFallbackLoader() {
+  return (
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
+      <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center animate-pulse">
+        <Loader2 className="w-6 h-6 text-indigo-400 animate-spin" />
+      </div>
+    </div>
+  );
+}
 
 function PrivateRoute({ children }) {
   const { isAuthenticated, token, user } = useSelector((state) => state.auth);
@@ -184,55 +196,57 @@ export default function App() {
   return (
     <Router>
       <ScrollToTopAndBackToTopButton />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/features" element={<Features />} />
-        <Route path="/templates" element={<Templates />} />
-        <Route path="/preview/:templateId" element={<TemplatePreview />} />
-        <Route path="/showcase" element={<Showcase />} />
-        <Route path="/showcase/:handle" element={<ShowcasePortfolio />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/careers" element={<Careers />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/payment-success" element={<PaymentSuccess />} />
-        <Route path="/payment/:planId" element={<PaymentForm />} />
-        <Route
-          path="/editor"
-          element={
-            <PrivateRoute>
-              <Editor />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <ProfileSettings />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-        <Route path="/p/:handle" element={<PublicPortfolio />} />
-        <Route path="/portfolio/:handle" element={<PublicPortfolio />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Suspense fallback={<PageFallbackLoader />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/preview/:templateId" element={<TemplatePreview />} />
+          <Route path="/showcase" element={<Showcase />} />
+          <Route path="/showcase/:handle" element={<ShowcasePortfolio />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment/:planId" element={<PaymentForm />} />
+          <Route
+            path="/editor"
+            element={
+              <PrivateRoute>
+                <Editor />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfileSettings />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route path="/p/:handle" element={<PublicPortfolio />} />
+          <Route path="/portfolio/:handle" element={<PublicPortfolio />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
