@@ -14,6 +14,9 @@ connectDB();
 
 const app = express();
 
+// Trust reverse proxy headers (e.g. Vercel, Nginx, Cloudflare) for accurate client IP rate limiting
+app.set('trust proxy', 1);
+
 // Security Middlewares
 app.use(helmet());
 

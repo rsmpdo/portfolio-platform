@@ -3,11 +3,57 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const passport = require('passport');
+const rateLimit = require('express-rate-limit');
 const User = require('../models/User');
 const Layout = require('../models/Layout');
 const Message = require('../models/Message');
 const sendEmail = require('../utils/sendEmail');
 const { getEmailVerificationTemplate, getPasswordResetTemplate } = require('../utils/emailTemplate');
+
+// Strict rate limiters for authentication endpoints to prevent brute-force attacks and email spamming
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // max 10 attempts per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many login attempts from this IP address. Please try again after 15 minutes.'
+  }
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // max 10 account registrations per hour per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many accounts registered from this IP address. Please try again later.'
+  }
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // max 5 password reset requests per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many password reset requests from this IP address. Please wait 15 minutes before requesting another link.'
+  }
+});
+
+const resendVerificationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // max 5 resend requests per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many verification email requests. Please wait 15 minutes before trying again.'
+  }
+});
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
 
@@ -62,7 +108,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 // @route   POST /api/auth/register
 // @desc    Register new user (Supports optional Admin Secret Code)
 // @access  Public
-router.post('/register', async (req, res) => {
+router.post('/register', registerLimiter, async (req, res) => {
   try {
     const { username, email, password, adminSecretCode } = req.body;
 
@@ -235,7 +281,7 @@ router.get('/verify-email/:verificationToken', async (req, res) => {
 // @route   POST /api/auth/login
 // @desc    Login user & get JWT token
 // @access  Public
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -264,7 +310,7 @@ router.post('/login', async (req, res) => {
 // @route   POST /api/auth/forgot-password
 // @desc    Send password reset token link via email
 // @access  Public
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -380,6 +426,7 @@ router.get(
 // @access  Private
 router.post(
   '/resend-verification',
+  resendVerificationLimiter,
   passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     try {
