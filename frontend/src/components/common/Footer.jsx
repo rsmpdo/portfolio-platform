@@ -25,7 +25,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-16 gap-y-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 sm:gap-x-12 lg:gap-x-16 gap-y-6">
             <div>
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Platform</h4>
               <ul className="space-y-2.5">
@@ -51,6 +51,23 @@ export default function Footer() {
                   { name: 'Blog', path: '/blog' },
                   { name: 'Careers', path: '/careers' },
                   { name: 'Contact', path: '/contact' }
+                ].map((item) => (
+                  <li key={item.name}>
+                    <Link to={item.path} className="text-sm text-slate-500 hover:text-white transition underline-hover">
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Legal</h4>
+              <ul className="space-y-2.5">
+                {[
+                  { name: 'Terms of Service', path: '/terms' },
+                  { name: 'Privacy Policy', path: '/privacy' },
+                  { name: 'Cookie Policy', path: '/cookies' },
+                  { name: 'Security', path: '/security' }
                 ].map((item) => (
                   <li key={item.name}>
                     <Link to={item.path} className="text-sm text-slate-500 hover:text-white transition underline-hover">
@@ -108,6 +125,15 @@ export default function Footer() {
 
         <div className="pt-8 border-t border-white/[0.06] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} PortfolioCraft. All rights reserved.</p>
+          <div className="flex items-center gap-3 sm:gap-5 text-xs text-slate-500">
+            <Link to="/terms" className="hover:text-slate-300 transition">Terms</Link>
+            <span className="text-slate-700">•</span>
+            <Link to="/privacy" className="hover:text-slate-300 transition">Privacy</Link>
+            <span className="text-slate-700">•</span>
+            <Link to="/cookies" className="hover:text-slate-300 transition">Cookies</Link>
+            <span className="text-slate-700">•</span>
+            <Link to="/security" className="hover:text-slate-300 transition">Security</Link>
+          </div>
           <p className="text-xs text-slate-600">Designed for creators who mean business.</p>
         </div>
       </div>

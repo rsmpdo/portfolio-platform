@@ -21,6 +21,10 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import Careers from './pages/Careers';
 import ContactPage from './pages/ContactPage';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import CookiePolicy from './pages/CookiePolicy';
+import Security from './pages/Security';
 import VerifyEmail from './pages/VerifyEmail';
 import VerifyPending from './pages/VerifyPending';
 import PublicPortfolio from './pages/PublicPortfolio';
@@ -216,6 +220,13 @@ export default function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/terms-and-conditions" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/privacy-policy" element={<Privacy />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/security" element={<Security />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
