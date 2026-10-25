@@ -4,31 +4,33 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCurrentUser, elevateToAdmin } from './store/authSlice';
 import Header from './components/common/Header';
 import { KeyRound, ShieldAlert, AlertCircle, Loader2, ArrowUp } from 'lucide-react';
-import Home from './pages/Home';
-import VerifyPending from './pages/VerifyPending';
 
-// Lazy-loaded routes for optimal initial bundle size and near-instant load times
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword'));
-const Features = lazy(() => import('./pages/Features'));
-const Templates = lazy(() => import('./pages/Templates'));
-const TemplatePreview = lazy(() => import('./pages/TemplatePreview'));
-const Showcase = lazy(() => import('./pages/Showcase'));
-const ShowcasePortfolio = lazy(() => import('./pages/ShowcasePortfolio'));
-const Pricing = lazy(() => import('./pages/Pricing'));
-const About = lazy(() => import('./pages/About'));
-const Blog = lazy(() => import('./pages/Blog'));
-const Careers = lazy(() => import('./pages/Careers'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
-const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
-const PaymentForm = lazy(() => import('./pages/PaymentForm'));
+// Eagerly loaded public and marketing pages for instant navigation with zero loading delay
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import Features from './pages/Features';
+import Templates from './pages/Templates';
+import TemplatePreview from './pages/TemplatePreview';
+import Showcase from './pages/Showcase';
+import ShowcasePortfolio from './pages/ShowcasePortfolio';
+import Pricing from './pages/Pricing';
+import About from './pages/About';
+import Blog from './pages/Blog';
+import Careers from './pages/Careers';
+import ContactPage from './pages/ContactPage';
+import VerifyEmail from './pages/VerifyEmail';
+import VerifyPending from './pages/VerifyPending';
+import PublicPortfolio from './pages/PublicPortfolio';
+
+// Heavy application modules loaded on demand
 const Editor = lazy(() => import('./pages/Editor'));
-const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const PublicPortfolio = lazy(() => import('./pages/PublicPortfolio'));
+const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
+const PaymentForm = lazy(() => import('./pages/PaymentForm'));
+const PaymentSuccess = lazy(() => import('./pages/PaymentSuccess'));
 
 function PageFallbackLoader() {
   return (
