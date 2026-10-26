@@ -126,7 +126,7 @@ export default function Editor() {
     <div className="h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
       <Header />
 
-      <div className="min-h-[56px] py-2 border-b border-white/[0.06] glass-dark px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2 mt-[68px] sm:mt-[72px] z-30">
+      <div className="min-h-[56px] py-2 border-b border-white/[0.06] glass-dark px-3 sm:px-6 flex flex-wrap items-center justify-between gap-2 mt-16 z-30">
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-indigo-400" />
