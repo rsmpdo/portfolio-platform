@@ -1132,7 +1132,7 @@ export default function Home() {
                   to="/register"
                   className="w-full sm:w-auto group btn-primary inline-flex items-center justify-center gap-3 px-9 py-4 rounded-2xl text-white font-bold text-base shadow-xl"
                 >
-                  <span>Start Building Now - It's Free</span>
+                  <span>Start Building Now It's Free</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
