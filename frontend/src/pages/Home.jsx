@@ -441,7 +441,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4 px-2">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400">
                 <Layers className="w-4 h-4 text-indigo-400" />
-                <span>Interactive Live Preview — Click a Creator Persona:</span>
+                <span>Interactive Live Preview - Click a Creator Persona:</span>
               </div>
               <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl glass border border-white/10">
                 {HERO_PERSONAS.map((p, idx) => {
@@ -675,7 +675,7 @@ export default function Home() {
                   Real-Time Canvas Editor & 6-Token Theme Engine
                 </h3>
                 <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                  Reorder sections, toggle visibility, and preview your site inside interactive Desktop, Tablet, and Mobile frames. Switch between 8 curated color palettes—like <strong className="text-white">Emerald Matrix</strong>, <strong className="text-white">Obsidian Gold</strong>, or <strong className="text-white">Nordic Light</strong>—or fine-tune every CSS variable in real time.
+                  Reorder sections, toggle visibility, and preview your site inside interactive Desktop, Tablet, and Mobile frames. Switch between 8 curated color palettes - like <strong className="text-white">Emerald Matrix</strong>, <strong className="text-white">Obsidian Gold</strong>, or <strong className="text-white">Nordic Light</strong> - or fine-tune every CSS variable in real time.
                 </p>
               </div>
 
@@ -847,7 +847,7 @@ export default function Home() {
               From Blank Canvas to Live in <span className="gradient-text">3 Simple Steps</span>
             </h2>
             <p className="text-slate-400 text-sm sm:text-base">
-              Spend your time crafting great projects—not debugging CSS grids or configuring deployment pipelines.
+              Spend your time crafting great projects - not debugging CSS grids or configuring deployment pipelines.
             </p>
           </div>
 
@@ -1132,7 +1132,7 @@ export default function Home() {
                   to="/register"
                   className="w-full sm:w-auto group btn-primary inline-flex items-center justify-center gap-3 px-9 py-4 rounded-2xl text-white font-bold text-base shadow-xl"
                 >
-                  <span>Start Building Now — It's Free</span>
+                  <span>Start Building Now - It's Free</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link

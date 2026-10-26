@@ -15,7 +15,7 @@ export default function TestimonialsCarousel({ props = {} }) {
       },
       {
         id: 't2',
-        quote: "If you want someone who actually cares about the outcome — not just shipping code — this is your person.",
+        quote: "If you want someone who actually cares about the outcome - not just shipping code - this is your person.",
         author: "Marcus Reid",
         role: "Product Lead, Verve Studios",
         avatar: ""

@@ -7,7 +7,7 @@ export default function ContactSection({ props = {}, viewportMode }) {
   const {
     badgeText = 'Get In Touch',
     heading = "Ready to Create Something Great?",
-    subheading = "Whether you have a project in mind or just want to explore possibilities — let's start a conversation.",
+    subheading = "Whether you have a project in mind or just want to explore possibilities - let's start a conversation.",
     email = 'support@portfoliocraft.io',
     location = '548 Market St, Suite 42100, San Francisco, CA 94104, USA',
     phone = '+1 (415) 890-5400',
@@ -46,7 +46,7 @@ export default function ContactSection({ props = {}, viewportMode }) {
       const recipientHandle = isPortfolioRoute ? pathParts[1].toLowerCase() : '';
 
       const compiledMessage = isEnterprise
-        ? `[Enterprise Inquiry — Company: ${form.company || 'N/A'} | Scope/Team Size: ${form.teamSize}]\n\n${form.message}`
+        ? `[Enterprise Inquiry - Company: ${form.company || 'N/A'} | Scope/Team Size: ${form.teamSize}]\n\n${form.message}`
         : form.message;
 
       const resolvedSubject =

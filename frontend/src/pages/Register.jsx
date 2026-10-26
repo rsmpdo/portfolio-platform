@@ -8,7 +8,7 @@ import { UserPlus, Lock, Mail, User, AlertCircle, Loader2, ArrowRight, CheckCirc
 
 const perks = [
   'Your portfolio live in under 5 minutes',
-  'Beautiful templates — no design skills needed',
+  'Beautiful templates - no design skills needed',
   'Custom domain support',
   'Unlimited projects and updates'
 ];
@@ -75,14 +75,14 @@ export default function Register() {
         <div className="w-full max-w-5xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-            {/* Left — Value Pitch */}
+            {/* Left - Value Pitch */}
             <div className="hidden lg:block">
               <h1 className="font-heading font-black text-5xl text-white leading-tight mb-6">
                 Start building<br />
                 <span className="gradient-text">your future today.</span>
               </h1>
               <p className="text-slate-400 text-lg mb-10 leading-relaxed">
-                Join thousands of creators who turned their passion into opportunities — with a portfolio that actually gets them noticed.
+                Join thousands of creators who turned their passion into opportunities - with a portfolio that actually gets them noticed.
               </p>
               <div className="space-y-4">
                 {perks.map((perk, i) => (
@@ -114,7 +114,7 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Right — Form */}
+            {/* Right - Form */}
             <div>
               <div className="text-center mb-8 lg:text-left">
                 <h2 className="font-heading font-black text-3xl text-white mb-2 lg:hidden">Create Your Portfolio</h2>

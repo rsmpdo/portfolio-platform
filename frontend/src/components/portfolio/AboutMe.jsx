@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 export default function AboutMe({ props = {}, templateId, viewportMode }) {
   const {
     heading = 'The Story Behind the Work',
-    bio = 'I believe great design is invisible — it just feels right. With years spent obsessing over the details that separate good from unforgettable, I bring that same obsession to every project I touch. Whether it\'s a product launch, a brand identity, or a complex web platform, my goal is always the same: make it exceptional.',
+    bio = 'I believe great design is invisible - it just feels right. With years spent obsessing over the details that separate good from unforgettable, I bring that same obsession to every project I touch. Whether it\'s a product launch, a brand identity, or a complex web platform, my goal is always the same: make it exceptional.',
     skills = ['UI/UX Design', 'Full Stack Dev', 'Brand Identity', 'Motion Design', 'Product Strategy'],
     experienceYears = '5+',
     completedProjects = '40+',
@@ -83,7 +83,7 @@ export default function AboutMe({ props = {}, templateId, viewportMode }) {
     <section className="py-20 px-6">
       <div className="max-w-6xl mx-auto">
         <div className={`grid gap-16 items-center ${gridClass}`}>
-          {/* Left — Story */}
+          {/* Left - Story */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -111,7 +111,7 @@ export default function AboutMe({ props = {}, templateId, viewportMode }) {
             </div>
           </motion.div>
 
-          {/* Right — Stats */}
+          {/* Right - Stats */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}

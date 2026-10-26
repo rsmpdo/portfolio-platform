@@ -36,7 +36,7 @@ const featureCategories = [
   {
     title: "Curated Designer Themes",
     icon: Palette,
-    desc: "Crafted by senior design directors. Switch effortlessly between minimalist editorial layouts, dark cyberpunk terminals, or luxury studio themes—and fine-tune six granular CSS color tokens with live canvas feedback.",
+    desc: "Crafted by senior design directors. Switch effortlessly between minimalist editorial layouts, dark cyberpunk terminals, or luxury studio themes - and fine-tune six granular CSS color tokens with live canvas feedback.",
     details: ["Dark & Light mode support", "Custom primary & secondary color pickers", "Pre-built typography pairings"]
   },
   {
@@ -99,7 +99,7 @@ export default function Features() {
             <span className="gradient-text">Demand Perfection</span>
           </h1>
           <p className="text-slate-300 text-lg leading-relaxed mb-4">
-            Everything you need to showcase your finest work, attract premier clients, and land top-tier opportunities — engineered into one cohesive, high-speed visual publishing platform.
+            Everything you need to showcase your finest work, attract premier clients, and land top-tier opportunities - engineered into one cohesive, high-speed visual publishing platform.
           </p>
           <p className="text-slate-400 text-sm md:text-base leading-relaxed">
             Most creators are forced to choose between spending weeks coding a custom portfolio from scratch or settling for generic drag-and-drop website builders that look cluttered and load slowly. PortfolioCraft eliminates that trade-off by combining a structured, zero-code CMS with the visual polish of an award-winning digital design studio.
@@ -147,7 +147,7 @@ export default function Features() {
               At the core of PortfolioCraft is a decoupled content-and-presentation architecture. Unlike traditional page builders where changing your theme breaks your layout and forces you to rebuild every page from scratch, PortfolioCraft stores your projects, experience timeline, skills, and media in a clean, structured schema.
             </p>
             <p className="text-slate-400 text-sm leading-relaxed">
-              This means you can switch instantaneously between 10 industry-specialized templates—from <strong className="text-slate-200">Minimalist Editorial</strong> and <strong className="text-slate-200">Dark Mode Cyber</strong> to <strong className="text-slate-200">Fintech SaaS Pro</strong> and <strong className="text-slate-200">Global Agency Studio</strong>—while your underlying content adapts automatically to the new typographic hierarchy and grid system.
+              This means you can switch instantaneously between 10 industry-specialized templates - from <strong className="text-slate-200">Minimalist Editorial</strong> and <strong className="text-slate-200">Dark Mode Cyber</strong> to <strong className="text-slate-200">Fintech SaaS Pro</strong> and <strong className="text-slate-200">Global Agency Studio</strong> - while your underlying content adapts automatically to the new typographic hierarchy and grid system.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {[

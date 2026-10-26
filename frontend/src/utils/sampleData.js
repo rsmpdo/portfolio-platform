@@ -1,5 +1,5 @@
 export const ALEX_PORTFOLIO = {
-  title: "Alex Morgan — Senior Product Designer & Creative Technologist",
+  title: "Alex Morgan - Senior Product Designer & Creative Technologist",
   handle: "alex",
   theme: { primaryColor: "#6366f1", secondaryColor: "#a855f7" },
   components: [
@@ -89,7 +89,7 @@ export const ALEX_PORTFOLIO = {
             id: "e1",
             role: "Lead Product Designer",
             company: "Verve Digital Studio",
-            period: "2022 — Present",
+            period: "2022 - Present",
             description: "Directing design strategy across 12 core product lines.",
             highlights: ["Design Systems", "Team Leadership", "Product Strategy"]
           }
@@ -113,7 +113,7 @@ export const ALEX_PORTFOLIO = {
 };
 
 export const MARCUS_PORTFOLIO = {
-  title: "Marcus Vance — Full Stack Engineer & Cloud Architect",
+  title: "Marcus Vance - Full Stack Engineer & Cloud Architect",
   handle: "demo",
   theme: { primaryColor: "#10b981", secondaryColor: "#3b82f6" },
   components: [
@@ -221,7 +221,7 @@ export const MARCUS_PORTFOLIO = {
 };
 
 export const ELENA_PORTFOLIO = {
-  title: "Elena Rostova — Creative Director & Brand Strategist",
+  title: "Elena Rostova - Creative Director & Brand Strategist",
   handle: "sample",
   theme: { primaryColor: "#ec4899", secondaryColor: "#f59e0b" },
   components: [

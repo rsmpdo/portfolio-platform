@@ -147,7 +147,7 @@ export default function Showcase() {
                 Hiring managers and founders don't evaluate portfolios in an aesthetic vacuum; they evaluate them against operational risk and return on investment. The strongest case studies lead with a dedicated impact strip highlighting quantifiable outcomes: conversion rate lifts, latency reductions, operational savings, or app store sentiment.
               </p>
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                Even when proprietary revenue metrics cannot be shared publicly, top creators quantify their craft through ergonomic metrics—such as cutting multi-step verification from 14 clicks down to 3, or decreasing customer support inquiry volume by 48% through clearer contextual onboarding.
+                Even when proprietary revenue metrics cannot be shared publicly, top creators quantify their craft through ergonomic metrics - such as cutting multi-step verification from 14 clicks down to 3, or decreasing customer support inquiry volume by 48% through clearer contextual onboarding.
               </p>
             </div>
 
@@ -192,7 +192,7 @@ export default function Showcase() {
                 Once a hiring executive or enterprise client decides they want to work with you, any friction in the outreach flow degrades conversion. Top portfolios provide clear booking availability, expected response turnaround windows, and structured inquiry forms directly on the page.
               </p>
               <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                Through PortfolioCraft's built-in inquiry inbox, creators capture validated inquiries, client budgets, and project timelines directly inside their dashboard—protecting their private phone numbers and personal email addresses from web scrapers while ensuring no high-ticket lead gets lost.
+                Through PortfolioCraft's built-in inquiry inbox, creators capture validated inquiries, client budgets, and project timelines directly inside their dashboard - protecting their private phone numbers and personal email addresses from web scrapers while ensuring no high-ticket lead gets lost.
               </p>
             </div>
           </div>

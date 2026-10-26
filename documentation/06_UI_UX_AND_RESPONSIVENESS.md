@@ -2,7 +2,7 @@
 
 **Course:** EC4307 Web Application Development Mini Project  
 **Author:** Ranaweerage Shashika Madhusankha Priyanath  
-**Evaluation Rubric Alignment:** UI/UX & Responsiveness — Layout, navigation, consistency, mobile support (2 Marks)  
+**Evaluation Rubric Alignment:** UI/UX & Responsiveness - Layout, navigation, consistency, mobile support (2 Marks)  
 
 ---
 
@@ -14,13 +14,13 @@ PortfolioCraft adopts an **Enterprise Dark Glassmorphism** aesthetic tailored fo
 - **Background Palette:** Deep OLED slate (`#020617` / `#070a10`) reducing eye strain and highlighting user creative assets.
 - **Glassmorphism Layers:** Multi-layered translucent panels (`backdrop-blur-md`, `bg-white/[0.02]`, `border-white/[0.08]`) establishing depth and visual hierarchy without heavy drop shadows.
 - **Dynamic CSS Theme Variables:**
-  - `--theme-primary`: Main interactive accents, badges, and primary buttons.
-  - `--theme-secondary`: Gradients, hover accents, and glowing borders.
-  - `--theme-bg`: Canvas background.
-  - `--theme-surface`: Card containers and input elements.
-  - `--theme-text`: Main headings and high-contrast titles.
-  - `--theme-muted`: Secondary paragraphs, dates, and metadata labels.
-  - `--theme-font`: Dynamically injected Google Font family.
+- `--theme-primary`: Main interactive accents, badges, and primary buttons.
+- `--theme-secondary`: Gradients, hover accents, and glowing borders.
+- `--theme-bg`: Canvas background.
+- `--theme-surface`: Card containers and input elements.
+- `--theme-text`: Main headings and high-contrast titles.
+- `--theme-muted`: Secondary paragraphs, dates, and metadata labels.
+- `--theme-font`: Dynamically injected Google Font family.
 
 ---
 
@@ -33,17 +33,17 @@ PortfolioCraft adopts an **Enterprise Dark Glassmorphism** aesthetic tailored fo
 ```
 
 1. **Global Fixed Header (`Header.jsx`):**
-   - Floating pill navigation anchored at the top with glass backdrop blur (`backdrop-blur-lg`).
-   - Active route detection: Highlights the current page with a bottom indigo indicator (`border-b-2 border-indigo-500`).
-   - Responsive Hamburger Drawer: Automatically collapses navigation items into an animated full-screen drawer on screens `< 1024px`.
+- Floating pill navigation anchored at the top with glass backdrop blur (`backdrop-blur-lg`).
+- Active route detection: Highlights the current page with a bottom indigo indicator (`border-b-2 border-indigo-500`).
+- Responsive Hamburger Drawer: Automatically collapses navigation items into an animated full-screen drawer on screens `< 1024px`.
 2. **Global Comprehensive Footer (`Footer.jsx`):**
-   - 3 balanced columns (`PLATFORM`, `COMPANY`, `LEGAL`) providing discoverability for marketing, corporate, and compliance pages.
-   - Status badge indicator ("All Systems Operational").
-   - Direct social channels and copyright strip.
+- 3 balanced columns (`PLATFORM`, `COMPANY`, `LEGAL`) providing discoverability for marketing, corporate, and compliance pages.
+- Status badge indicator ("All Systems Operational").
+- Direct social channels and copyright strip.
 3. **Floating "Back to Top" Action:**
-   - Detects scroll position (`window.scrollY > 300`) and reveals a smooth-scroll floating action button to return visitors to the top of long case studies.
+- Detects scroll position (`window.scrollY > 300`) and reveals a smooth-scroll floating action button to return visitors to the top of long case studies.
 4. **Contextual Route Scrolls:**
-   - Global scroll listener ensures the window instantly scrolls to `(top: 0, left: 0)` on every page transition.
+- Global scroll listener ensures the window instantly scrolls to `(top: 0, left: 0)` on every page transition.
 
 ---
 
@@ -79,6 +79,6 @@ To ensure creators don't need external testing tools, the CMS editor (`Editor.js
 - **Keyboard Navigation:** Form inputs, buttons, and modal dialogs support keyboard tabbing with visible focus rings (`focus:ring-2 focus:ring-indigo-500`).
 - **Semantic HTML5:** Proper use of landmark tags (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`).
 - **Feedback & Micro-interactions:**
-  - Interactive buttons feature subtle spring transforms (`active:scale-95`).
-  - Loading buttons display spinning loaders (`<Loader2 className="animate-spin" />`) to prevent accidental duplicate form submissions.
-  - Toast alerts and success pills indicate persistence confirmation ("Saved!").
+- Interactive buttons feature subtle spring transforms (`active:scale-95`).
+- Loading buttons display spinning loaders (`<Loader2 className="animate-spin" />`) to prevent accidental duplicate form submissions.
+- Toast alerts and success pills indicate persistence confirmation ("Saved!").

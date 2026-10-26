@@ -615,7 +615,7 @@ export default function ComponentInspector() {
                             newItems[idx] = { ...newItems[idx], period: e.target.value };
                             handlePropChange('items', newItems);
                           }}
-                          placeholder="2023 — Present"
+                          placeholder="2023 - Present"
                         />
                       </div>
                     </div>
@@ -658,7 +658,7 @@ export default function ComponentInspector() {
                         id: `exp_${Date.now()}`,
                         role: 'Product Lead / Engineer',
                         company: 'Innovative Studio',
-                        period: '2022 — Present',
+                        period: '2022 - Present',
                         description: 'Architected scalable systems and delivered polished user experiences.',
                         highlights: ['Leadership', 'System Design']
                       }
@@ -1269,7 +1269,7 @@ export default function ComponentInspector() {
                 <button
                   type="button"
                   onClick={() => {
-                    handlePropChange('content', `## Engineering Challenge\n\nWhen scaling to over **500K concurrent users**, database connection pooling became the primary bottleneck.\n\n> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra\n\n### Technical Decisions\n\n- **Zero-Copy Buffers**: Reduced latency by 45%.\n- **Distributed Consensus**: Implemented Raft with edge failover.\n\n\`\`\`javascript\n// High-throughput WebSocket dispatcher\nexport function dispatch(socket, data) {\n  return socket.write(Buffer.from(data));\n}\n\`\`\`\n\n### Business Outcome\n\nMaintained **99.99% uptime** during Black Friday traffic surges.`);
+                    handlePropChange('content', `## Engineering Challenge\n\nWhen scaling to over **500K concurrent users**, database connection pooling became the primary bottleneck.\n\n> "Simplicity is prerequisite for reliability." - Edsger W. Dijkstra\n\n### Technical Decisions\n\n- **Zero-Copy Buffers**: Reduced latency by 45%.\n- **Distributed Consensus**: Implemented Raft with edge failover.\n\n\`\`\`javascript\n// High-throughput WebSocket dispatcher\nexport function dispatch(socket, data) {\n  return socket.write(Buffer.from(data));\n}\n\`\`\`\n\n### Business Outcome\n\nMaintained **99.99% uptime** during Black Friday traffic surges.`);
                   }}
                   className="px-2.5 py-1.5 rounded-xl glass border border-white/10 hover:border-indigo-500/40 text-[11px] text-slate-300 hover:text-white font-semibold text-center transition"
                 >
@@ -1278,7 +1278,7 @@ export default function ComponentInspector() {
                 <button
                   type="button"
                   onClick={() => {
-                    handlePropChange('content', `## Design Philosophy\n\nGreat interfaces feel invisible. Every interaction should give the user confidence and momentum.\n\n### Core Principles\n\n- **Content First**: Remove every decorative element that doesn't aid clarity.\n- **Sub-100ms Feedback**: Animate state changes with physical spring physics.\n- **Universal Access**: WCAG AAA compliant contrast and full screen-reader semantic trees.\n\n> "Good design is as little design as possible." — Dieter Rams`);
+                    handlePropChange('content', `## Design Philosophy\n\nGreat interfaces feel invisible. Every interaction should give the user confidence and momentum.\n\n### Core Principles\n\n- **Content First**: Remove every decorative element that doesn't aid clarity.\n- **Sub-100ms Feedback**: Animate state changes with physical spring physics.\n- **Universal Access**: WCAG AAA compliant contrast and full screen-reader semantic trees.\n\n> "Good design is as little design as possible." - Dieter Rams`);
                   }}
                   className="px-2.5 py-1.5 rounded-xl glass border border-white/10 hover:border-indigo-500/40 text-[11px] text-slate-300 hover:text-white font-semibold text-center transition"
                 >

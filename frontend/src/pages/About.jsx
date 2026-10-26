@@ -31,7 +31,7 @@ const pillars = [
     icon: Layers,
     title: 'Modular Visual Architecture',
     description:
-      'Every section—from Hero Banners and Interactive Case Studies to Experience Timelines and Metric Cards—is engineered for total customization without touching a line of code.'
+      'Every section - from Hero Banners and Interactive Case Studies to Experience Timelines and Metric Cards - is engineered for total customization without touching a line of code.'
   },
   {
     icon: Palette,
@@ -55,7 +55,7 @@ const pillars = [
     icon: Globe,
     title: 'Multi-Portfolio Studio Scaling',
     description:
-      'Run up to 5 independent portfolios under a single account—ideal for multidisciplinary creators, consultants, and boutique agencies.'
+      'Run up to 5 independent portfolios under a single account - ideal for multidisciplinary creators, consultants, and boutique agencies.'
   },
   {
     icon: Award,
@@ -199,7 +199,7 @@ export default function About() {
               When we spoke with hundreds of hiring managers, design leads, and engineering VPs, a clear pattern emerged: recruiters spend less than 15 seconds scanning a portfolio before deciding whether to schedule an interview.
             </p>
             <p className="text-slate-400 text-sm leading-relaxed">
-              Traditional website builders force creators to start from blank canvases or clunky restaurant templates, while coding a custom portfolio from scratch takes weeks away from actual project work. PortfolioCraft bridges that gap—combining the speed of a structured CMS with the visual polish of a bespoke creative studio site.
+              Traditional website builders force creators to start from blank canvases or clunky restaurant templates, while coding a custom portfolio from scratch takes weeks away from actual project work. PortfolioCraft bridges that gap - combining the speed of a structured CMS with the visual polish of a bespoke creative studio site.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {[

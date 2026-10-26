@@ -348,7 +348,7 @@ function AdminMessagesSection() {
                       <td className="p-4 font-mono text-slate-400 whitespace-nowrap">
                         {stat.lastContactedAt
                           ? new Date(stat.lastContactedAt).toLocaleString()
-                          : '—'}
+                          : ' - '}
                       </td>
                     </tr>
                   ))}
@@ -379,7 +379,7 @@ function AdminMessagesSection() {
               className="text-[11px] text-amber-400 hover:text-amber-300 font-mono font-bold flex items-center gap-1.5 underline underline-offset-2"
             >
               <Lock className="w-3.5 h-3.5" />
-              <span>Message bodies locked — Click to authorize with password</span>
+              <span>Message bodies locked - Click to authorize with password</span>
             </button>
           )}
         </div>
@@ -1040,7 +1040,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  // Active Section ('users' | 'portfolios' | 'messages' | 'payments' | 'careers') — No 'all' section
+  // Active Section ('users' | 'portfolios' | 'messages' | 'payments' | 'careers') - No 'all' section
   const [activeTab, setActiveTab] = useState('users');
 
   const [stats, setStats] = useState(null);
@@ -1219,7 +1219,7 @@ export default function AdminDashboard() {
           );
           setActionMessage(
             res.data.layout.isBanned
-              ? `Portfolio /p/${adminAuthModal.targetLayout.handle} banned — hidden from public.`
+              ? `Portfolio /p/${adminAuthModal.targetLayout.handle} banned - hidden from public.`
               : `Portfolio /p/${adminAuthModal.targetLayout.handle} unbanned.`
           );
           setTimeout(() => setActionMessage(''), 3500);
@@ -1689,7 +1689,7 @@ export default function AdminDashboard() {
                       <FileText className="w-5 h-5 text-indigo-400" />
                       <span>
                         Selected User Profile, Bio & Links
-                        {selectedUser ? ` — @${selectedUser.username || selectedUser.email?.split('@')[0]}` : ''}
+                        {selectedUser ? ` - @${selectedUser.username || selectedUser.email?.split('@')[0]}` : ''}
                       </span>
                     </h3>
                     {selectedUser && (
@@ -2311,7 +2311,7 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-400 mb-2">
-                  Admin Note <span className="text-slate-600">(optional — included in email)</span>
+                  Admin Note <span className="text-slate-600">(optional - included in email)</span>
                 </label>
                 <textarea
                   rows={3}

@@ -52,11 +52,11 @@ const posts = [
     content: [
       {
         heading: '1. The First 5 Seconds: The Above-the-Fold Value Thesis',
-        text: "Design VPs and hiring managers review 40 to 70 portfolios per open requisition. If your hero banner doesn't immediately communicate who you are, what problem domain you specialize in, and the scale of impact you deliver, over 75% of reviewers will close the tab before scrolling to your first project.\n\nAvoid generic filler statements like 'Passionate UX thinker crafting delightful human-centered experiences.' Instead, anchor your hero banner around a concrete 3-part formula: [Role & Seniority] + [Core Domain / Technical Specialty] + [Proof of Scale or Outcome].\n\nFor example: 'Senior Product Designer specializing in high-frequency B2B fintech workflows, multi-brand Figma token systems, and zero-to-one AI tooling—previously shipping products used by 3.2M daily active users.' Pair this headline with immediate quick-jump links to your 3 flagship case studies and a visible availability badge."
+        text: "Design VPs and hiring managers review 40 to 70 portfolios per open requisition. If your hero banner doesn't immediately communicate who you are, what problem domain you specialize in, and the scale of impact you deliver, over 75% of reviewers will close the tab before scrolling to your first project.\n\nAvoid generic filler statements like 'Passionate UX thinker crafting delightful human-centered experiences.' Instead, anchor your hero banner around a concrete 3-part formula: [Role & Seniority] + [Core Domain / Technical Specialty] + [Proof of Scale or Outcome].\n\nFor example: 'Senior Product Designer specializing in high-frequency B2B fintech workflows, multi-brand Figma token systems, and zero-to-one AI tooling - previously shipping products used by 3.2M daily active users.' Pair this headline with immediate quick-jump links to your 3 flagship case studies and a visible availability badge."
       },
       {
         heading: '2. The 4-Act Case Study Architecture That Wins Onsite Loops',
-        text: "A high-converting case study is not an exhaustive archive of every sticky note and wireframe you produced. It is an executive narrative of decision-making under real business and engineering constraints. Structure each of your 3 flagship case studies into four scannable acts:\n\n• Act I — Executive Context & The High-Stakes Problem: Open with a metadata bar (Client, Role, Timeline, Squad Size) and a 4-card KPI outcome strip at the very top. Do not hide the results at the bottom! State clearly what was broken in the legacy product and why the business prioritized fixing it.\n• Act II — Discovery, Telemetry & Key Insights: Share the 2 or 3 sharpest insights uncovered from product analytics (Mixpanel/Amplitude drop-off funnels) and user shadowing. Show how data invalidated your team's initial assumptions.\n• Act III — Explorations, Trade-offs & System Architecture: Hiring managers at Stripe and Figma look specifically for how you navigate trade-offs. Show Option A and Option B that you rejected, explain the technical or usability constraints that led you to Option C, and highlight how your solution scaled across the design system.\n• Act IV — Production Polish, Edge Cases & Measured Impact: Showcase high-resolution dark/light UI states, loading skeletons, error recovery states, and the post-launch metrics validated via A/B testing."
+        text: "A high-converting case study is not an exhaustive archive of every sticky note and wireframe you produced. It is an executive narrative of decision-making under real business and engineering constraints. Structure each of your 3 flagship case studies into four scannable acts:\n\n• Act I - Executive Context & The High-Stakes Problem: Open with a metadata bar (Client, Role, Timeline, Squad Size) and a 4-card KPI outcome strip at the very top. Do not hide the results at the bottom! State clearly what was broken in the legacy product and why the business prioritized fixing it.\n• Act II - Discovery, Telemetry & Key Insights: Share the 2 or 3 sharpest insights uncovered from product analytics (Mixpanel/Amplitude drop-off funnels) and user shadowing. Show how data invalidated your team's initial assumptions.\n• Act III - Explorations, Trade-offs & System Architecture: Hiring managers at Stripe and Figma look specifically for how you navigate trade-offs. Show Option A and Option B that you rejected, explain the technical or usability constraints that led you to Option C, and highlight how your solution scaled across the design system.\n• Act IV - Production Polish, Edge Cases & Measured Impact: Showcase high-resolution dark/light UI states, loading skeletons, error recovery states, and the post-launch metrics validated via A/B testing."
       },
       {
         heading: '3. Quantifying Design Impact When You Lack Direct Revenue Numbers',
@@ -76,7 +76,7 @@ const posts = [
       }
     ],
     takeaways: [
-      'Place a 4-card KPI outcome strip at the very top of every case study—never bury results at the bottom.',
+      'Place a 4-card KPI outcome strip at the very top of every case study - never bury results at the bottom.',
       'Write a sharp 5-second Hero value thesis combining your seniority, domain specialty, and proof of scale.',
       'Document at least two design trade-offs (rejected concepts and why they failed) in every flagship project.',
       'Quantify impact using task completion speed, support ticket reduction, or design system adoption when revenue metrics are private.',
@@ -101,7 +101,7 @@ const posts = [
     excerpt:
       'Stop listing raw tech frameworks without business context. Learn how positioning your engineering and creative work around client ROI turns passive visitors into high-paying inbound retainers.',
     overview:
-      'Most developers and independent creators treat their portfolio copy as an afterthought—slapping together a list of programming languages ("React, Node.js, Docker, PostgreSQL") and a few GitHub links. Yet when founders, CTOs, and agency directors look to hire a $150–$250/hr consultant or a senior engineer, they aren’t buying syntax; they are buying risk reduction, speed to market, and revenue growth.\n\nIn this deep-dive guide, we dissect the biggest copywriting pitfalls that commoditize your talent and show you word-for-word how to rewrite your portfolio for high-ticket inbound conversion.',
+      'Most developers and independent creators treat their portfolio copy as an afterthought - slapping together a list of programming languages ("React, Node.js, Docker, PostgreSQL") and a few GitHub links. Yet when founders, CTOs, and agency directors look to hire a $150–$250/hr consultant or a senior engineer, they aren’t buying syntax; they are buying risk reduction, speed to market, and revenue growth.\n\nIn this deep-dive guide, we dissect the biggest copywriting pitfalls that commoditize your talent and show you word-for-word how to rewrite your portfolio for high-ticket inbound conversion.',
     beforeAfter: {
       weak: '"Full Stack Developer experienced in React, Node.js, Express, and MongoDB. Check out my e-commerce app and chat app below."',
       strong: '"Principal Full Stack & Cloud Architect helping Series A–C SaaS companies eliminate API bottlenecks, scale WebSocket infrastructure to 100K+ concurrent users, and cut AWS spend by 35%."'
@@ -133,7 +133,7 @@ const posts = [
       }
     ],
     takeaways: [
-      'Never lead with a raw list of frameworks—pair every technology with the business capability it delivers.',
+      'Never lead with a raw list of frameworks - pair every technology with the business capability it delivers.',
       'Rewrite every project summary using the Problem → Architecture → Quantified Result formula.',
       'Replace vague adjectives ("fast", "scalable") with verifiable engineering metrics (<18ms P99 latency, 99.99% SLA).',
       'Embed a client or engineering leader testimonial directly inside each flagship case study.',
@@ -158,7 +158,7 @@ const posts = [
     excerpt:
       'A comprehensive masterclass in dark-mode luminance hierarchy, optical backdrop-filter glassmorphism, CSS custom property architecture, and 60fps micro-interaction choreography.',
     overview:
-      'When an art director, founder, or recruiter lands on your portfolio, they form a subconscious judgment about your craft quality within 50 milliseconds—long before they read a single word of copy. In 2026, atmospheric dark-mode interfaces paired with subtle optical glassmorphism and fluid micro-interactions have become the gold standard for developer tools, AI platforms, and luxury digital flagships.\n\nIn this visual engineering guide, we explore the exact color science, elevation tokens, border shaders, and typographic contrast rules that make dark interfaces feel tactile, luminous, and effortless to read.',
+      'When an art director, founder, or recruiter lands on your portfolio, they form a subconscious judgment about your craft quality within 50 milliseconds - long before they read a single word of copy. In 2026, atmospheric dark-mode interfaces paired with subtle optical glassmorphism and fluid micro-interactions have become the gold standard for developer tools, AI platforms, and luxury digital flagships.\n\nIn this visual engineering guide, we explore the exact color science, elevation tokens, border shaders, and typographic contrast rules that make dark interfaces feel tactile, luminous, and effortless to read.',
     beforeAfter: {
       weak: 'Pure #000000 black backgrounds with harsh #FFFFFF borders, muddy drop shadows, and unreadable low-contrast gray body text.',
       strong: 'Layered obsidian-slate canvas tokens (#050811 → #111827), 1px specular gradient borders (rgba(255,255,255,0.08)), radial ambient light blooms, and WCAG AAA typographic hierarchy.'
@@ -190,7 +190,7 @@ const posts = [
       }
     ],
     takeaways: [
-      'Avoid pure #000000 black—use a 3-tier obsidian-to-slate elevation scale (#050811 → #111827 → translucent glass).',
+      'Avoid pure #000000 black - use a 3-tier obsidian-to-slate elevation scale (#050811 → #111827 → translucent glass).',
       'Define glassmorphic containers with 1px specular borders (rgba(255,255,255,0.08)) and subtle gradient highlights.',
       'Use ambient radial light blurs (blur(140px) at 15–25% opacity) to give translucent cards realistic depth.',
       'Ensure badges over cover images use a solid high-contrast backdrop (bg-slate-950/90) for guaranteed WCAG legibility.',
@@ -284,7 +284,7 @@ export default function Blog() {
   const handleSocialShare = (e, platform, post) => {
     if (e) e.stopPropagation();
     const url = encodeURIComponent(getPostShareUrl(post));
-    const text = encodeURIComponent(`${post.title} — via PortfolioCraft`);
+    const text = encodeURIComponent(`${post.title} - via PortfolioCraft`);
 
     if (platform === 'twitter') {
       window.open(
@@ -514,7 +514,7 @@ export default function Blog() {
                 Learn how to structure case studies around the 4-act executive arc: Context & Problem, Discovery & Telemetry, Explorations & Trade-Offs, and Quantified Business Impact.
               </p>
               <p className="text-slate-400 text-xs leading-relaxed">
-                By presenting quantifiable telemetry—such as activation lift, latency reductions, or customer support savings—your case studies prove real business returns rather than decorative aesthetics.
+                By presenting quantifiable telemetry - such as activation lift, latency reductions, or customer support savings - your case studies prove real business returns rather than decorative aesthetics.
               </p>
             </div>
 

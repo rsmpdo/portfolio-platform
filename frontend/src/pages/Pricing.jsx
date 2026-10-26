@@ -64,7 +64,7 @@ const plans = [
 
 const faqs = [
   { q: "Is the free plan really free forever?", a: "Yes! No credit card is required to sign up. You can build, publish, and update your portfolio for free." },
-  { q: "Can I use a custom domain for my portfolio?", a: "Every portfolio on our platform gets its own unique, shareable URL — for example portfoliosite.com/p/yourname. Each of your portfolios can have a different page name (handle). Custom external domains (e.g. yourname.com) are not currently supported, but every plan including Free gets a clean, professional portfolio URL." },
+  { q: "Can I use a custom domain for my portfolio?", a: "Every portfolio on our platform gets its own unique, shareable URL - for example portfoliosite.com/p/yourname. Each of your portfolios can have a different page name (handle). Custom external domains (e.g. yourname.com) are not currently supported, but every plan including Free gets a clean, professional portfolio URL." },
   { q: "Do I need coding knowledge?", a: "Not at all! Everything is controlled via a visual drag-and-drop CMS editor." },
   { q: "Is payment processing safe?", a: "Yes! We never store sensitive credit card details on our platform. Plan upgrades use secure direct bank transfer (Wise) and undergo manual payment slip and identity verification by our administrator team to ensure every transaction is 100% authentic and protected." }
 ];

@@ -177,7 +177,7 @@ export default function PaymentForm() {
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                   <div className="text-sm">
-                    <p className="font-bold text-amber-300 mb-1">Important — Please Read</p>
+                    <p className="font-bold text-amber-300 mb-1">Important - Please Read</p>
                     <p className="text-slate-400 leading-relaxed">This is a <strong className="text-white">one-time bank transfer purchase</strong>, not a monthly subscription. You pay once and get lifetime access to the {plan.name} features. After transferring, upload your payment slip below so our team can verify and upgrade your account within <strong className="text-white">1–3 business days</strong>.</p>
                   </div>
                 </div>

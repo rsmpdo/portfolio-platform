@@ -59,7 +59,7 @@ export default function CookiePolicy() {
               Cookie <span className="gradient-text">Policy</span>
             </h1>
             <p className="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              We believe in honest, transparent technology. PortfolioCraft uses strictly essential local tokens to power your editor and authentication—never cross-site advertising trackers.
+              We believe in honest, transparent technology. PortfolioCraft uses strictly essential local tokens to power your editor and authentication - never cross-site advertising trackers.
             </p>
             <p className="text-xs font-mono text-slate-500 mt-4">
               Last updated: {lastUpdated} • Cookie-minimal platform

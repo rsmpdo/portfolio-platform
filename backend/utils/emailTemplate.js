@@ -166,14 +166,14 @@ function getPaymentApprovedTemplate({ recipientName, plan, amount, adminNote, cl
     : '';
 
   return createBrandedEmailTemplate({
-    subtitle: `${planUpper} Plan — Payment Approved!`,
+    subtitle: `${planUpper} Plan - Payment Approved!`,
     recipientName,
     contentHtml: `
       <p style="margin: 0 0 12px 0;">
         Great news! Your payment for the PortfolioCraft <strong>${planUpper} Plan</strong> has been verified and successfully approved.
       </p>
       <p style="margin: 0 0 12px 0;">
-        Your account has been upgraded with all premium capabilities unlocked—including custom domains, high-tier layouts, analytics, and white-label branding.
+        Your account has been upgraded with all premium capabilities unlocked - including custom domains, high-tier layouts, analytics, and white-label branding.
       </p>
       ${adminNoteHtml}
       <p style="margin: 0;">

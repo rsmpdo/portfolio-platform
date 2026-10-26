@@ -48,19 +48,19 @@ export const SHOWCASE_CREATORS = [
       {
         role: 'Lead Product Designer',
         company: 'Verve Digital Studio',
-        period: '2022 — Present',
+        period: '2022 - Present',
         description: 'Directing design strategy and multi-brand token design systems across 12 flagship SaaS and fintech product lines serving 3.2M daily users.'
       },
       {
         role: 'Senior UI/UX Designer',
         company: 'NovaPay Financial',
-        period: '2019 — 2022',
+        period: '2019 - 2022',
         description: 'Spearheaded the mobile banking & wealth management redesign serving 200K+ active retail investors, boosting 30-day retention by 34%.'
       },
       {
         role: 'Product Designer',
         company: 'Pulse Labs (YC W19)',
-        period: '2018 — 2019',
+        period: '2018 - 2019',
         description: 'Designed the core zero-to-one B2B analytics workspace and interactive onboarding flows that helped close a $14M Series A.'
       }
     ],
@@ -92,7 +92,7 @@ export const SHOWCASE_CREATORS = [
           },
           {
             phase: '02. Tokenized Financial Design System',
-            detail: 'Created "NovaUI" — a semantic design token system supporting instant dark/OLED/light switching and high-density numeric tabular typography.'
+            detail: 'Created "NovaUI" - a semantic design token system supporting instant dark/OLED/light switching and high-density numeric tabular typography.'
           },
           {
             phase: '03. High-Frequency Data Visualization',
@@ -141,7 +141,7 @@ export const SHOWCASE_CREATORS = [
         team: '1 Designer, 4 WebGL/TypeScript Engineers, 2 ML Researchers',
         image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
         summary: 'An infinite-canvas multiplayer web application allowing brand teams to chain generative AI models, non-destructive layers, and vector exports.',
-        overview: 'Creative agencies were frustrated with chat-based prompt boxes that forced designers to generate images one by one without spatial context or brand consistency.\n\nWe designed Kinetix Canvas — a hardware-accelerated infinite 2D workspace where design teams wire visual style nodes, mask regions in real time, and collaborate with live multiplayer cursors.',
+        overview: 'Creative agencies were frustrated with chat-based prompt boxes that forced designers to generate images one by one without spatial context or brand consistency.\n\nWe designed Kinetix Canvas - a hardware-accelerated infinite 2D workspace where design teams wire visual style nodes, mask regions in real time, and collaborate with live multiplayer cursors.',
         challenge: 'Creative teams struggled with linear Discord-style prompt tools that lacked spatial organization, brand color locking, layer masking, and real-time multiplayer collaboration.',
         solution: 'Built a spatial node-graph canvas with WebGL viewport rendering, live multiplayer cursors, non-destructive style layers, and one-click SVG/Figma export.',
         impact: '85,000+ Active Creators · 60% Faster Campaign Delivery · 91 NPS Score',
@@ -314,19 +314,19 @@ export const SHOWCASE_CREATORS = [
       {
         role: 'Principal Systems Architect',
         company: 'CloudScale Infrastructure',
-        period: '2022 — Present',
+        period: '2022 - Present',
         description: 'Architecting multi-region Kubernetes clusters and high-throughput telemetry pipelines handling 50M+ events/day with 99.99% SLA.'
       },
       {
         role: 'Senior Full Stack Engineer',
         company: 'StreamLine Core',
-        period: '2020 — 2022',
+        period: '2020 - 2022',
         description: 'Built distributed WebSocket messaging relays supporting 100,000+ concurrent connections and sub-18ms global P99 latency.'
       },
       {
         role: 'Platform Infrastructure Engineer',
         company: 'DataForge Systems',
-        period: '2018 — 2020',
+        period: '2018 - 2020',
         description: 'Automated multi-account AWS Terraform provisioning and CI/CD canary pipelines for 85 microservices.'
       }
     ],
@@ -473,7 +473,7 @@ export const SHOWCASE_CREATORS = [
         team: '2 Rust/Go Engineers, 1 Frontend Engineer',
         image: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1200&q=80',
         summary: 'High-speed CLI and ClickHouse observability engine processing over 50 million build, test, and runtime log events per day.',
-        overview: 'Modern monorepos generate terabytes of unstructured CI/CD and container logs daily, yet developers still waste hours grepping raw text files when a flaky integration test or microservice deploy fails.\n\nWe built TracePulse — a zero-config CLI binary and ClickHouse ingestion engine that parses, indexes, and correlates distributed OpenTelemetry traces and build logs in under 80 milliseconds.',
+        overview: 'Modern monorepos generate terabytes of unstructured CI/CD and container logs daily, yet developers still waste hours grepping raw text files when a flaky integration test or microservice deploy fails.\n\nWe built TracePulse - a zero-config CLI binary and ClickHouse ingestion engine that parses, indexes, and correlates distributed OpenTelemetry traces and build logs in under 80 milliseconds.',
         challenge: 'CI/CD bottlenecks and flaky test regressions were hidden inside millions of unstructured log lines across thousands of daily microservice builds.',
         solution: 'Created a lightweight Go/Rust CLI daemon paired with a columnar ClickHouse analytics engine and keyboard-first TUI/Web trace inspector.',
         impact: '50M+ Daily Logs Indexed · 3.4x Faster CI Debugging · 12,000+ GitHub Stars',
@@ -580,19 +580,19 @@ export const SHOWCASE_CREATORS = [
       {
         role: 'Founder & Executive Creative Director',
         company: 'Atelier Rostova London',
-        period: '2021 — Present',
+        period: '2021 - Present',
         description: 'Leading a multidisciplinary studio of 14 designers, 3D artists, and typographers crafting iconic brand worlds for cultural and luxury leaders.'
       },
       {
         role: 'Design Director',
         company: 'Monolith Creative Agency',
-        period: '2017 — 2021',
+        period: '2017 - 2021',
         description: 'Directed global rebrands, custom typefaces, and digital flagships for European museums, architecture biennales, and fashion houses.'
       },
       {
         role: 'Senior Art Director',
         company: 'Studio Nord Paris',
-        period: '2015 — 2017',
+        period: '2015 - 2017',
         description: 'Spearheaded editorial print direction, exhibition catalogs, and kinetic identity systems across Paris and Milan.'
       }
     ],
@@ -607,7 +607,7 @@ export const SHOWCASE_CREATORS = [
         team: '3 Brand Designers, 2 Type Foundry Collaborators, 2 Motion Designers',
         image: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=1200&q=80',
         summary: 'Comprehensive visual rebranding, bespoke variable serif typeface, and kinetic motion guidelines across 28 international markets.',
-        overview: 'Following the merger of three European contemporary art and architecture foundations, Aethelgard needed a cohesive brand architecture capable of flexing from monumental museum signage in Zurich to generative social campaigns and bilingual digital publications.\n\nWe crafted a living identity system anchored by "Aethelgard Serif" — a custom optical-size variable typeface whose stroke contrast responds dynamically to ambient sound and scroll velocity.',
+        overview: 'Following the merger of three European contemporary art and architecture foundations, Aethelgard needed a cohesive brand architecture capable of flexing from monumental museum signage in Zurich to generative social campaigns and bilingual digital publications.\n\nWe crafted a living identity system anchored by "Aethelgard Serif" - a custom optical-size variable typeface whose stroke contrast responds dynamically to ambient sound and scroll velocity.',
         challenge: 'Unifying a fragmented global brand presence across 6 sub-brands, digital products, physical museum spaces, and broadcast media in 28 countries.',
         solution: 'Crafted a kinetic identity system anchored by a bespoke variable serif typeface, generative architectural grid rules, and an interactive online brand portal.',
         impact: 'Red Dot Best of the Best · +65% Unprompted Brand Recall · 28 Global Markets Unified',

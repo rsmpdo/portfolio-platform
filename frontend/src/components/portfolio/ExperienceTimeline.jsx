@@ -11,7 +11,7 @@ export default function ExperienceTimeline({ props = {} }) {
         id: 'exp-1',
         role: 'Senior Full Stack Engineer',
         company: 'TechCorp Solutions',
-        period: '2023 — Present',
+        period: '2023 - Present',
         description: 'Led the architecture of a high-traffic platform serving 2M+ users. Mentored a team of 5 engineers and reduced deployment time by 60%.',
         highlights: ['Platform Architecture', 'Team Leadership', 'CI/CD Pipelines']
       },
@@ -19,7 +19,7 @@ export default function ExperienceTimeline({ props = {} }) {
         id: 'exp-2',
         role: 'Frontend Developer',
         company: 'Creative Agency Inc',
-        period: '2021 — 2023',
+        period: '2021 - 2023',
         description: 'Designed and shipped responsive web experiences for Fortune 500 clients, achieving a 94% client satisfaction rating across 20+ projects.',
         highlights: ['Client Projects', 'UI/UX Design', 'Performance Optimization']
       }

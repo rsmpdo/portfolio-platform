@@ -161,7 +161,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               id: `exp_${ts}_1`,
               role: 'Lead Full Stack Architect',
               company: 'Veloce Labs',
-              period: '2023 — Present',
+              period: '2023 - Present',
               description: 'Spearheaded migration to micro-frontends, accelerating deployment cycles by 3.5x while leading a team of 8 engineers.',
               highlights: ['Architecture', 'Leadership', 'Performance']
             },
@@ -169,7 +169,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               id: `exp_${ts}_2`,
               role: 'Senior Product Engineer',
               company: 'Apex Digital',
-              period: '2021 — 2023',
+              period: '2021 - 2023',
               description: 'Engineered high-conversion user journeys for flagship SaaS products, generating $4.2M in annual recurring revenue.',
               highlights: ['Product Design', 'Next.js', 'GraphQL']
             }
@@ -217,7 +217,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
       case 'ContactSection':
         return {
           heading: 'Ready to Create Something Great?',
-          subheading: "Whether you have an upcoming project or just want to explore ideas — let's connect.",
+          subheading: "Whether you have an upcoming project or just want to explore ideas - let's connect.",
           email: 'hello@example.com',
           location: 'San Francisco, CA (or Remote)',
           phone: '+1 (555) 234-5678',
@@ -268,7 +268,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
           badge: 'Technical Case Study',
           heading: 'Architecture & Problem Breakdown',
           subheading: 'An in-depth look into the decisions, constraints, and engineering methodology behind this project.',
-          content: `## The Core Challenge\n\nWhen scaling systems to handle **hundreds of thousands of concurrent operations**, architectural trade-offs become critical.\n\n> "Simplicity is prerequisite for reliability." — Edsger W. Dijkstra\n\n### Engineering Decisions\n\n- **Zero-Copy Buffers**: Reduced memory footprint by over 35%.\n- **Stateless Edge Handlers**: Distributed load smoothly across multiple global zones.\n- **Adaptive Circuit Breakers**: Guaranteed sub-50ms latency SLAs even during peak failover events.\n\n\`\`\`javascript\n// Realtime stream processor pipeline\nexport async function processEventStream(events) {\n  return events\n    .filter(e => e.isValid)\n    .map(e => transformPayload(e));\n}\n\`\`\`\n\n### Measuring Impact\n\nBy prioritizing *observability* and *resilience* early, the system maintained 99.99% uptime through consecutive high-traffic launches.`,
+          content: `## The Core Challenge\n\nWhen scaling systems to handle **hundreds of thousands of concurrent operations**, architectural trade-offs become critical.\n\n> "Simplicity is prerequisite for reliability." - Edsger W. Dijkstra\n\n### Engineering Decisions\n\n- **Zero-Copy Buffers**: Reduced memory footprint by over 35%.\n- **Stateless Edge Handlers**: Distributed load smoothly across multiple global zones.\n- **Adaptive Circuit Breakers**: Guaranteed sub-50ms latency SLAs even during peak failover events.\n\n\`\`\`javascript\n// Realtime stream processor pipeline\nexport async function processEventStream(events) {\n  return events\n    .filter(e => e.isValid)\n    .map(e => transformPayload(e));\n}\n\`\`\`\n\n### Measuring Impact\n\nBy prioritizing *observability* and *resilience* early, the system maintained 99.99% uptime through consecutive high-traffic launches.`,
           alignment: 'left'
         };
       default:

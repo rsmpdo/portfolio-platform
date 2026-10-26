@@ -1490,13 +1490,13 @@ export default function ProfileSettings() {
                 </div>
               </section>
 
-              {/* Danger Zone — Account Deletion */}
+              {/* Danger Zone - Account Deletion */}
               <section className="p-8 rounded-3xl bg-red-500/5 border border-red-500/20">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                   <div>
                     <h2 className="font-heading font-bold text-xl text-red-400 mb-1 flex items-center gap-2">
                       <Trash2 className="w-5 h-5" />
-                      <span>Danger Zone — Account Deletion</span>
+                      <span>Danger Zone - Account Deletion</span>
                     </h2>
                     <p className="text-slate-400 text-xs leading-relaxed max-w-2xl">
                       Permanently delete your account, your user credentials, your received messages, and all of your live/draft portfolio layouts from PortfolioCraft. Requires 2-step confirmation and password authentication.

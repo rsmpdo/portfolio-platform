@@ -2,7 +2,7 @@
 
 **Course:** EC4307 Web Application Development Mini Project  
 **Author:** Ranaweerage Shashika Madhusankha Priyanath  
-**Evaluation Rubric Alignment:** Database Design — Structure, keys, relationships, data types (4 Marks)  
+**Evaluation Rubric Alignment:** Database Design - Structure, keys, relationships, data types (4 Marks)  
 
 ---
 

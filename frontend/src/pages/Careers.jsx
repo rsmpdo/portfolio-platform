@@ -106,7 +106,7 @@ const HIRING_STEPS = [
     step: '04',
     title: 'Founder Conversation & Offer',
     description:
-      'Meet our co-founders to align on long-term product vision, role impact, and career growth—followed by a transparent, fast-turnaround offer.'
+      'Meet our co-founders to align on long-term product vision, role impact, and career growth - followed by a transparent, fast-turnaround offer.'
   }
 ];
 
@@ -283,7 +283,7 @@ export default function Careers() {
               Designed to Support Your Best Work
             </h2>
             <p className="text-slate-400 text-sm leading-relaxed">
-              We invest heavily in the health, autonomy, and long-term growth of every person on our team—wherever you call home.
+              We invest heavily in the health, autonomy, and long-term growth of every person on our team - wherever you call home.
             </p>
           </div>
 

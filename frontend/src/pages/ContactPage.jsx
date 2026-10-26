@@ -64,7 +64,7 @@ export default function ContactPage() {
             Whether you are an independent product designer preparing for your next career leap, a full-stack engineer documenting complex system architecture, or a global creative agency onboarding fifty seats, our team is committed to giving you direct, human support.
           </p>
           <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-3xl mx-auto">
-            With headquarters in San Francisco and enterprise operations in New York, PortfolioCraft routes every inquiry directly to product specialists and solutions engineers—never automated chatbots or scripted ticket queues.
+            With headquarters in San Francisco and enterprise operations in New York, PortfolioCraft routes every inquiry directly to product specialists and solutions engineers - never automated chatbots or scripted ticket queues.
           </p>
         </section>
 

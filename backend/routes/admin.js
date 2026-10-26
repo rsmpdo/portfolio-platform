@@ -309,7 +309,7 @@ router.get(
 );
 
 // @route   PUT /api/admin/payment-request/:id/approve
-// @desc    Approve a payment request — upgrades user plan and notifies them
+// @desc    Approve a payment request - upgrades user plan and notifies them
 // @access  Private (Admin only)
 router.put(
   '/payment-request/:id/approve',
@@ -354,8 +354,8 @@ router.put(
 
         await sendEmail({
           email: user.email,
-          subject: `✅ PortfolioCraft ${request.plan.toUpperCase()} Plan — Payment Approved!`,
-          message: `Hi ${user.username || user.email},\n\nGreat news! Your payment of $${request.amount} USD for the PortfolioCraft ${request.plan.toUpperCase()} Plan has been verified and approved.${noteMsg}\n\nYour account has been upgraded to ${request.plan.toUpperCase()}. You can now log in and enjoy all the premium features.\n\nThis is a one-time purchase — no recurring charges.\n\nThank you for joining PortfolioCraft!\n\n— The PortfolioCraft Team`,
+          subject: `✅ PortfolioCraft ${request.plan.toUpperCase()} Plan - Payment Approved!`,
+          message: `Hi ${user.username || user.email},\n\nGreat news! Your payment of $${request.amount} USD for the PortfolioCraft ${request.plan.toUpperCase()} Plan has been verified and approved.${noteMsg}\n\nYour account has been upgraded to ${request.plan.toUpperCase()}. You can now log in and enjoy all the premium features.\n\nThis is a one-time purchase - no recurring charges.\n\nThank you for joining PortfolioCraft!\n\n - The PortfolioCraft Team`,
           html
         });
       } catch (emailErr) {
@@ -374,7 +374,7 @@ router.put(
 );
 
 // @route   PUT /api/admin/payment-request/:id/reject
-// @desc    Reject a payment request — notifies user with reason
+// @desc    Reject a payment request - notifies user with reason
 // @access  Private (Admin only)
 router.put(
   '/payment-request/:id/reject',
@@ -412,8 +412,8 @@ router.put(
 
           await sendEmail({
             email: user.email,
-            subject: `❌ PortfolioCraft Payment Request — Update Required`,
-            message: `Hi ${user.username || user.email},\n\nWe were unable to verify your payment request for the PortfolioCraft ${request.plan.toUpperCase()} Plan.\n\nReason: ${adminNote}\n\nPlease visit our pricing page to resubmit your payment with the correct documents.\n\nIf you believe this is an error, please contact our support team.\n\n— The PortfolioCraft Team`,
+            subject: `❌ PortfolioCraft Payment Request - Update Required`,
+            message: `Hi ${user.username || user.email},\n\nWe were unable to verify your payment request for the PortfolioCraft ${request.plan.toUpperCase()} Plan.\n\nReason: ${adminNote}\n\nPlease visit our pricing page to resubmit your payment with the correct documents.\n\nIf you believe this is an error, please contact our support team.\n\n - The PortfolioCraft Team`,
             html
           });
         }
