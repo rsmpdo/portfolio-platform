@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Monitor, Figma, Youtube, Code, ShieldCheck } from 'lucide-react';
+import { Monitor, Figma } from 'lucide-react';
 
 export default function PremiumEmbed({ props = {}, templateId, viewportMode }) {
   const {
     heading = 'Interactive Prototype',
     embedUrl = '', // E.g. figma embed, spline, youtube
     embedType = 'figma', // figma, spline, youtube, custom
-    height = '600px',
-    isProFeature = true // visual flag
+    height = '600px'
   } = props;
 
   const isMobile = viewportMode === 'mobile';
@@ -25,12 +24,6 @@ export default function PremiumEmbed({ props = {}, templateId, viewportMode }) {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <h2 className="text-2xl md:text-4xl text-white font-bold">{heading}</h2>
-          {isProFeature && (
-            <div className="badge badge-amber flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Premium Feature</span>
-            </div>
-          )}
         </div>
 
         <motion.div 

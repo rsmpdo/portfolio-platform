@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, Users, Target, Zap, ShieldCheck } from 'lucide-react';
+import { TrendingUp, Users, Target, Zap } from 'lucide-react';
 
 export default function AdvancedMetrics({ props = {}, templateId, viewportMode }) {
   const {
@@ -9,8 +9,7 @@ export default function AdvancedMetrics({ props = {}, templateId, viewportMode }
       { id: 'm1', label: 'Revenue Generated', value: '$10M+', icon: 'trending' },
       { id: 'm2', label: 'Active Users', value: '2.5M', icon: 'users' },
       { id: 'm3', label: 'Global Awards', value: '14', icon: 'target' }
-    ],
-    isStudioFeature = true
+    ]
   } = props;
 
   const isMobile = viewportMode === 'mobile';
@@ -37,12 +36,6 @@ export default function AdvancedMetrics({ props = {}, templateId, viewportMode }
         <div className="max-w-7xl mx-auto relative z-10">
           <div className={`flex items-center gap-4 ${isSmall ? 'mb-8' : 'mb-16'}`}>
             <h2 className={`font-heading font-black ${isMobile ? 'text-3xl' : isTablet ? 'text-4xl' : 'text-5xl md:text-7xl'} text-white uppercase tracking-tighter`}>{heading}</h2>
-            {isStudioFeature && (
-              <div className="badge badge-amber hidden sm:flex items-center gap-1.5 ml-auto text-xs">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Studio Exclusive</span>
-              </div>
-            )}
           </div>
           
           <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-3 md:gap-12'}`}>
@@ -74,7 +67,6 @@ export default function AdvancedMetrics({ props = {}, templateId, viewportMode }
       <div className="max-w-6xl mx-auto">
         <div className={`flex items-center justify-between ${isSmall ? 'mb-8 pb-4' : 'mb-16 pb-6'} border-b border-emerald-500/30`}>
           <h2 className={`${isMobile ? 'text-xl' : 'text-2xl md:text-3xl'} text-emerald-400 uppercase tracking-widest`}>{heading}_</h2>
-          {isStudioFeature && <span className="text-[10px] uppercase bg-emerald-950 px-2.5 py-0.5 border border-emerald-500/50">{templateId.includes('pro') ? 'Pro.Tier' : 'Studio.Tier'}</span>}
         </div>
         
         <div className={`grid gap-5 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'}`}>
