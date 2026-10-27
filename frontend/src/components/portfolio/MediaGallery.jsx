@@ -44,9 +44,12 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
     return (
       <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} font-mono bg-[#050505]`}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-xl md:text-2xl text-emerald-500 mb-6 uppercase tracking-widest border-b border-emerald-500/20 pb-3">
-            &gt; {heading}_
-          </h2>
+          <div className="mb-6 border-b border-emerald-500/20 pb-3">
+            <h2 className="text-xl md:text-2xl text-emerald-500 uppercase tracking-widest">
+              &gt; {heading}_
+            </h2>
+            {subheading && <p className="text-emerald-500/70 text-xs md:text-sm mt-1.5">{subheading}</p>}
+          </div>
           <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'}`}>
             {items.map((item, index) => (
               <div key={item.id || index} className="border border-emerald-500/30 p-2 bg-emerald-950/10 hover:border-emerald-400 transition cursor-pointer" onClick={() => setLightboxItem(item)}>
@@ -54,6 +57,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
                   <img src={item.url} alt={item.title} className="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition duration-500" />
                 </div>
                 {item.title && <div className="mt-2 text-emerald-400 text-xs uppercase truncate">[{item.title}]</div>}
+                {item.description && <div className="mt-0.5 text-emerald-500/60 text-[11px] truncate">{item.description}</div>}
               </div>
             ))}
           </div>
@@ -72,14 +76,15 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-serif text-5xl md:text-7xl text-black mb-4 uppercase tracking-tighter">{heading}</h2>
-            <p className="text-slate-500 text-lg md:text-xl font-light italic">{subheading}</p>
+            {subheading && <p className="text-slate-500 text-lg md:text-xl font-light italic">{subheading}</p>}
           </div>
           <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
             {items.map((item, index) => (
               <div key={item.id || index} className="break-inside-avoid cursor-pointer group relative overflow-hidden" onClick={() => setLightboxItem(item)}>
                 <img src={item.url} alt={item.title} className="w-full h-auto filter grayscale group-hover:grayscale-0 transition duration-700" />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">
                   <span className="text-white font-serif uppercase tracking-widest text-sm border border-white px-4 py-2">{item.title}</span>
+                  {item.description && <span className="text-white/80 text-xs mt-2 font-light">{item.description}</span>}
                 </div>
               </div>
             ))}
@@ -98,7 +103,10 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
       <section className="py-24 px-6 bg-slate-900 border-y border-slate-700">
         <div className="max-w-[90rem] mx-auto">
           <div className="flex items-end justify-between mb-12 border-b border-slate-700 pb-4">
-            <h2 className="font-sans font-bold text-4xl text-slate-100 uppercase tracking-widest">{heading}</h2>
+            <div>
+              <h2 className="font-sans font-bold text-4xl text-slate-100 uppercase tracking-widest">{heading}</h2>
+              {subheading && <p className="text-slate-400 text-sm md:text-base mt-2">{subheading}</p>}
+            </div>
             <span className="text-slate-500 font-mono text-xs hidden md:block">DATASET_RENDER // {items.length} FILES</span>
           </div>
           <div className="flex overflow-x-auto gap-8 pb-8 snap-x snap-mandatory hide-scrollbar">
@@ -107,8 +115,11 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
                 <div className="w-full aspect-video bg-black relative overflow-hidden">
                   <img src={item.url} alt={item.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" />
                 </div>
-                <div className="flex justify-between items-center mt-4">
-                  <span className="text-slate-300 font-sans uppercase tracking-widest text-sm">{item.title}</span>
+                <div className="flex justify-between items-start mt-4">
+                  <div>
+                    <span className="text-slate-300 font-sans uppercase tracking-widest text-sm block">{item.title}</span>
+                    {item.description && <span className="text-slate-400 text-xs mt-1 block">{item.description}</span>}
+                  </div>
                   <span className="text-emerald-500 font-mono text-xs">V-1.0</span>
                 </div>
               </div>
@@ -129,7 +140,8 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
         <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-24">
-            <h2 className="font-serif italic text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3e5ab] via-[#d4af37] to-[#aa7c11] mb-6 drop-shadow-sm">{heading}</h2>
+            <h2 className="font-serif italic text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3e5ab] via-[#d4af37] to-[#aa7c11] mb-4 drop-shadow-sm">{heading}</h2>
+            {subheading && <p className="text-[#d4af37]/80 font-light text-base md:text-lg mb-6 max-w-2xl mx-auto">{subheading}</p>}
             <div className="w-24 h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto"></div>
           </div>
           <div className={`grid gap-12 md:gap-24 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
@@ -159,7 +171,8 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
       <section className="py-32 px-6 bg-slate-900 border-y border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-24">
-            <h2 className="font-serif italic text-4xl md:text-6xl text-white mb-6">{heading}</h2>
+            <h2 className="font-serif italic text-4xl md:text-6xl text-white mb-4">{heading}</h2>
+            {subheading && <p className="text-slate-400 text-base md:text-lg mb-6 max-w-2xl mx-auto">{subheading}</p>}
             <div className="w-24 h-px bg-white/20 mx-auto"></div>
           </div>
           <div className={`grid gap-12 md:gap-24 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
@@ -213,9 +226,10 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
               ) : (
                 <div className="w-full h-full bg-slate-900 flex items-center justify-center text-slate-700">Empty</div>
               )}
-              {item.title && (
+              {(item.title || item.description) && (
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent">
-                  <h4 className="text-sm font-semibold text-white truncate">{item.title}</h4>
+                  {item.title && <h4 className="text-sm font-semibold text-white truncate">{item.title}</h4>}
+                  {item.description && <p className="text-xs text-slate-400 truncate mt-0.5">{item.description}</p>}
                 </div>
               )}
             </motion.div>
