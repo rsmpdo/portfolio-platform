@@ -284,6 +284,41 @@ router.put(
   }
 );
 
+// @route   DELETE /api/admin/layout/:id
+// @desc    Admin delete a portfolio layout (Requires Admin password authorization)
+// @access  Private (Admin only)
+router.delete(
+  '/layout/:id',
+  passport.authenticate('jwt', { session: false }),
+  checkAdmin,
+  async (req, res) => {
+    try {
+      const password = req.body?.password || req.headers['x-admin-password'];
+      const isAuthorized = await verifyAdminAuthPassword(req, password);
+      if (!isAuthorized) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid Admin password or Secret Code. Portfolio deletion denied.'
+        });
+      }
+
+      const layout = await Layout.findById(req.params.id);
+      if (!layout) {
+        return res.status(404).json({ success: false, message: 'Portfolio layout not found' });
+      }
+
+      await Layout.findByIdAndDelete(layout._id);
+
+      res.status(200).json({
+        success: true,
+        message: `Portfolio /p/${layout.handle} permanently deleted`
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MANUAL PAYMENT REQUEST REVIEW ROUTES

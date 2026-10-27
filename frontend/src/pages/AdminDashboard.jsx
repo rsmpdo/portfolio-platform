@@ -1159,17 +1159,10 @@ export default function AdminDashboard() {
     setAdminAuthError('');
   };
 
-  const handleTogglePublish = async (layoutId) => {
-    try {
-      const res = await API.put(`/admin/layout/${layoutId}/toggle-publish`);
-      if (res.data.success) {
-        setLayoutsList(layoutsList.map((l) => (l._id === layoutId ? { ...l, isPublished: res.data.layout.isPublished } : l)));
-        setActionMessage('Updated portfolio publication status');
-        setTimeout(() => setActionMessage(''), 3000);
-      }
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update layout status');
-    }
+  const handleDeleteLayout = (layoutObj) => {
+    setAdminAuthModal({ type: 'delete-layout', targetLayout: layoutObj });
+    setAdminAuthPassword('');
+    setAdminAuthError('');
   };
 
   const handleToggleBan = (layoutObj) => {
@@ -1200,6 +1193,19 @@ export default function AdminDashboard() {
           setUsersList(usersList.filter((u) => u._id !== targetId));
           setLayoutsList(layoutsList.filter((l) => String(l.userId?._id || l.userId) !== String(targetId)));
           setActionMessage(`User ${adminAuthModal.targetUser.email} and associated portfolios deleted.`);
+          setTimeout(() => setActionMessage(''), 3500);
+          setAdminAuthModal(null);
+          setAdminAuthPassword('');
+        }
+      } else if (adminAuthModal.type === 'delete-layout') {
+        const layoutId = adminAuthModal.targetLayout._id;
+        const res = await API.delete(`/admin/layout/${layoutId}`, {
+          data: { password: adminAuthPassword },
+          headers: { 'x-admin-password': adminAuthPassword }
+        });
+        if (res.data.success) {
+          setLayoutsList(layoutsList.filter((l) => l._id !== layoutId));
+          setActionMessage(`Portfolio /p/${adminAuthModal.targetLayout.handle} permanently deleted.`);
           setTimeout(() => setActionMessage(''), 3500);
           setAdminAuthModal(null);
           setAdminAuthPassword('');
@@ -2047,19 +2053,12 @@ export default function AdminDashboard() {
                                   ) : (
                                     <>
                                       <button
-                                        onClick={() => handleTogglePublish(l._id)}
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
-                                          l.isPublished
-                                            ? 'bg-slate-500/10 text-slate-400 hover:bg-slate-500/20'
-                                            : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
-                                        }`}
-                                        title={l.isPublished ? 'Unpublish this portfolio' : 'Publish this portfolio'}
+                                        onClick={() => handleDeleteLayout(l)}
+                                        className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20 inline-flex items-center gap-1"
+                                        title="Delete this portfolio (Requires Admin Password)"
                                       >
-                                        {l.isPublished ? (
-                                          <><EyeOff className="w-3 h-3 inline mr-1" />Unpublish</>
-                                        ) : (
-                                          <><Eye className="w-3 h-3 inline mr-1" />Publish</>  
-                                        )}
+                                        <Trash2 className="w-3 h-3" />
+                                        <span>Delete</span>
                                       </button>
                                       <button
                                         onClick={() => handleToggleBan(l)}
@@ -2408,6 +2407,8 @@ export default function AdminDashboard() {
                 <h3 className="font-heading font-bold text-xl text-white">
                   {adminAuthModal.type === 'delete-user'
                     ? 'Confirm User Account Deletion'
+                    : adminAuthModal.type === 'delete-layout'
+                    ? 'Confirm Portfolio Deletion'
                     : adminAuthModal.targetLayout?.isBanned
                     ? 'Confirm Portfolio Unban'
                     : 'Confirm Portfolio Ban'}
@@ -2426,6 +2427,14 @@ export default function AdminDashboard() {
                     {adminAuthModal.targetUser?.username || 'User'}
                   </strong>{' '}
                   (<span className="text-indigo-300 font-mono">{adminAuthModal.targetUser?.email}</span>) and erase all of their portfolios and messages. This action cannot be undone.
+                </>
+              ) : adminAuthModal.type === 'delete-layout' ? (
+                <>
+                  You are about to permanently delete portfolio{' '}
+                  <strong className="text-white">
+                    {adminAuthModal.targetLayout?.title || 'Untitled'}
+                  </strong>{' '}
+                  (<span className="text-indigo-300 font-mono">/p/{adminAuthModal.targetLayout?.handle}</span>). This action cannot be undone.
                 </>
               ) : (
                 <>
@@ -2491,6 +2500,8 @@ export default function AdminDashboard() {
                   <span>
                     {adminAuthModal.type === 'delete-user'
                       ? 'Authorize & Delete User'
+                      : adminAuthModal.type === 'delete-layout'
+                      ? 'Authorize & Delete Portfolio'
                       : adminAuthModal.targetLayout?.isBanned
                       ? 'Authorize & Unban Portfolio'
                       : 'Authorize & Ban Portfolio'}
