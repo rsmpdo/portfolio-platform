@@ -146,8 +146,151 @@ function TagEditor({ tags = [], onChange, placeholder = "Add tag & press Enter..
   );
 }
 
-// Reusable Image & Media Uploader field with thumbnail preview
-function MediaUploadField({ value, onChange, accept = "image/*", placeholder = "https://...", uploading, onUpload }) {
+// Fast client-side image optimizer to shrink multi-MB photos before upload
+async function optimizeImageFile(file) {
+  if (!file || !file.type.startsWith('image/') || file.type === 'image/gif' || file.size < 350 * 1024) {
+    return file;
+  }
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const maxDim = 1920;
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (blob && blob.size < file.size) {
+            const optimizedFile = new File(
+              [blob],
+              file.name.replace(/\.[^.]+$/, '.webp'),
+              { type: 'image/webp' }
+            );
+            resolve(optimizedFile);
+          } else {
+            resolve(file);
+          }
+        },
+        'image/webp',
+        0.84
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(file);
+    };
+    img.src = objectUrl;
+  });
+}
+
+// Reusable Image & Media Uploader field with isolated per-field upload state, direct CDN upload, and preview
+function MediaUploadField({ value, onChange, accept = "image/*", placeholder = "https://...", onUploadComplete }) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const isVideoUrl = Boolean(
+    value && (/\.(mp4|webm|mov)(\?.*)?$/i.test(value) || value.includes('/video/upload/'))
+  );
+
+  const handleLocalFileSelect = async (e) => {
+    const rawFile = e.target.files?.[0];
+    e.target.value = '';
+    if (!rawFile) return;
+
+    try {
+      setIsUploading(true);
+      setProgress(5);
+
+      const file = await optimizeImageFile(rawFile);
+      let uploadedUrl = '';
+      let resourceType = file.type.startsWith('video/') ? 'video' : 'image';
+
+      // 1. Try direct browser-to-Cloudinary upload (single network hop, much faster)
+      try {
+        const sigRes = await API.get('/upload/signature');
+        if (sigRes.data?.success && sigRes.data.cloudName && sigRes.data.apiKey) {
+          const { signature, timestamp, folder, cloudName, apiKey } = sigRes.data;
+          const directForm = new FormData();
+          directForm.append('file', file);
+          directForm.append('api_key', apiKey);
+          directForm.append('timestamp', timestamp);
+          directForm.append('signature', signature);
+          directForm.append('folder', folder);
+
+          uploadedUrl = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`);
+            xhr.upload.onprogress = (evt) => {
+              if (evt.lengthComputable) {
+                setProgress(Math.min(95, Math.round((evt.loaded / evt.total) * 100)));
+              }
+            };
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                const data = JSON.parse(xhr.responseText);
+                resourceType = data.resource_type || resourceType;
+                resolve(data.secure_url || data.url);
+              } else {
+                reject(new Error('Direct upload fallback'));
+              }
+            };
+            xhr.onerror = () => reject(new Error('Direct upload network error'));
+            xhr.send(directForm);
+          });
+        }
+      } catch {
+        // Fallback to backend proxy upload if direct upload is blocked
+      }
+
+      // 2. Fallback to backend /api/upload if direct upload wasn't used
+      if (!uploadedUrl) {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await API.post('/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (evt) => {
+            if (evt.total) {
+              setProgress(Math.min(95, Math.round((evt.loaded / evt.total) * 100)));
+            }
+          }
+        });
+        if (res.data?.success) {
+          uploadedUrl = res.data.url;
+          resourceType = res.data.resource_type || resourceType;
+        }
+      }
+
+      if (uploadedUrl) {
+        setProgress(100);
+        if (onUploadComplete) {
+          onUploadComplete(uploadedUrl, resourceType);
+        } else if (onChange) {
+          onChange({ target: { value: uploadedUrl } });
+        }
+      }
+    } catch (err) {
+      console.error('File upload error:', err);
+      alert('Upload failed: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setIsUploading(false);
+      setProgress(0);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
@@ -156,24 +299,47 @@ function MediaUploadField({ value, onChange, accept = "image/*", placeholder = "
           onChange={onChange}
           placeholder={placeholder}
         />
-        <label className="p-2 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 text-white cursor-pointer shrink-0 transition flex items-center justify-center">
-          {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+        <label
+          className={`p-2 rounded-xl text-white shrink-0 transition flex items-center justify-center ${
+            isUploading
+              ? 'bg-indigo-600/50 cursor-wait'
+              : 'bg-indigo-600/80 hover:bg-indigo-600 cursor-pointer'
+          }`}
+          title={isUploading ? `Uploading (${progress}%)` : 'Upload File'}
+        >
+          {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
           <input
             type="file"
             accept={accept}
+            disabled={isUploading}
             className="hidden"
-            onChange={onUpload}
+            onChange={handleLocalFileSelect}
           />
         </label>
       </div>
-      {value && accept.includes('image') && (
+      {isUploading && (
+        <div className="space-y-1">
+          <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+            <div
+              className="h-full bg-indigo-500 transition-all duration-200"
+              style={{ width: `${Math.max(8, progress)}%` }}
+            />
+          </div>
+          <p className="text-[10px] font-mono text-indigo-400">Uploading asset... {progress}%</p>
+        </div>
+      )}
+      {value && (accept.includes('image') || accept.includes('video')) && (
         <div className="w-full h-20 rounded-xl overflow-hidden border border-white/10 bg-slate-900/80 relative group">
-          <img src={value} alt="Preview" className="w-full h-full object-cover" />
+          {isVideoUrl ? (
+            <video src={value} className="w-full h-full object-cover" muted playsInline preload="metadata" />
+          ) : (
+            <img src={value} alt="Preview" className="w-full h-full object-cover" />
+          )}
           <button
             type="button"
             onClick={() => onChange({ target: { value: '' } })}
             className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/70 text-slate-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition"
-            title="Clear Image"
+            title="Clear Media"
           >
             <X className="w-3 h-3" />
           </button>
@@ -186,7 +352,6 @@ function MediaUploadField({ value, onChange, accept = "image/*", placeholder = "
 export default function ComponentInspector() {
   const dispatch = useDispatch();
   const { activeLayout, selectedComponentId } = useSelector((state) => state.layout);
-  const [uploadingTarget, setUploadingTarget] = useState(null);
 
   if (!activeLayout || !selectedComponentId) {
     return (
@@ -209,29 +374,6 @@ export default function ComponentInspector() {
 
   const handlePropChange = (key, value) => {
     dispatch(updateComponentProps({ id: selectedComp.id, props: { [key]: value } }));
-  };
-
-  const handleFileUpload = async (e, onComplete) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      setUploadingTarget(true);
-      const res = await API.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      if (res.data.success) {
-        onComplete(res.data.url);
-      }
-    } catch (err) {
-      console.error('File upload error:', err);
-      alert('Upload failed: ' + (err.response?.data?.message || err.message));
-    } finally {
-      setUploadingTarget(false);
-    }
   };
 
   const templateId = activeLayout.theme?.templateId || 'default';
@@ -288,8 +430,7 @@ export default function ComponentInspector() {
               <MediaUploadField
                 value={props.avatarUrl}
                 onChange={(e) => handlePropChange('avatarUrl', e.target.value)}
-                uploading={uploadingTarget}
-                onUpload={(e) => handleFileUpload(e, (url) => handlePropChange('avatarUrl', url))}
+                onUploadComplete={(url) => handlePropChange('avatarUrl', url)}
               />
             </Field>
 
@@ -299,8 +440,7 @@ export default function ComponentInspector() {
                 value={props.bgVideoUrl}
                 onChange={(e) => handlePropChange('bgVideoUrl', e.target.value)}
                 placeholder="https://assets.example.com/ambient.mp4"
-                uploading={uploadingTarget}
-                onUpload={(e) => handleFileUpload(e, (url) => handlePropChange('bgVideoUrl', url))}
+                onUploadComplete={(url) => handlePropChange('bgVideoUrl', url)}
               />
             </Field>
 
@@ -462,12 +602,11 @@ export default function ComponentInspector() {
                           newItems[idx] = { ...newItems[idx], imageUrl: e.target.value };
                           handlePropChange('items', newItems);
                         }}
-                        uploading={uploadingTarget}
-                        onUpload={(e) => handleFileUpload(e, (url) => {
+                        onUploadComplete={(url) => {
                           const newItems = [...props.items];
                           newItems[idx] = { ...newItems[idx], imageUrl: url };
                           handlePropChange('items', newItems);
-                        })}
+                        }}
                       />
                     </div>
 
@@ -847,12 +986,11 @@ export default function ComponentInspector() {
                           newItems[idx] = { ...newItems[idx], avatar: e.target.value };
                           handlePropChange('items', newItems);
                         }}
-                        uploading={uploadingTarget}
-                        onUpload={(e) => handleFileUpload(e, (url) => {
+                        onUploadComplete={(url) => {
                           const newItems = [...props.items];
                           newItems[idx] = { ...newItems[idx], avatar: url };
                           handlePropChange('items', newItems);
-                        })}
+                        }}
                       />
                     </div>
                   </div>
@@ -1010,16 +1148,18 @@ export default function ComponentInspector() {
                         accept="image/*,video/*"
                         value={item.url}
                         onChange={(e) => {
+                          const val = e.target.value;
+                          const isVid = /\.(mp4|webm|mov)(\?.*)?$/i.test(val) || val.includes('/video/upload/');
                           const newItems = [...props.items];
-                          newItems[idx] = { ...newItems[idx], url: e.target.value };
+                          newItems[idx] = { ...newItems[idx], url: val, type: isVid ? 'video' : 'image' };
                           handlePropChange('items', newItems);
                         }}
-                        uploading={uploadingTarget}
-                        onUpload={(e) => handleFileUpload(e, (url) => {
+                        onUploadComplete={(url, resourceType) => {
+                          const isVid = resourceType === 'video' || /\.(mp4|webm|mov)(\?.*)?$/i.test(url) || url.includes('/video/upload/');
                           const newItems = [...props.items];
-                          newItems[idx] = { ...newItems[idx], url };
+                          newItems[idx] = { ...newItems[idx], url, type: isVid ? 'video' : 'image' };
                           handlePropChange('items', newItems);
-                        })}
+                        }}
                       />
                     </div>
                   </div>

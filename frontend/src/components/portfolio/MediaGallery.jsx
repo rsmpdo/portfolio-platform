@@ -14,6 +14,17 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
   const isTablet = viewportMode === 'tablet';
   const isSmall = isMobile || isTablet;
 
+  const isVideoItem = (item) =>
+    item?.type === 'video' ||
+    Boolean(item?.url && (/\.(mp4|webm|mov)(\?.*)?$/i.test(item.url) || item.url.includes('/video/upload/')));
+
+  const renderAsset = (item, className) =>
+    isVideoItem(item) ? (
+      <video src={item.url} className={className} autoPlay loop muted playsInline preload="metadata" />
+    ) : (
+      <img src={item.url} alt={item.title || 'Media'} className={className} loading="lazy" />
+    );
+
   // Helper to render Lightbox universally
   const renderLightbox = (themeClass = "") => (
     <AnimatePresence>
@@ -26,12 +37,23 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
           <button className="absolute top-6 right-6 text-white hover:text-slate-400 font-bold tracking-widest uppercase text-sm">
             CLOSE
           </button>
-          <motion.img
-            initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-            src={lightboxItem.url} alt={lightboxItem.title}
-            className="max-w-full max-h-[85vh] object-contain shadow-2xl"
-            onClick={e => e.stopPropagation()}
-          />
+          {isVideoItem(lightboxItem) ? (
+            <motion.video
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              src={lightboxItem.url}
+              controls
+              autoPlay
+              className="max-w-full max-h-[85vh] object-contain shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            />
+          ) : (
+            <motion.img
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              src={lightboxItem.url} alt={lightboxItem.title}
+              className="max-w-full max-h-[85vh] object-contain shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            />
+          )}
         </motion.div>
       )}
     </AnimatePresence>
@@ -54,7 +76,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
             {items.map((item, index) => (
               <div key={item.id || index} className="border border-emerald-500/30 p-2 bg-emerald-950/10 hover:border-emerald-400 transition cursor-pointer" onClick={() => setLightboxItem(item)}>
                 <div className="w-full h-48 bg-black relative overflow-hidden group">
-                  <img src={item.url} alt={item.title} className="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition duration-500" />
+                  {renderAsset(item, "w-full h-full object-cover opacity-50 group-hover:opacity-100 transition duration-500")}
                 </div>
                 {item.title && <div className="mt-2 text-emerald-400 text-xs uppercase truncate">[{item.title}]</div>}
                 {item.description && <div className="mt-0.5 text-emerald-500/60 text-[11px] truncate">{item.description}</div>}
@@ -81,7 +103,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
           <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
             {items.map((item, index) => (
               <div key={item.id || index} className="break-inside-avoid cursor-pointer group relative overflow-hidden" onClick={() => setLightboxItem(item)}>
-                <img src={item.url} alt={item.title} className="w-full h-auto filter grayscale group-hover:grayscale-0 transition duration-700" />
+                {renderAsset(item, "w-full h-auto filter grayscale group-hover:grayscale-0 transition duration-700")}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-center">
                   <span className="text-white font-serif uppercase tracking-widest text-sm border border-white px-4 py-2">{item.title}</span>
                   {item.description && <span className="text-white/80 text-xs mt-2 font-light">{item.description}</span>}
@@ -113,7 +135,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
             {items.map((item, index) => (
               <div key={item.id || index} className="min-w-[85vw] md:min-w-[600px] snap-center cursor-pointer border border-slate-700 p-4" onClick={() => setLightboxItem(item)}>
                 <div className="w-full aspect-video bg-black relative overflow-hidden">
-                  <img src={item.url} alt={item.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" />
+                  {renderAsset(item, "w-full h-full object-cover hover:scale-105 transition-transform duration-1000")}
                 </div>
                 <div className="flex justify-between items-start mt-4">
                   <div>
@@ -148,7 +170,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
             {items.map((item, index) => (
               <div key={item.id || index} className={`cursor-pointer group ${index % 2 !== 0 && !isMobile ? 'md:mt-32' : ''}`} onClick={() => setLightboxItem(item)}>
                 <div className="relative aspect-[3/4] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#d4af37]/20 rounded-t-full">
-                  <img src={item.url} alt={item.title} className="w-full h-full object-cover filter contrast-125 sepia-[0.2] group-hover:sepia-0 group-hover:scale-110 transition duration-1000" />
+                  {renderAsset(item, "w-full h-full object-cover filter contrast-125 sepia-[0.2] group-hover:sepia-0 group-hover:scale-110 transition duration-1000")}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a0908] via-[#0a0908]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-12 text-center">
                     <h4 className="text-[#f3e5ab] font-serif text-4xl mb-3">{item.title}</h4>
                     <p className="text-[#d4af37] font-light text-xs tracking-[0.3em] uppercase">{item.description}</p>
@@ -179,7 +201,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
             {items.map((item, index) => (
               <div key={item.id || index} className={`cursor-pointer group ${index % 2 !== 0 && !isMobile ? 'md:mt-32' : ''}`} onClick={() => setLightboxItem(item)}>
                 <div className="relative aspect-[3/4] overflow-hidden shadow-2xl">
-                  <img src={item.url} alt={item.title} className="w-full h-full object-cover filter saturate-50 group-hover:saturate-100 group-hover:scale-110 transition duration-1000" />
+                  {renderAsset(item, "w-full h-full object-cover filter saturate-50 group-hover:saturate-100 group-hover:scale-110 transition duration-1000")}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
                     <div>
                       <h4 className="text-white font-serif text-2xl mb-2">{item.title}</h4>
@@ -222,7 +244,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
               onClick={() => setLightboxItem(item)}
             >
               {item.url ? (
-                <img src={item.url} alt={item.title || `Media ${index}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                renderAsset(item, "w-full h-full object-cover group-hover:scale-105 transition-transform duration-700")
               ) : (
                 <div className="w-full h-full bg-slate-900 flex items-center justify-center text-slate-700">Empty</div>
               )}
