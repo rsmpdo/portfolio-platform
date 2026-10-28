@@ -55,6 +55,7 @@ const AVAILABLE_COMPONENTS = [
   { type: 'ExperienceTimeline', title: 'Experience Timeline', icon: '💼', tier: 'free' },
   { type: 'SkillsCloud', title: 'Skills Cloud', icon: '⚡', tier: 'free' },
   { type: 'TestimonialsCarousel', title: 'Testimonials', icon: '⭐', tier: 'free' },
+  { type: 'SocialLinks', title: 'Social Links', icon: '🔗', tier: 'free' },
   { type: 'ContactSection', title: 'Contact Section', icon: '✉️', tier: 'free' },
   { type: 'MediaGallery', title: 'Media Gallery', icon: '🖼️', tier: 'free' },
   { type: 'RichTextSection', title: 'Case Study & Markdown', icon: '📝', tier: 'free' },
@@ -115,9 +116,19 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
           subheadline: 'Crafting high-impact digital experiences and modern web applications with precision.',
           avatarUrl: '',
           ctaText: 'Explore My Work',
-          githubUrl: '',
-          linkedinUrl: '',
           bgVideoUrl: ''
+        };
+      case 'SocialLinks':
+        return {
+          heading: 'Connect & Follow',
+          subheading: 'Find me across platforms and social channels.',
+          name: '',
+          avatarUrl: '',
+          links: [
+            { id: `s_${ts}_1`, platform: 'github', label: 'GitHub', url: 'https://github.com/' },
+            { id: `s_${ts}_2`, platform: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/in/' },
+            { id: `s_${ts}_3`, platform: 'twitter', label: 'X / Twitter', url: 'https://x.com/' }
+          ]
         };
       case 'AboutMe':
         return {

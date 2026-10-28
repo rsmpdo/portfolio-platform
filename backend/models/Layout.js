@@ -78,6 +78,7 @@ const LayoutSchema = new mongoose.Schema(
             'PremiumEmbed',
             'AdvancedMetrics',
             'RichTextSection',
+            'SocialLinks',
             'CustomHTML'
           ]
         },

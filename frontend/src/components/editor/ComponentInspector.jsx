@@ -451,22 +451,223 @@ export default function ComponentInspector() {
                 placeholder="Explore My Work"
               />
             </Field>
+          </>
+        )}
 
-            <Field label="GitHub Profile URL">
+        {selectedComp.type === 'SocialLinks' && (
+          <>
+            <Field label="Section Heading">
               <TextInput
-                value={props.githubUrl}
-                onChange={(e) => handlePropChange('githubUrl', e.target.value)}
-                placeholder="https://github.com/username"
+                value={props.heading}
+                onChange={(e) => handlePropChange('heading', e.target.value)}
+                placeholder="Connect & Follow"
               />
             </Field>
 
-            <Field label="LinkedIn Profile URL">
-              <TextInput
-                value={props.linkedinUrl}
-                onChange={(e) => handlePropChange('linkedinUrl', e.target.value)}
-                placeholder="https://linkedin.com/in/username"
+            <Field label="Subheading / Description">
+              <TextArea
+                rows={2}
+                value={props.subheading}
+                onChange={(e) => handlePropChange('subheading', e.target.value)}
+                placeholder="Find me across platforms and social channels."
               />
             </Field>
+
+            <Field label="Display Name (Optional)">
+              <TextInput
+                value={props.name}
+                onChange={(e) => handlePropChange('name', e.target.value)}
+                placeholder="e.g. Alex Morgan"
+              />
+            </Field>
+
+            <Field label="User Photo / Profile Image">
+              <MediaUploadField
+                value={props.avatarUrl}
+                onChange={(e) => handlePropChange('avatarUrl', e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+                onUploadComplete={(url) => handlePropChange('avatarUrl', url)}
+              />
+            </Field>
+
+            <div className="pt-2 border-t border-white/5">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Selected Social Links ({(props.links || []).length})
+                </h4>
+              </div>
+
+              {/* Quick-add buttons for popular social platforms */}
+              <div className="mb-3 p-2.5 rounded-xl glass border border-white/[0.08] bg-white/[0.01]">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                  Quick Add Platform
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { platform: 'github', label: 'GitHub', placeholderUrl: 'https://github.com/' },
+                    { platform: 'linkedin', label: 'LinkedIn', placeholderUrl: 'https://linkedin.com/in/' },
+                    { platform: 'twitter', label: 'X / Twitter', placeholderUrl: 'https://x.com/' },
+                    { platform: 'instagram', label: 'Instagram', placeholderUrl: 'https://instagram.com/' },
+                    { platform: 'youtube', label: 'YouTube', placeholderUrl: 'https://youtube.com/@' },
+                    { platform: 'dribbble', label: 'Dribbble', placeholderUrl: 'https://dribbble.com/' },
+                    { platform: 'behance', label: 'Behance', placeholderUrl: 'https://behance.net/' },
+                    { platform: 'website', label: 'Website', placeholderUrl: 'https://' }
+                  ].map((preset) => (
+                    <button
+                      key={preset.platform}
+                      type="button"
+                      onClick={() => {
+                        const newLinks = [
+                          ...(props.links || []),
+                          {
+                            id: `s_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                            platform: preset.platform,
+                            label: preset.label,
+                            url: preset.placeholderUrl
+                          }
+                        ];
+                        handlePropChange('links', newLinks);
+                      }}
+                      className="px-2 py-1 rounded-lg text-[10px] font-semibold bg-white/5 hover:bg-indigo-500/20 text-slate-300 hover:text-indigo-300 border border-white/10 transition"
+                    >
+                      + {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {(props.links || []).map((link, idx) => (
+                  <div
+                    key={link.id || idx}
+                    className="p-3.5 glass rounded-2xl border border-white/[0.08] space-y-2.5 bg-white/[0.01]"
+                  >
+                    <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                      <span className="text-xs font-bold text-indigo-400">
+                        Social Link #{idx + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newLinks = (props.links || []).filter((_, i) => i !== idx);
+                          handlePropChange('links', newLinks);
+                        }}
+                        className="p-1 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] text-slate-500 font-semibold block mb-1">
+                          Platform
+                        </label>
+                        <SelectInput
+                          value={link.platform || 'website'}
+                          onChange={(e) => {
+                            const selectedPlatform = e.target.value;
+                            const defaultLabels = {
+                              github: 'GitHub',
+                              linkedin: 'LinkedIn',
+                              twitter: 'X / Twitter',
+                              instagram: 'Instagram',
+                              youtube: 'YouTube',
+                              facebook: 'Facebook',
+                              dribbble: 'Dribbble',
+                              behance: 'Behance',
+                              medium: 'Medium',
+                              discord: 'Discord',
+                              telegram: 'Telegram',
+                              whatsapp: 'WhatsApp',
+                              tiktok: 'TikTok',
+                              leetcode: 'LeetCode',
+                              email: 'Email',
+                              website: 'Website'
+                            };
+                            const newLinks = [...(props.links || [])];
+                            newLinks[idx] = {
+                              ...newLinks[idx],
+                              platform: selectedPlatform,
+                              label: defaultLabels[selectedPlatform] || newLinks[idx].label
+                            };
+                            handlePropChange('links', newLinks);
+                          }}
+                          options={[
+                            { value: 'github', label: 'GitHub' },
+                            { value: 'linkedin', label: 'LinkedIn' },
+                            { value: 'twitter', label: 'X / Twitter' },
+                            { value: 'instagram', label: 'Instagram' },
+                            { value: 'youtube', label: 'YouTube' },
+                            { value: 'dribbble', label: 'Dribbble' },
+                            { value: 'behance', label: 'Behance' },
+                            { value: 'medium', label: 'Medium' },
+                            { value: 'discord', label: 'Discord' },
+                            { value: 'telegram', label: 'Telegram' },
+                            { value: 'whatsapp', label: 'WhatsApp' },
+                            { value: 'facebook', label: 'Facebook' },
+                            { value: 'tiktok', label: 'TikTok' },
+                            { value: 'leetcode', label: 'LeetCode' },
+                            { value: 'email', label: 'Email' },
+                            { value: 'website', label: 'Website / Custom' }
+                          ]}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-500 font-semibold block mb-1">
+                          Display Label
+                        </label>
+                        <TextInput
+                          value={link.label}
+                          onChange={(e) => {
+                            const newLinks = [...(props.links || [])];
+                            newLinks[idx] = { ...newLinks[idx], label: e.target.value };
+                            handlePropChange('links', newLinks);
+                          }}
+                          placeholder="e.g. GitHub"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] text-slate-500 font-semibold block mb-1">
+                        Profile URL
+                      </label>
+                      <TextInput
+                        value={link.url}
+                        onChange={(e) => {
+                          const newLinks = [...(props.links || [])];
+                          newLinks[idx] = { ...newLinks[idx], url: e.target.value };
+                          handlePropChange('links', newLinks);
+                        }}
+                        placeholder="https://..."
+                      />
+                    </div>
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newLinks = [
+                      ...(props.links || []),
+                      {
+                        id: `s_${Date.now()}`,
+                        platform: 'website',
+                        label: 'Website',
+                        url: 'https://'
+                      }
+                    ];
+                    handlePropChange('links', newLinks);
+                  }}
+                  className="w-full py-2.5 rounded-xl border border-dashed border-white/20 hover:border-indigo-500/50 hover:bg-indigo-500/5 text-xs font-semibold flex items-center justify-center gap-1.5 text-slate-400 hover:text-white transition"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Social Link</span>
+                </button>
+              </div>
+            </div>
           </>
         )}
 

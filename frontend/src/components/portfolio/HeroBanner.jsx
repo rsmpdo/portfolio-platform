@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, MonitorPlay } from 'lucide-react';
+import { ArrowRight, MonitorPlay } from 'lucide-react';
 
 export default function HeroBanner({ props = {}, templateId, viewportMode, theme = {} }) {
   const {
@@ -8,8 +8,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     subheadline = "Full Stack Developer & Creative Innovator",
     avatarUrl = "",
     ctaText = "View My Work",
-    githubUrl = "",
-    linkedinUrl = "",
     bgVideoUrl = ""
   } = props;
 

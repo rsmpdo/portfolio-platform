@@ -10,6 +10,7 @@ import TestimonialsCarousel from './TestimonialsCarousel';
 import PremiumEmbed from './PremiumEmbed';
 import AdvancedMetrics from './AdvancedMetrics';
 import RichTextSection from './RichTextSection';
+import SocialLinks from './SocialLinks';
 
 const COMPONENT_MAP = {
   HeroBanner,
@@ -22,7 +23,8 @@ const COMPONENT_MAP = {
   TestimonialsCarousel,
   PremiumEmbed,
   AdvancedMetrics,
-  RichTextSection
+  RichTextSection,
+  SocialLinks
 };
 
 export default function ComponentRenderer({ 
