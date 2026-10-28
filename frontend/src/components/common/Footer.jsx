@@ -5,8 +5,8 @@ import LogoIcon from './LogoIcon';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] bg-slate-950 py-16 px-4 sm:px-6 lg:px-8">
-      <div className="w-full">
+    <footer className="border-t border-white/[0.06] bg-slate-950 py-16 px-6">
+      <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
           
           <div className="max-w-xs">
@@ -25,7 +25,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 sm:gap-x-12 lg:gap-x-20 xl:gap-x-28 gap-y-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 sm:gap-x-12 lg:gap-x-16 gap-y-6">
             <div>
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-4">Platform</h4>
               <ul className="space-y-2.5">
