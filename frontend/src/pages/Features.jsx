@@ -99,10 +99,10 @@ export default function Features() {
             <span className="gradient-text">Demand Perfection</span>
           </h1>
           <p className="text-slate-300 text-lg leading-relaxed mb-4">
-            Everything you need to showcase your finest work, attract premier clients, and land top-tier opportunities - engineered into one cohesive, high-speed visual publishing platform.
+            Everything you need to showcase your finest work, attract premier clients, and land top-tier opportunities, engineered into one cohesive, high-speed visual publishing platform.
           </p>
           <p className="text-slate-400 text-sm md:text-base leading-relaxed">
-            Most creators are forced to choose between spending weeks coding a custom portfolio from scratch or settling for generic drag-and-drop website builders that look cluttered and load slowly. PortfolioCraft eliminates that trade-off by combining a structured, zero-code CMS with the visual polish of an award-winning digital design studio.
+            Most creators are forced to choose between spending weeks coding a custom portfolio from scratch or settling for generic drag and drop website builders that look cluttered and load slowly. PortfolioCraft eliminates that trade-off by combining a structured, zero-code CMS with the visual polish of an award-winning digital design studio.
           </p>
         </div>
 
