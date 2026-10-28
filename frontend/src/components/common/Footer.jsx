@@ -17,7 +17,7 @@ export default function Footer() {
               <span className="font-heading font-bold text-white tracking-tight">Portfolio<span className="gradient-text">Craft</span></span>
             </Link>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
-              Where talent meets opportunity. Build an Adobe Portfolio-grade showcase that makes people stop scrolling and start reaching out.
+              Where talent meets opportunity. Build a premium-grade showcase that makes people stop scrolling and start reaching out.
             </p>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
