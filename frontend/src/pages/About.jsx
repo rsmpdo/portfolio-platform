@@ -127,7 +127,7 @@ export default function About() {
             <span className="gradient-text">Stand Out & Get Hired</span>
           </h1>
           <p className="text-slate-400 text-lg leading-relaxed">
-            We believe your work deserves a stage that feels as premium as your craft. We built PortfolioCraft so designers, developers, and directors spend less time wrangling code and more time winning life-changing opportunities.
+            We believe your work deserves a stage that feels as premium as your craft. We built PortfolioCraft so designers, developers, and directors spend less time wrangling code and more time winning life changing opportunities.
           </p>
         </div>
 
