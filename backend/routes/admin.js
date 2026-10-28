@@ -248,7 +248,7 @@ router.put(
 );
 
 // @route   PUT /api/admin/layout/:id/toggle-ban
-// @desc    Admin ban/unban an inappropriate portfolio (Requires Admin password authorization)
+// @desc    Admin ban/unban an inappropriate portfolio
 // @access  Private (Admin only)
 router.put(
   '/layout/:id/toggle-ban',
@@ -256,27 +256,26 @@ router.put(
   checkAdmin,
   async (req, res) => {
     try {
-      const password = req.body?.password || req.headers['x-admin-password'];
-      const isAuthorized = await verifyAdminAuthPassword(req, password);
-      if (!isAuthorized) {
-        return res.status(401).json({
-          success: false,
-          message: 'Invalid Admin password or Secret Code. Portfolio ban action denied.'
-        });
-      }
-
       const layout = await Layout.findById(req.params.id);
       if (!layout) {
         return res.status(404).json({ success: false, message: 'Layout not found' });
       }
 
-      layout.isBanned = !layout.isBanned;
-      await layout.save();
+      const nextBannedState =
+        typeof req.body?.isBanned === 'boolean' ? req.body.isBanned : !Boolean(layout.isBanned);
+
+      const updatedLayout = await Layout.findByIdAndUpdate(
+        req.params.id,
+        { $set: { isBanned: nextBannedState } },
+        { new: true }
+      ).populate('userId', 'username email role plan');
 
       res.status(200).json({
         success: true,
-        message: `Portfolio ban status set to ${layout.isBanned}`,
-        layout
+        message: nextBannedState
+          ? `Portfolio /p/${updatedLayout.handle} has been banned`
+          : `Portfolio /p/${updatedLayout.handle} has been unbanned`,
+        layout: updatedLayout
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });

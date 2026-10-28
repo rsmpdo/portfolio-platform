@@ -1076,11 +1076,12 @@ export default function AdminDashboard() {
   const [reviewNote, setReviewNote] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
 
-  // Admin Password Authorization Modal State for Delete User & Ban Portfolio
-  const [adminAuthModal, setAdminAuthModal] = useState(null); // { type: 'delete-user' | 'toggle-ban', targetUser?, targetLayout? }
+  // Admin Password Authorization Modal State for Delete User & Delete Portfolio
+  const [adminAuthModal, setAdminAuthModal] = useState(null); // { type: 'delete-user' | 'delete-layout', targetUser?, targetLayout? }
   const [adminAuthPassword, setAdminAuthPassword] = useState('');
   const [adminAuthError, setAdminAuthError] = useState('');
   const [adminAuthLoading, setAdminAuthLoading] = useState(false);
+  const [togglingBanId, setTogglingBanId] = useState(null);
 
   useEffect(() => {
     const fetchAdminData = async () => {
@@ -1165,10 +1166,31 @@ export default function AdminDashboard() {
     setAdminAuthError('');
   };
 
-  const handleToggleBan = (layoutObj) => {
-    setAdminAuthModal({ type: 'toggle-ban', targetLayout: layoutObj });
-    setAdminAuthPassword('');
-    setAdminAuthError('');
+  const handleToggleBan = async (layoutObj) => {
+    if (!layoutObj?._id) return;
+    try {
+      setTogglingBanId(layoutObj._id);
+      const nextBannedState = !Boolean(layoutObj.isBanned);
+      const res = await API.put(`/admin/layout/${layoutObj._id}/toggle-ban`, {
+        isBanned: nextBannedState
+      });
+      if (res.data.success) {
+        const updatedIsBanned = Boolean(res.data.layout?.isBanned);
+        setLayoutsList((prev) =>
+          prev.map((l) => (l._id === layoutObj._id ? { ...l, isBanned: updatedIsBanned } : l))
+        );
+        setActionMessage(
+          updatedIsBanned
+            ? `Portfolio /p/${layoutObj.handle} banned - hidden from public.`
+            : `Portfolio /p/${layoutObj.handle} unbanned and restored.`
+        );
+        setTimeout(() => setActionMessage(''), 3500);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update portfolio ban status');
+    } finally {
+      setTogglingBanId(null);
+    }
   };
 
   const handleConfirmAdminProtectedAction = async (e) => {
@@ -1884,6 +1906,21 @@ export default function AdminDashboard() {
                                         >
                                           {l.isBanned ? 'Banned' : l.isPublished ? 'Published' : 'Draft'}
                                         </span>
+                                        {l.isBanned && (
+                                          <button
+                                            type="button"
+                                            disabled={togglingBanId === l._id}
+                                            onClick={() => handleToggleBan(l)}
+                                            className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition inline-flex items-center gap-1 disabled:opacity-50"
+                                            title="Unban this portfolio"
+                                          >
+                                            {togglingBanId === l._id ? (
+                                              <Loader2 className="w-3 h-3 animate-spin" />
+                                            ) : (
+                                              <span>✓ Unban</span>
+                                            )}
+                                          </button>
+                                        )}
                                         <Link
                                           to={`/p/${l.handle}`}
                                           target="_blank"
@@ -2046,30 +2083,38 @@ export default function AdminDashboard() {
                                   >
                                     <Eye className="w-3.5 h-3.5" /> View
                                   </a>
-                                  {isProtectedShowcase ? (
+                                  {isProtectedShowcase && !l.isBanned ? (
                                     <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-500 text-xs font-bold border border-white/5 cursor-not-allowed inline-flex items-center gap-1" title="System showcase portfolio cannot be modified">
                                       Protected
                                     </span>
                                   ) : (
                                     <>
+                                      {!isProtectedShowcase && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleDeleteLayout(l)}
+                                          className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20 inline-flex items-center gap-1"
+                                          title="Delete this portfolio (Requires Admin Password)"
+                                        >
+                                          <Trash2 className="w-3 h-3" />
+                                          <span>Delete</span>
+                                        </button>
+                                      )}
                                       <button
-                                        onClick={() => handleDeleteLayout(l)}
-                                        className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20 inline-flex items-center gap-1"
-                                        title="Delete this portfolio (Requires Admin Password)"
-                                      >
-                                        <Trash2 className="w-3 h-3" />
-                                        <span>Delete</span>
-                                      </button>
-                                      <button
+                                        type="button"
+                                        disabled={togglingBanId === l._id}
                                         onClick={() => handleToggleBan(l)}
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition disabled:opacity-50 ${
                                           l.isBanned
-                                            ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
+                                            ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25'
                                             : 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
                                         }`}
-                                        title={l.isBanned ? 'Unban this portfolio (Requires Password)' : 'Ban this portfolio (Requires Password)'}
+                                        title={l.isBanned ? 'Unban this portfolio' : 'Ban this portfolio'}
                                       >
-                                        {l.isBanned ? '✓ Unban' : '🚫 Ban'}
+                                        {togglingBanId === l._id ? (
+                                          <Loader2 className="w-3 h-3 animate-spin" />
+                                        ) : null}
+                                        <span>{l.isBanned ? '✓ Unban' : '🚫 Ban'}</span>
                                       </button>
                                     </>
                                   )}
