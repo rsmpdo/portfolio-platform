@@ -378,7 +378,7 @@ export default function Home() {
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-              Build an executive-grade, interactive portfolio in minutes without writing a single line of code. Engineered with real-time theme tokens, KPI case study cards, and instant edge publishing to turn recruiters and high-ticket clients into inbound opportunities.
+              Build an executive-grade, interactive portfolio in minutes without writing a single line of code. Engineered with dynamic themes, custom showcase sections, and instant edge publishing to turn recruiters and high-ticket clients into inbound opportunities.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
