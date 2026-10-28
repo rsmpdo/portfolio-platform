@@ -36,7 +36,7 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-dark border-b border-white/[0.08] backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group shrink-0">
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl glass border border-indigo-500/30 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
             <LogoIcon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -92,10 +92,11 @@ export default function Header() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="hidden sm:flex p-1.5 rounded-lg btn-ghost text-slate-400 hover:text-white"
+                className="hidden sm:flex px-3 py-1.5 rounded-xl btn-ghost text-slate-300 hover:text-white text-xs font-semibold items-center gap-1.5 whitespace-nowrap"
                 title="Sign Out"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <LogOut className="w-3.5 h-3.5 shrink-0" />
+                <span>Sign Out</span>
               </button>
             </>
           ) : (
