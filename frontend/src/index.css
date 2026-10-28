@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    color-scheme: dark;
     --bg-primary: #050811;
     --bg-secondary: #0a0e1a;
     --bg-card: rgba(255,255,255,0.035);
@@ -232,7 +233,7 @@
   border-radius: 9999px;
 }
 
-/* ─── Input Focus ──────────────────────────────── */
+/* ─── Input Focus & Dropdown Select Visibility ─── */
 .input-field {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
@@ -246,6 +247,20 @@
   box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
 }
 .input-field::placeholder { color: rgba(255,255,255,0.2); }
+
+select,
+select.input-field {
+  color-scheme: dark;
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+select option,
+select optgroup,
+option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
 
 /* ─── Badge Pill ───────────────────────────────── */
 .badge {
