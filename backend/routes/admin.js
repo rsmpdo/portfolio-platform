@@ -11,7 +11,8 @@ const sendEmail = require('../utils/sendEmail');
 const {
   getPaymentApprovedTemplate,
   getPaymentRejectedTemplate,
-  getModerationWarningTemplate
+  getModerationWarningTemplate,
+  getPortfolioBanStatusTemplate
 } = require('../utils/emailTemplate');
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
@@ -248,7 +249,7 @@ router.put(
 );
 
 // @route   PUT /api/admin/layout/:id/toggle-ban
-// @desc    Admin ban/unban an inappropriate portfolio
+// @desc    Admin ban/unban an inappropriate portfolio and email owner with message
 // @access  Private (Admin only)
 router.put(
   '/layout/:id/toggle-ban',
@@ -263,18 +264,55 @@ router.put(
 
       const nextBannedState =
         typeof req.body?.isBanned === 'boolean' ? req.body.isBanned : !Boolean(layout.isBanned);
+      const adminMessage = (req.body?.message || '').trim();
 
       const updatedLayout = await Layout.findByIdAndUpdate(
         req.params.id,
         { $set: { isBanned: nextBannedState } },
         { new: true }
-      ).populate('userId', 'username email role plan');
+      ).populate('userId', 'username fullName email role plan');
+
+      // Send branded email notification to the portfolio owner
+      const owner = updatedLayout.userId;
+      if (owner && owner.email) {
+        try {
+          const clientUrl = getClientUrl(req);
+          const defaultMsg = nextBannedState
+            ? 'Your portfolio has been restricted due to a violation of our platform community guidelines.'
+            : 'Your portfolio restriction has been lifted and your portfolio is now restored.';
+          const finalMessage = adminMessage || defaultMsg;
+
+          const html = getPortfolioBanStatusTemplate({
+            recipientName: owner.fullName || owner.username,
+            portfolioTitle: updatedLayout.title || 'My Portfolio',
+            handle: updatedLayout.handle,
+            isBanned: nextBannedState,
+            adminMessage: finalMessage,
+            clientUrl
+          });
+
+          await sendEmail({
+            email: owner.email,
+            subject: nextBannedState
+              ? `🚫 PortfolioCraft Moderation Notice - Portfolio /p/${updatedLayout.handle} Banned`
+              : `✅ PortfolioCraft Moderation Update - Portfolio /p/${updatedLayout.handle} Unbanned`,
+            message: `Hello ${owner.fullName || owner.username},\n\n${
+              nextBannedState
+                ? `Your portfolio (${updatedLayout.title || `/p/${updatedLayout.handle}`}) has been restricted by our moderation team.`
+                : `Good news! The moderation restriction on your portfolio (${updatedLayout.title || `/p/${updatedLayout.handle}`}) has been lifted.`
+            }\n\nMessage from Admin:\n"${finalMessage}"\n\nPortfolioCraft Trust & Safety Team`,
+            html
+          });
+        } catch (emailErr) {
+          console.error('Ban/Unban notification email error:', emailErr.message);
+        }
+      }
 
       res.status(200).json({
         success: true,
         message: nextBannedState
-          ? `Portfolio /p/${updatedLayout.handle} has been banned`
-          : `Portfolio /p/${updatedLayout.handle} has been unbanned`,
+          ? `Portfolio /p/${updatedLayout.handle} banned and email sent to ${owner?.email || 'user'}`
+          : `Portfolio /p/${updatedLayout.handle} unbanned and email sent to ${owner?.email || 'user'}`,
         layout: updatedLayout
       });
     } catch (error) {

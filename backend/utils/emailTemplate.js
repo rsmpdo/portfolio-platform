@@ -266,6 +266,75 @@ function getNewsletterWelcomeTemplate({ email, clientUrl }) {
   });
 }
 
+/**
+ * Pre-built template for Portfolio Ban / Unban Notification
+ */
+function getPortfolioBanStatusTemplate({
+  recipientName,
+  portfolioTitle,
+  handle,
+  isBanned,
+  adminMessage,
+  clientUrl
+}) {
+  const baseUrl = clientUrl || 'https://portfoliocraftlk.vercel.app';
+  const editorUrl = `${baseUrl}/editor`;
+  const publicUrl = `${baseUrl}/p/${handle}`;
+
+  const details = [
+    { label: 'Portfolio Title', value: portfolioTitle || 'My Portfolio' },
+    { label: 'Portfolio URL', value: `/p/${handle}` },
+    {
+      label: 'Moderation Status',
+      value: isBanned ? 'Restricted / Banned 🚫' : 'Restored / Active ✅'
+    }
+  ];
+
+  if (isBanned) {
+    return createBrandedEmailTemplate({
+      subtitle: 'Portfolio Moderation Notice - Portfolio Banned',
+      recipientName,
+      contentHtml: `
+        <p style="margin: 0 0 12px 0;">
+          Our moderation team has reviewed your portfolio <strong>${portfolioTitle || `/p/${handle}`}</strong> and temporarily restricted public access to it.
+        </p>
+        <div style="margin: 16px 0; padding: 14px 16px; background-color: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; border-radius: 6px; color: #fca5a5; font-size: 13.5px;">
+          <strong>Message from Admin:</strong><br/>
+          ${adminMessage || 'Your portfolio has been restricted due to a violation of our platform community guidelines.'}
+        </div>
+        <p style="margin: 0;">
+          Please sign in to your PortfolioCraft Editor to review and update your content. Once updated, you may contact support to request a moderation review.
+        </p>
+      `,
+      details,
+      ctaText: 'Open Portfolio Editor',
+      ctaUrl: editorUrl,
+      footerNote: 'PortfolioCraft Trust & Safety Team.'
+    });
+  }
+
+  return createBrandedEmailTemplate({
+    subtitle: 'Portfolio Moderation Update - Ban Lifted',
+    recipientName,
+    contentHtml: `
+      <p style="margin: 0 0 12px 0;">
+        Good news! Our administration team has lifted the moderation restriction on your portfolio <strong>${portfolioTitle || `/p/${handle}`}</strong>.
+      </p>
+      <div style="margin: 16px 0; padding: 14px 16px; background-color: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; border-radius: 6px; color: #a7f3d0; font-size: 13.5px;">
+        <strong>Message from Admin:</strong><br/>
+        ${adminMessage || 'Your portfolio restriction has been lifted and your portfolio is now restored.'}
+      </div>
+      <p style="margin: 0;">
+        Your portfolio is active again. Thank you for helping keep PortfolioCraft a safe and professional creative community.
+      </p>
+    `,
+    details,
+    ctaText: 'View Your Portfolio',
+    ctaUrl: publicUrl,
+    footerNote: 'PortfolioCraft Trust & Safety Team.'
+  });
+}
+
 module.exports = {
   createBrandedEmailTemplate,
   getEmailVerificationTemplate,
@@ -273,5 +342,6 @@ module.exports = {
   getPaymentApprovedTemplate,
   getPaymentRejectedTemplate,
   getModerationWarningTemplate,
+  getPortfolioBanStatusTemplate,
   getNewsletterWelcomeTemplate
 };

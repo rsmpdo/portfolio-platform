@@ -1081,6 +1081,10 @@ export default function AdminDashboard() {
   const [adminAuthPassword, setAdminAuthPassword] = useState('');
   const [adminAuthError, setAdminAuthError] = useState('');
   const [adminAuthLoading, setAdminAuthLoading] = useState(false);
+
+  // Ban / Unban Portfolio Modal State (collects message to email to user)
+  const [banModalTarget, setBanModalTarget] = useState(null);
+  const [banMessage, setBanMessage] = useState('');
   const [togglingBanId, setTogglingBanId] = useState(null);
 
   useEffect(() => {
@@ -1166,25 +1170,40 @@ export default function AdminDashboard() {
     setAdminAuthError('');
   };
 
-  const handleToggleBan = async (layoutObj) => {
+  const handleToggleBan = (layoutObj) => {
     if (!layoutObj?._id) return;
+    setBanModalTarget(layoutObj);
+    setBanMessage(
+      layoutObj.isBanned
+        ? 'Your portfolio restriction has been lifted after our review. Your portfolio is now restored.'
+        : 'Your portfolio has been restricted due to a violation of our platform community guidelines. Please update your content in the editor.'
+    );
+  };
+
+  const handleConfirmToggleBan = async (e) => {
+    e.preventDefault();
+    if (!banModalTarget?._id || !banMessage.trim()) return;
     try {
-      setTogglingBanId(layoutObj._id);
-      const nextBannedState = !Boolean(layoutObj.isBanned);
-      const res = await API.put(`/admin/layout/${layoutObj._id}/toggle-ban`, {
-        isBanned: nextBannedState
+      setTogglingBanId(banModalTarget._id);
+      const nextBannedState = !Boolean(banModalTarget.isBanned);
+      const res = await API.put(`/admin/layout/${banModalTarget._id}/toggle-ban`, {
+        isBanned: nextBannedState,
+        message: banMessage.trim()
       });
       if (res.data.success) {
         const updatedIsBanned = Boolean(res.data.layout?.isBanned);
         setLayoutsList((prev) =>
-          prev.map((l) => (l._id === layoutObj._id ? { ...l, isBanned: updatedIsBanned } : l))
+          prev.map((l) => (l._id === banModalTarget._id ? { ...l, isBanned: updatedIsBanned } : l))
         );
         setActionMessage(
-          updatedIsBanned
-            ? `Portfolio /p/${layoutObj.handle} banned - hidden from public.`
-            : `Portfolio /p/${layoutObj.handle} unbanned and restored.`
+          res.data.message ||
+            (updatedIsBanned
+              ? `Portfolio /p/${banModalTarget.handle} banned and email sent to user.`
+              : `Portfolio /p/${banModalTarget.handle} unbanned and email sent to user.`)
         );
-        setTimeout(() => setActionMessage(''), 3500);
+        setTimeout(() => setActionMessage(''), 4000);
+        setBanModalTarget(null);
+        setBanMessage('');
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update portfolio ban status');
@@ -2428,6 +2447,98 @@ export default function AdminDashboard() {
                 >
                   {sendingWarn ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   <span>Send Warning Email</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {banModalTarget && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-6"
+          onClick={() => !togglingBanId && setBanModalTarget(null)}
+        >
+          <div
+            className={`glass gradient-border rounded-3xl max-w-md w-full p-8 shadow-2xl border ${
+              banModalTarget.isBanned ? 'border-emerald-500/30' : 'border-red-500/30'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
+                  banModalTarget.isBanned
+                    ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400'
+                    : 'bg-red-500/15 border border-red-500/30 text-red-400'
+                }`}
+              >
+                {banModalTarget.isBanned ? (
+                  <CheckCircle2 className="w-6 h-6" />
+                ) : (
+                  <ShieldAlert className="w-6 h-6" />
+                )}
+              </div>
+              <div>
+                <h3 className="font-heading font-bold text-xl text-white">
+                  {banModalTarget.isBanned ? 'Unban Portfolio & Notify User' : 'Ban Portfolio & Notify User'}
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Portfolio: <span className="text-indigo-400 font-mono">/p/{banModalTarget.handle}</span>
+                  {banModalTarget.userId?.email ? ` (${banModalTarget.userId.email})` : ''}
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleConfirmToggleBan} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-400 mb-2">
+                  Message to Deliver to User via Email *
+                </label>
+                <textarea
+                  rows={4}
+                  required
+                  autoFocus
+                  value={banMessage}
+                  onChange={(e) => setBanMessage(e.target.value)}
+                  placeholder={
+                    banModalTarget.isBanned
+                      ? 'Enter message confirming the portfolio restriction has been lifted...'
+                      : 'Enter reason for banning this portfolio to send to the owner...'
+                  }
+                  className="input-field w-full px-3.5 py-2.5 rounded-xl text-xs resize-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  disabled={Boolean(togglingBanId)}
+                  onClick={() => {
+                    setBanModalTarget(null);
+                    setBanMessage('');
+                  }}
+                  className="btn-ghost px-4 py-2.5 rounded-xl text-xs text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={Boolean(togglingBanId)}
+                  className={`px-5 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2 disabled:opacity-60 ${
+                    banModalTarget.isBanned
+                      ? 'bg-emerald-600 hover:bg-emerald-500'
+                      : 'bg-red-600 hover:bg-red-500'
+                  }`}
+                >
+                  {togglingBanId ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  <span>
+                    {banModalTarget.isBanned ? '✓ Unban & Send Email' : '🚫 Ban & Send Email'}
+                  </span>
                 </button>
               </div>
             </form>
