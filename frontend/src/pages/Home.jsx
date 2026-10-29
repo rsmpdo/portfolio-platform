@@ -30,7 +30,9 @@ import {
   ChevronDown,
   HelpCircle,
   Share2,
-  Cpu
+  Cpu,
+  Crown,
+  CreditCard
 } from 'lucide-react';
 
 const HERO_PERSONAS = [
@@ -381,7 +383,7 @@ export default function Home() {
               Build an executive-grade, interactive portfolio in minutes without writing a single line of code. Engineered with dynamic themes, custom showcase sections, and instant edge publishing to turn recruiters and high-ticket clients into inbound opportunities.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/register"
                 className="w-full sm:w-auto group btn-primary inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-white font-bold text-base shadow-xl"
@@ -397,38 +399,6 @@ export default function Home() {
                 <Eye className="w-4 h-4 text-indigo-400" />
                 <span>Explore Live Showcases</span>
               </Link>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-2">
-                  {[
-                    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=60&h=60&fit=crop',
-                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop',
-                    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=60&h=60&fit=crop',
-                    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop'
-                  ].map((src, i) => (
-                    <img
-                      key={i}
-                      src={src}
-                      alt="Creator"
-                      className="w-7 h-7 rounded-full border-2 border-slate-950 object-cover"
-                    />
-                  ))}
-                </div>
-                <div className="flex items-center gap-0.5 text-amber-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                  ))}
-                </div>
-                <span className="text-slate-300 font-semibold">4.9/5</span>
-                <span>from 10,000+ creators</span>
-              </div>
-              <span className="hidden sm:inline text-slate-700">•</span>
-              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Free Forever Plan · No Credit Card Required</span>
-              </span>
             </div>
           </motion.div>
 
@@ -617,6 +587,38 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[
+                    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=60&h=60&fit=crop',
+                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop',
+                    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=60&h=60&fit=crop',
+                    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&h=60&fit=crop'
+                  ].map((src, i) => (
+                    <img
+                      key={i}
+                      src={src}
+                      alt="Creator"
+                      className="w-7 h-7 rounded-full border-2 border-slate-950 object-cover"
+                    />
+                  ))}
+                </div>
+                <div className="flex items-center gap-0.5 text-amber-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
+                  ))}
+                </div>
+                <span className="text-slate-300 font-semibold">4.9/5</span>
+                <span>from 10,000+ creators</span>
+              </div>
+              <span className="hidden sm:inline text-slate-700">•</span>
+              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Free Forever Plan · No Credit Card Required</span>
+              </span>
             </div>
           </motion.div>
         </div>
@@ -1045,6 +1047,142 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 px-6 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="badge badge-indigo inline-flex mb-3">
+              <Crown className="w-3.5 h-3.5" />
+              <span>3 Flexible Creator Tiers</span>
+            </div>
+            <h2 className="font-heading font-black text-3xl sm:text-5xl text-white mb-4">
+              Start Free Forever. <span className="gradient-text">Scale When Ready.</span>
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+              Launch your first portfolio free with zero recurring fees, or unlock multi-portfolio publishing, interactive prototypes, and studio-grade telemetry with a simple one-time upgrade.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                id: 'free',
+                name: 'Free Forever',
+                badge: 'Starter Tier',
+                badgeClass: 'text-indigo-300 bg-indigo-500/10 border-indigo-500/30',
+                price: '$0',
+                period: 'forever',
+                desc: 'Everything you need to launch a clean, recruiter-ready portfolio today.',
+                features: [
+                  '1 Live Published Portfolio',
+                  'Up to 5 Modular Portfolio Sections',
+                  'Real-Time Visual CMS & Theme Editor',
+                  'Cloudinary Image & Media Uploads',
+                  'Custom Shareable Slug (/p/username)',
+                  'Global Edge SSL & ATS Resume Export'
+                ],
+                ctaText: 'Start Building Free',
+                ctaLink: '/register',
+                popular: false
+              },
+              {
+                id: 'pro',
+                name: 'Pro Creator',
+                badge: 'Most Popular',
+                badgeClass: 'text-amber-300 bg-amber-500/15 border-amber-500/35',
+                price: '$12',
+                period: 'one-time lifetime',
+                desc: 'For senior engineers, designers, and freelancers who want multiple portfolios and interactive embeds.',
+                features: [
+                  'Up to 3 Live Published Portfolios',
+                  'Unlimited Portfolio Sections',
+                  'Interactive Figma & YouTube Embeds',
+                  'Pro Templates (Fintech, AI Labs, Cyber)',
+                  'Real-Time Visitor Traffic Analytics',
+                  'Custom Portfolio Handle per Layout'
+                ],
+                ctaText: 'Explore Pro Creator',
+                ctaLink: '/pricing',
+                popular: true
+              },
+              {
+                id: 'studio',
+                name: 'Studio & Team',
+                badge: 'Agency & Executive',
+                badgeClass: 'text-emerald-300 bg-emerald-500/15 border-emerald-500/35',
+                price: '$29',
+                period: 'one-time lifetime',
+                desc: 'Designed for creative directors, boutique studios, and founders running multiple tailored showcases.',
+                features: [
+                  'Up to 5 Live Published Portfolios',
+                  'Everything in Pro Creator Included',
+                  'Cinematic Looping Video Backgrounds',
+                  'Executive KPI & Data Metrics Section',
+                  'Interactive 3D Spline WebGL Scenes',
+                  'Full White-Label Branding Removal'
+                ],
+                ctaText: 'Explore Studio Plan',
+                ctaLink: '/pricing',
+                popular: false
+              }
+            ].map((tier, idx) => (
+              <motion.div
+                key={tier.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className={`glass-card gradient-border rounded-3xl p-8 flex flex-col justify-between relative ${
+                  tier.popular ? 'border-indigo-500/50 glow-indigo' : ''
+                }`}
+              >
+                {tier.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 btn-primary px-4 py-1 rounded-full text-[11px] font-bold text-white uppercase tracking-wider shadow-lg">
+                    Most Popular
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <h3 className="font-heading font-bold text-2xl text-white">{tier.name}</h3>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${tier.badgeClass}`}>
+                      {tier.badge}
+                    </span>
+                  </div>
+
+                  <p className="text-slate-400 text-xs leading-relaxed mb-6">{tier.desc}</p>
+
+                  <div className="flex items-baseline gap-1.5 mb-6 pb-6 border-b border-white/[0.06]">
+                    <span className="font-heading font-black text-4xl text-white">{tier.price}</span>
+                    <span className="text-xs text-slate-400 font-medium">/ {tier.period}</span>
+                  </div>
+
+                  <ul className="space-y-3 mb-8">
+                    {tier.features.map((feat, fIdx) => (
+                      <li key={fIdx} className="text-xs text-slate-300 flex items-center gap-2.5">
+                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <Link
+                  to={tier.ctaLink}
+                  className={`w-full py-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition ${
+                    tier.popular
+                      ? 'btn-primary text-white shadow-lg'
+                      : 'bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-white'
+                  }`}
+                >
+                  <span>{tier.ctaText}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
