@@ -31,7 +31,10 @@ router.post('/subscribe', async (req, res) => {
 
     // Send confirmation welcome email with weekly portfolio tips
     try {
-      const clientUrl = process.env.CLIENT_URL || 'https://portfoliocraftlk.vercel.app';
+      const clientUrl =
+        process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost') && !process.env.CLIENT_URL.includes('127.0.0.1')
+          ? process.env.CLIENT_URL.replace(/\/$/, '')
+          : 'https://portfoliocraftlk.vercel.app';
       const html = getNewsletterWelcomeTemplate({
         email: cleanEmail,
         clientUrl

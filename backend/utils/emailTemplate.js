@@ -4,6 +4,23 @@
  * the platform's signature styling.
  */
 
+const PRODUCTION_CLIENT_URL = 'https://portfoliocraftlk.vercel.app';
+
+function normalizeEmailUrl(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== 'string') return PRODUCTION_CLIENT_URL;
+  const trimmed = rawUrl.trim().replace(/\/$/, '');
+  if (
+    trimmed.includes('localhost') ||
+    trimmed.includes('127.0.0.1') ||
+    trimmed.includes('portfolio-platform.vercel.app')
+  ) {
+    return trimmed
+      .replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i, PRODUCTION_CLIENT_URL)
+      .replace(/^https?:\/\/portfolio-platform\.vercel\.app/i, PRODUCTION_CLIENT_URL);
+  }
+  return trimmed;
+}
+
 function createBrandedEmailTemplate({
   subtitle = '',
   recipientName = '',
@@ -13,6 +30,7 @@ function createBrandedEmailTemplate({
   details = null,
   footerNote = ''
 }) {
+  const safeCtaUrl = ctaUrl ? normalizeEmailUrl(ctaUrl) : '';
   const greeting = recipientName ? `Hello <strong>${recipientName}</strong>,` : 'Hello,';
 
   let detailsHtml = '';
@@ -38,16 +56,16 @@ function createBrandedEmailTemplate({
   }
 
   let ctaHtml = '';
-  if (ctaText && ctaUrl) {
+  if (ctaText && safeCtaUrl) {
     ctaHtml = `
       <div style="text-align: center; margin: 32px 0;">
-        <a href="${ctaUrl}" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: #ffffff; padding: 14px 28px; border-radius: 10px; font-weight: bold; text-decoration: none; display: inline-block; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); font-size: 14px;">
+        <a href="${safeCtaUrl}" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: #ffffff; padding: 14px 28px; border-radius: 10px; font-weight: bold; text-decoration: none; display: inline-block; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); font-size: 14px;">
           ${ctaText}
         </a>
       </div>
       <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin: 20px 0 0 0;">
         If the button doesn't work, copy and paste this link into your browser:<br>
-        <a href="${ctaUrl}" target="_blank" rel="noopener noreferrer" style="color: #818cf8; word-break: break-all; text-decoration: underline;">${ctaUrl}</a>
+        <a href="${safeCtaUrl}" target="_blank" rel="noopener noreferrer" style="color: #818cf8; word-break: break-all; text-decoration: underline;">${safeCtaUrl}</a>
       </p>
     `;
   }
@@ -152,7 +170,8 @@ function getPasswordResetTemplate({ recipientName, resetUrl, expiresIn = '10 min
  */
 function getPaymentApprovedTemplate({ recipientName, plan, amount, adminNote, clientUrl }) {
   const planUpper = String(plan || 'pro').toUpperCase();
-  const loginUrl = `${clientUrl || 'https://portfoliocraftlk.vercel.app'}/login`;
+  const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
+  const loginUrl = `${baseUrl}/login`;
 
   const details = [
     { label: 'Purchased Plan', value: `${planUpper} Tier` },
@@ -192,7 +211,8 @@ function getPaymentApprovedTemplate({ recipientName, plan, amount, adminNote, cl
  */
 function getPaymentRejectedTemplate({ recipientName, plan, reason, clientUrl }) {
   const planUpper = String(plan || 'pro').toUpperCase();
-  const pricingUrl = `${clientUrl || 'https://portfoliocraftlk.vercel.app'}/pricing`;
+  const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
+  const pricingUrl = `${baseUrl}/pricing`;
 
   return createBrandedEmailTemplate({
     subtitle: 'Payment Verification Update',
@@ -218,7 +238,8 @@ function getPaymentRejectedTemplate({ recipientName, plan, reason, clientUrl }) 
  * Pre-built template for Admin Moderation Warning
  */
 function getModerationWarningTemplate({ recipientName, warningMessage, clientUrl }) {
-  const editorUrl = `${clientUrl || 'https://portfoliocraftlk.vercel.app'}/editor`;
+  const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
+  const editorUrl = `${baseUrl}/editor`;
 
   return createBrandedEmailTemplate({
     subtitle: 'Account Moderation Notice',
@@ -244,7 +265,8 @@ function getModerationWarningTemplate({ recipientName, warningMessage, clientUrl
  * Pre-built template for Newsletter Welcome
  */
 function getNewsletterWelcomeTemplate({ email, clientUrl }) {
-  const exploreUrl = `${clientUrl || 'https://portfoliocraftlk.vercel.app'}/templates`;
+  const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
+  const exploreUrl = `${baseUrl}/templates`;
 
   return createBrandedEmailTemplate({
     subtitle: 'Welcome to Weekly Tips & Masterclasses',
@@ -277,7 +299,7 @@ function getPortfolioBanStatusTemplate({
   adminMessage,
   clientUrl
 }) {
-  const baseUrl = clientUrl || 'https://portfoliocraftlk.vercel.app';
+  const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
   const editorUrl = `${baseUrl}/editor`;
   const publicUrl = `${baseUrl}/p/${handle}`;
 

@@ -57,20 +57,16 @@ const resendVerificationLimiter = rateLimit({
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
 
-// Helper to get client frontend URL dynamically
-const getClientUrl = (req) => {
-  if (process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost')) {
+// Helper to get client frontend URL dynamically (always uses production URL for emails instead of localhost)
+const getClientUrl = () => {
+  if (
+    process.env.CLIENT_URL &&
+    !process.env.CLIENT_URL.includes('localhost') &&
+    !process.env.CLIENT_URL.includes('127.0.0.1')
+  ) {
     return process.env.CLIENT_URL.replace(/\/$/, '');
   }
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  }
-  const host = req?.headers?.['x-forwarded-host'] || req?.get?.('host') || '';
-  const protocol = req?.headers?.['x-forwarded-proto'] || req?.protocol || 'https';
-  if (host && !host.includes('localhost') && !host.includes('127.0.0.1') && !host.includes('vercel.com')) {
-    return `${protocol}://${host}`;
-  }
-  return process.env.PUBLIC_CLIENT_URL || 'https://portfolio-platform.vercel.app';
+  return 'https://portfoliocraftlk.vercel.app';
 };
 
 // Helper to generate JWT token

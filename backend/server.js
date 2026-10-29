@@ -80,7 +80,10 @@ app.get('/api/health', (req, res) => {
 app.get(['/sitemap.xml', '/api/sitemap.xml'], async (req, res) => {
   try {
     const Layout = require('./models/Layout');
-    const baseUrl = process.env.CLIENT_URL || 'https://portfoliocraftlk.vercel.app';
+    const baseUrl =
+      process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost') && !process.env.CLIENT_URL.includes('127.0.0.1')
+        ? process.env.CLIENT_URL.replace(/\/$/, '')
+        : 'https://portfoliocraftlk.vercel.app';
     const now = new Date().toISOString().split('T')[0];
 
     const staticPages = [
@@ -140,7 +143,10 @@ ${allUrls
 
 // Robots.txt
 app.get(['/robots.txt', '/api/robots.txt'], (req, res) => {
-  const baseUrl = process.env.CLIENT_URL || 'https://portfoliocraftlk.vercel.app';
+  const baseUrl =
+    process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost') && !process.env.CLIENT_URL.includes('127.0.0.1')
+      ? process.env.CLIENT_URL.replace(/\/$/, '')
+      : 'https://portfoliocraftlk.vercel.app';
   res.type('text/plain');
   res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /editor\nDisallow: /profile\nDisallow: /api/\n\nSitemap: ${baseUrl}/sitemap.xml\n`);
 });
