@@ -90,6 +90,23 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorSecret: {
+    type: String,
+    select: false
+  },
+  twoFactorTempSecret: {
+    type: String,
+    select: false
+  },
+  twoFactorRecoveryCodes: {
+    type: [String],
+    select: false,
+    default: []
+  },
   verificationToken: String,
   verificationTokenExpire: Date,
   resetPasswordToken: String,

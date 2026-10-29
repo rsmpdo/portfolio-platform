@@ -8,10 +8,27 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const res = await API.post('/auth/login', credentials);
-      localStorage.setItem('portfolio_jwt_token', res.data.token);
+      if (!res.data.requiresTwoFactor && res.data.token) {
+        localStorage.setItem('portfolio_jwt_token', res.data.token);
+      }
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Login failed');
+    }
+  }
+);
+
+export const verifyTwoFactorLogin = createAsyncThunk(
+  'auth/verifyTwoFactorLogin',
+  async ({ tempToken, code }, { rejectWithValue }) => {
+    try {
+      const res = await API.post('/auth/2fa/login-verify', { tempToken, code });
+      if (res.data.token) {
+        localStorage.setItem('portfolio_jwt_token', res.data.token);
+      }
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Invalid Authenticator code');
     }
   }
 );
@@ -61,6 +78,8 @@ const authSlice = createSlice({
     user: null,
     token: tokenFromStorage || null,
     isAuthenticated: !!tokenFromStorage,
+    requiresTwoFactor: false,
+    twoFactorTempToken: null,
     loading: false,
     error: null
   },
@@ -70,9 +89,16 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      state.requiresTwoFactor = false;
+      state.twoFactorTempToken = null;
       state.error = null;
     },
     clearError: (state) => {
+      state.error = null;
+    },
+    cancelTwoFactor: (state) => {
+      state.requiresTwoFactor = false;
+      state.twoFactorTempToken = null;
       state.error = null;
     },
     setUser: (state, action) => {
@@ -88,11 +114,36 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        if (action.payload.requiresTwoFactor) {
+          state.requiresTwoFactor = true;
+          state.twoFactorTempToken = action.payload.tempToken;
+          state.isAuthenticated = false;
+        } else {
+          state.requiresTwoFactor = false;
+          state.twoFactorTempToken = null;
+          state.isAuthenticated = true;
+          state.token = action.payload.token;
+          state.user = action.payload.user;
+        }
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Verify 2FA Login
+      .addCase(verifyTwoFactorLogin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyTwoFactorLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.requiresTwoFactor = false;
+        state.twoFactorTempToken = null;
         state.isAuthenticated = true;
         state.token = action.payload.token;
         state.user = action.payload.user;
       })
-      .addCase(loginUser.rejected, (state, action) => {
+      .addCase(verifyTwoFactorLogin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -144,5 +195,5 @@ const authSlice = createSlice({
   }
 });
 
-export const { logout, clearError, setUser } = authSlice.actions;
+export const { logout, clearError, cancelTwoFactor, setUser } = authSlice.actions;
 export default authSlice.reducer;

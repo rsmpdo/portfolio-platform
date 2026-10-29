@@ -9,6 +9,12 @@ const Layout = require('../models/Layout');
 const Message = require('../models/Message');
 const sendEmail = require('../utils/sendEmail');
 const { getEmailVerificationTemplate, getPasswordResetTemplate } = require('../utils/emailTemplate');
+const {
+  generateBase32Secret,
+  verifyTOTP,
+  generateRecoveryCodes,
+  buildOtpAuthUrl
+} = require('../utils/totp');
 
 // Strict rate limiters for authentication endpoints to prevent brute-force attacks and email spamming
 const loginLimiter = rateLimit({
@@ -96,6 +102,7 @@ const sendTokenResponse = (user, statusCode, res) => {
       role: user.role,
       plan: user.plan || 'free',
       isVerified: user.isVerified,
+      twoFactorEnabled: Boolean(user.twoFactorEnabled),
       createdAt: user.createdAt
     }
   });
@@ -295,6 +302,81 @@ router.post('/login', loginLimiter, async (req, res) => {
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    // Check if Two-Factor Authentication (Authenticator App) is enabled
+    if (user.twoFactorEnabled) {
+      const tempToken = jwt.sign(
+        { id: user._id, purpose: '2fa_login' },
+        process.env.JWT_SECRET || 'secret_key_123',
+        { expiresIn: '10m' }
+      );
+      return res.status(200).json({
+        success: true,
+        requiresTwoFactor: true,
+        tempToken,
+        message: 'Enter the 6-digit code from your Authenticator app.'
+      });
+    }
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @route   POST /api/auth/2fa/login-verify
+// @desc    Verify 6-digit Authenticator App TOTP code or backup recovery code during login
+// @access  Public (Requires valid 2FA tempToken)
+router.post('/2fa/login-verify', loginLimiter, async (req, res) => {
+  try {
+    const { tempToken, code } = req.body;
+    if (!tempToken || !code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please enter your 6-digit Authenticator code or recovery code.'
+      });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(tempToken, process.env.JWT_SECRET || 'secret_key_123');
+    } catch {
+      return res.status(401).json({
+        success: false,
+        message: 'Your 2FA verification session expired. Please sign in again.'
+      });
+    }
+
+    if (decoded.purpose !== '2fa_login' || !decoded.id) {
+      return res.status(401).json({ success: false, message: 'Invalid verification session.' });
+    }
+
+    const user = await User.findById(decoded.id).select('+twoFactorSecret +twoFactorRecoveryCodes');
+    if (!user || !user.twoFactorEnabled || !user.twoFactorSecret) {
+      return res.status(400).json({ success: false, message: '2FA is not active on this account.' });
+    }
+
+    const cleanCode = String(code).trim().toUpperCase();
+    const isTotpValid = verifyTOTP(cleanCode, user.twoFactorSecret);
+
+    let isRecoveryValid = false;
+    if (!isTotpValid && Array.isArray(user.twoFactorRecoveryCodes)) {
+      const idx = user.twoFactorRecoveryCodes.findIndex(
+        (rc) => String(rc).toUpperCase() === cleanCode
+      );
+      if (idx !== -1) {
+        isRecoveryValid = true;
+        user.twoFactorRecoveryCodes.splice(idx, 1);
+        await user.save({ validateBeforeSave: false });
+      }
+    }
+
+    if (!isTotpValid && !isRecoveryValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid Authenticator code. Please check your app and try again.'
+      });
     }
 
     sendTokenResponse(user, 200, res);
@@ -589,6 +671,7 @@ router.put(
           role: user.role,
           plan: user.plan || 'free',
           isVerified: user.isVerified,
+          twoFactorEnabled: Boolean(user.twoFactorEnabled),
           createdAt: user.createdAt
         }
       });
@@ -639,6 +722,188 @@ router.put(
       res.status(200).json({
         success: true,
         message: 'Your account password has been updated successfully!'
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   POST /api/auth/2fa/setup
+// @desc    Generate TOTP secret & QR code for Authenticator App setup
+// @access  Private
+router.post(
+  '/2fa/setup',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id).select('+twoFactorTempSecret');
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      const secret = generateBase32Secret(20);
+      user.twoFactorTempSecret = secret;
+      await user.save({ validateBeforeSave: false });
+
+      const otpauthUrl = buildOtpAuthUrl({
+        secret,
+        accountName: user.email,
+        issuer: 'PortfolioCraft'
+      });
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(
+        otpauthUrl
+      )}`;
+
+      res.status(200).json({
+        success: true,
+        secret,
+        otpauthUrl,
+        qrCodeUrl
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   POST /api/auth/2fa/verify-setup
+// @desc    Verify 6-digit TOTP code from Authenticator App and activate 2FA
+// @access  Private
+router.post(
+  '/2fa/verify-setup',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const { code } = req.body;
+      if (!code) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please enter the 6-digit code from your Authenticator app.'
+        });
+      }
+
+      const user = await User.findById(req.user.id).select(
+        '+twoFactorTempSecret +twoFactorSecret +twoFactorRecoveryCodes'
+      );
+      if (!user || !user.twoFactorTempSecret) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please start 2FA setup first to generate a QR code.'
+        });
+      }
+
+      const isValid = verifyTOTP(code, user.twoFactorTempSecret);
+      if (!isValid) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid 6-digit code. Ensure your Authenticator app clock is synced and try again.'
+        });
+      }
+
+      const recoveryCodes = generateRecoveryCodes(8);
+      user.twoFactorSecret = user.twoFactorTempSecret;
+      user.twoFactorTempSecret = undefined;
+      user.twoFactorEnabled = true;
+      user.twoFactorRecoveryCodes = recoveryCodes;
+      await user.save({ validateBeforeSave: false });
+
+      res.status(200).json({
+        success: true,
+        message: 'Two-Factor Authentication (2FA) is now enabled on your account!',
+        recoveryCodes,
+        user: {
+          id: user._id,
+          _id: user._id,
+          username: user.username,
+          fullName: user.fullName || '',
+          headline: user.headline || '',
+          bio: user.bio || '',
+          location: user.location || '',
+          website: user.website || '',
+          github: user.github || '',
+          linkedin: user.linkedin || '',
+          twitter: user.twitter || '',
+          email: user.email,
+          role: user.role,
+          plan: user.plan || 'free',
+          isVerified: user.isVerified,
+          twoFactorEnabled: true,
+          createdAt: user.createdAt
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
+);
+
+// @route   POST /api/auth/2fa/disable
+// @desc    Disable Authenticator App 2FA after verifying password or 6-digit TOTP code
+// @access  Private
+router.post(
+  '/2fa/disable',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res) => {
+    try {
+      const { password, code } = req.body;
+      if (!password && !code) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please enter your current password or 6-digit Authenticator code to disable 2FA.'
+        });
+      }
+
+      const user = await User.findById(req.user.id).select(
+        '+password +twoFactorSecret +twoFactorTempSecret +twoFactorRecoveryCodes'
+      );
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      let authorized = false;
+      if (password && String(password).trim()) {
+        authorized = await user.matchPassword(String(password).trim());
+      }
+      if (!authorized && code && user.twoFactorSecret) {
+        authorized = verifyTOTP(String(code).trim(), user.twoFactorSecret);
+      }
+
+      if (!authorized) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid password or Authenticator code. Could not disable 2FA.'
+        });
+      }
+
+      user.twoFactorEnabled = false;
+      user.twoFactorSecret = undefined;
+      user.twoFactorTempSecret = undefined;
+      user.twoFactorRecoveryCodes = [];
+      await user.save({ validateBeforeSave: false });
+
+      res.status(200).json({
+        success: true,
+        message: 'Two-Factor Authentication has been disabled.',
+        user: {
+          id: user._id,
+          _id: user._id,
+          username: user.username,
+          fullName: user.fullName || '',
+          headline: user.headline || '',
+          bio: user.bio || '',
+          location: user.location || '',
+          website: user.website || '',
+          github: user.github || '',
+          linkedin: user.linkedin || '',
+          twitter: user.twitter || '',
+          email: user.email,
+          role: user.role,
+          plan: user.plan || 'free',
+          isVerified: user.isVerified,
+          twoFactorEnabled: false,
+          createdAt: user.createdAt
+        }
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
