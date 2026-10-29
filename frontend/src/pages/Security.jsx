@@ -13,13 +13,19 @@ import {
   CheckCircle2,
   Mail,
   ArrowRight,
-  Cpu
+  Cpu,
+  Smartphone
 } from 'lucide-react';
 
 export default function Security() {
-  const lastUpdated = 'October 25, 2026';
+  const lastUpdated = 'October 29, 2026';
 
   const securityPillars = [
+    {
+      icon: Smartphone,
+      title: 'Authenticator App 2FA (TOTP)',
+      desc: 'Protect your account with RFC 6238 Time-Based One-Time Passwords via Google Authenticator, Authy, 1Password, or Microsoft Authenticator, complete with 8 one-time backup recovery codes.'
+    },
     {
       icon: Lock,
       title: 'End-to-End Encryption',
@@ -28,22 +34,17 @@ export default function Security() {
     {
       icon: KeyRound,
       title: 'Hardened Credential Security',
-      desc: 'User passwords are treated with one-way Bcrypt hashing with 10 salt rounds. We never store or transmit plaintext passwords anywhere in our ecosystem.'
+      desc: 'User passwords are protected with one-way Bcrypt hashing (10 salt rounds) and multi-step verification for sensitive actions like password changes and account deletion.'
     },
     {
       icon: Zap,
       title: 'API Rate Limiting & Abuse Defense',
-      desc: 'Sensitive authentication endpoints (/login, /register, /forgot-password) are protected with dynamic IP rate-limiting to prevent brute force attacks.'
+      desc: 'Sensitive authentication endpoints (/login, /2fa/login-verify, /register, /forgot-password) are protected with dynamic IP rate-limiting to prevent brute-force attacks.'
     },
     {
       icon: Server,
       title: '99.99% Edge High Availability',
       desc: 'Portfolio assets are cached and distributed across worldwide global edge points of presence, ensuring high speed and resilience against regional outages.'
-    },
-    {
-      icon: RefreshCw,
-      title: 'Continuous Automated Backups',
-      desc: 'Our databases perform continuous point-in-time recovery and snapshot replication to prevent accidental data loss.'
     },
     {
       icon: Cpu,
@@ -89,6 +90,63 @@ export default function Security() {
                 <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{pillar.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Two-Factor Authentication (2FA) Spotlight Card */}
+          <div className="p-6 sm:p-8 rounded-3xl glass-card gradient-border border border-indigo-500/30 space-y-6 mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
+                  <Smartphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-heading font-bold text-lg sm:text-xl text-white">
+                      Two-Factor Authentication (2FA)
+                    </h2>
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                      Available Now
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Hardware-grade TOTP verification for all creator and studio accounts.
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                to="/profile"
+                className="btn-primary px-4 py-2.5 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 self-start sm:self-auto shrink-0"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Enable 2FA in Settings</span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  title: '1. QR & Setup Key Pairing',
+                  desc: 'Scan the generated QR code or copy the Base32 setup key into Google Authenticator, Authy, 1Password, or Microsoft Authenticator.'
+                },
+                {
+                  title: '2. 6-Digit TOTP Sign-In Gate',
+                  desc: 'Every sign-in requires a rotating 30-second cryptographic 6-digit verification code after password authentication.'
+                },
+                {
+                  title: '3. One-Time Recovery Codes',
+                  desc: 'Receive 8 single-use emergency backup recovery codes upon activation so you never lose access if you switch devices.'
+                }
+              ].map((step, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5"
+                >
+                  <h4 className="text-xs font-bold text-indigo-300">{step.title}</h4>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">{step.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Compliance & Standards */}
