@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
+import API from '../services/api';
 import {
   BookOpen,
   Clock,
@@ -21,7 +22,9 @@ import {
   BarChart3,
   Code2,
   ShieldCheck,
-  Zap
+  Zap,
+  Mail,
+  Loader2
 } from 'lucide-react';
 
 const STORAGE_KEY = 'portfoliocraft_bookmarked_blogs';
@@ -214,6 +217,32 @@ export default function Blog() {
   const [filterMode, setFilterMode] = useState('all'); // 'all' | 'saved'
   const [shareMenuPostId, setShareMenuPostId] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [newsletterStatus, setNewsletterStatus] = useState(null);
+
+  const handleNewsletterSubscribe = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail.trim()) return;
+    setNewsletterLoading(true);
+    setNewsletterStatus(null);
+    try {
+      const res = await API.post('/newsletter/subscribe', { email: newsletterEmail.trim() });
+      setNewsletterStatus({
+        type: 'success',
+        text: res.data?.message || 'Subscribed successfully! Check your inbox for our welcome email.'
+      });
+      setNewsletterEmail('');
+      triggerToast('Subscribed to the PortfolioCraft Newsletter!');
+    } catch (err) {
+      setNewsletterStatus({
+        type: 'error',
+        text: err.response?.data?.message || 'Unable to subscribe right now. Please try again.'
+      });
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
 
   const triggerToast = (msg) => {
     setToastMessage(msg);
@@ -346,7 +375,7 @@ export default function Blog() {
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-3 mb-12">
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
           <button
             onClick={() => setFilterMode('all')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
@@ -373,6 +402,13 @@ export default function Blog() {
             />
             <span>Saved Bookmarks ({bookmarks.length})</span>
           </button>
+          <a
+            href="#blog-newsletter"
+            className="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 glass border border-indigo-500/40 text-indigo-300 hover:text-white hover:bg-indigo-500/20"
+          >
+            <Mail className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Subscribe to Newsletter</span>
+          </a>
         </div>
 
         {displayedPosts.length === 0 ? (
@@ -562,6 +598,64 @@ export default function Blog() {
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
               We reject sponsored product placements, superficial listicles, and unsubstantiated claims. Our singular benchmark is utility: whether reading a guide directly equips a creator to communicate their value with greater precision, negotiate higher compensation, and land career-defining opportunities.
             </p>
+          </div>
+
+          {/* Newsletter Subscription Section */}
+          <div
+            id="blog-newsletter"
+            className="mt-16 glass-card gradient-border rounded-3xl p-8 sm:p-12 max-w-4xl mx-auto text-center relative overflow-hidden"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mx-auto mb-4">
+              <Mail className="w-6 h-6" />
+            </div>
+            <h3 className="font-heading font-black text-2xl sm:text-4xl text-white mb-3">
+              Subscribe to Weekly <span className="gradient-text">Masterclasses & Tips</span>
+            </h3>
+            <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-7 leading-relaxed">
+              Get new executive portfolio playbooks, case study breakdowns, and hiring manager insights delivered straight to your inbox.
+            </p>
+
+            <form
+              onSubmit={handleNewsletterSubscribe}
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto"
+            >
+              <div className="relative w-full">
+                <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="email"
+                  required
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="Enter your email address..."
+                  className="input-field w-full pl-11 pr-4 py-3.5 rounded-xl text-sm"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={newsletterLoading}
+                className="btn-primary w-full sm:w-auto px-6 py-3.5 rounded-xl text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-60 shadow-lg"
+              >
+                {newsletterLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Mail className="w-4 h-4" />
+                )}
+                <span>Subscribe to Newsletter</span>
+              </button>
+            </form>
+
+            {newsletterStatus && (
+              <div
+                className={`mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold border ${
+                  newsletterStatus.type === 'success'
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                    : 'bg-red-500/10 border-red-500/30 text-red-300'
+                }`}
+              >
+                {newsletterStatus.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                <span>{newsletterStatus.text}</span>
+              </div>
+            )}
           </div>
         </section>
       </main>
