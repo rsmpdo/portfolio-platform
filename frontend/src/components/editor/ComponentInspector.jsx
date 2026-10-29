@@ -434,7 +434,7 @@ export default function ComponentInspector() {
               />
             </Field>
 
-            <Field label="Cinematic Video Background" badge="Studio Plan" tip="Looping background MP4 video for high-end studio aesthetic">
+            <Field label="Cinematic Video Background" badge="Studio Plan" tip="Looping background MP4 video for high-end studio aesthetic (50 MB max)">
               <MediaUploadField
                 accept="video/*,image/*"
                 value={props.bgVideoUrl}
