@@ -215,6 +215,7 @@ export default function App() {
           <Route path="/preview/:templateId" element={<TemplatePreview />} />
           <Route path="/showcase" element={<Showcase />} />
           <Route path="/showcase/:handle" element={<ShowcasePortfolio />} />
+          <Route path="/plans" element={<Pricing />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
           <Route path="/blog" element={<Blog />} />

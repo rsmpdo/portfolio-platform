@@ -33,7 +33,7 @@ export default function Footer() {
                   { name: 'Features', path: '/features' },
                   { name: 'Templates', path: '/templates' },
                   { name: 'Showcase', path: '/showcase' },
-                  { name: 'Pricing', path: '/pricing' }
+                  { name: 'Plans', path: '/plans' }
                 ].map((item) => (
                   <li key={item.name}>
                     <Link to={item.path} className="text-sm text-slate-500 hover:text-white transition underline-hover">

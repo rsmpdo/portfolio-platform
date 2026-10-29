@@ -107,7 +107,7 @@ export default function Pricing() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
             <CreditCard className="w-3.5 h-3.5" />
-            <span>Simple Transparent Pricing</span>
+            <span>Simple Transparent Plans</span>
           </div>
           <h1 className="font-heading font-black text-4xl md:text-6xl text-white mb-6">
             Invest in Your<br />

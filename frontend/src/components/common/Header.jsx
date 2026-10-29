@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { name: 'Features', path: '/features' },
   { name: 'Templates', path: '/templates' },
   { name: 'Showcase', path: '/showcase' },
-  { name: 'Pricing', path: '/pricing' },
+  { name: 'Plans', path: '/plans' },
   { name: 'About', path: '/about' },
   { name: 'Blog', path: '/blog' },
   { name: 'Careers', path: '/careers' },
