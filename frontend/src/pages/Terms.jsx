@@ -147,7 +147,7 @@ export default function Terms() {
       <Header />
 
       <main className="flex-1 pt-32 pb-24 px-6">
-        <div className="max-w-5xl 2xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
           {/* Header Banner */}
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-4">

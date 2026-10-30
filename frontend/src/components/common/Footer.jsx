@@ -5,8 +5,8 @@ import LogoIcon from './LogoIcon';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] bg-slate-950 py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+    <footer className="border-t border-white/[0.06] bg-slate-950 py-16 px-6">
+      <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 mb-12">
           
           <div className="max-w-xs">

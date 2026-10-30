@@ -32,8 +32,7 @@ import {
   Share2,
   Cpu,
   Crown,
-  CreditCard,
-  Sparkles
+  CreditCard
 } from 'lucide-react';
 
 const HERO_PERSONAS = [
@@ -338,21 +337,7 @@ export default function Home() {
     <div className="min-h-screen bg-slate-950 text-slate-100 overflow-x-hidden">
       <Header />
 
-      <section className="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Ambient Looping Video Background Layer */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover opacity-20 mix-blend-screen scale-105 filter blur-[0.5px]"
-            src="https://assets.mixkit.co/videos/preview/mixkit-abstract-laser-lights-background-animation-42526-large.mp4"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/60 to-slate-950 pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#020617_85%)] pointer-events-none" />
-        </div>
-
+      <section className="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div
             className="absolute top-12 left-1/2 -translate-x-1/2 w-[850px] h-[500px] rounded-full blur-[150px] transition-colors duration-700 opacity-25"
@@ -374,69 +359,12 @@ export default function Home() {
           }}
         />
 
-        <div className="relative z-10 max-w-7xl 2xl:max-w-[1440px] mx-auto">
-          {/* Left Floating Animated Portfolio Card (Desktop/Widescreen) */}
-          <motion.div
-            animate={{ y: [0, -14, 0] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="hidden xl:flex absolute -left-4 2xl:-left-10 top-6 flex-col gap-2.5 p-4 rounded-2xl glass border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl max-w-[240px] text-left pointer-events-none select-none z-20"
-          >
-            <div className="flex items-center gap-2.5">
-              <img
-                src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80"
-                alt="Alex Morgan"
-                className="w-10 h-10 rounded-xl object-cover border border-indigo-400/50"
-              />
-              <div>
-                <div className="text-xs font-bold text-white leading-tight">Alex Morgan</div>
-                <div className="text-[10px] text-indigo-300 font-medium">Principal Designer</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-[11px] pt-2 border-t border-white/10 font-medium">
-              <span className="text-slate-400">Live Handle</span>
-              <span className="text-emerald-400 font-mono font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                /p/alex
-              </span>
-            </div>
-            <div className="text-[10px] bg-indigo-500/15 border border-indigo-500/30 text-indigo-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-semibold">
-              <Sparkles className="w-3 h-3 text-indigo-400" />
-              <span>+34% Recruiter Response</span>
-            </div>
-          </motion.div>
-
-          {/* Right Floating Animated Portfolio Card (Desktop/Widescreen) */}
-          <motion.div
-            animate={{ y: [0, 14, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}
-            className="hidden xl:flex absolute -right-4 2xl:-right-10 top-12 flex-col gap-2.5 p-4 rounded-2xl glass border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl max-w-[240px] text-left pointer-events-none select-none z-20"
-          >
-            <div className="flex items-center gap-2.5">
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
-                alt="Marcus Vance"
-                className="w-10 h-10 rounded-xl object-cover border border-emerald-400/50"
-              />
-              <div>
-                <div className="text-xs font-bold text-white leading-tight">Marcus Vance</div>
-                <div className="text-[10px] text-emerald-300 font-medium">Staff Cloud Architect</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-[11px] pt-2 border-t border-white/10 font-medium">
-              <span className="text-slate-400">Inbound Inquiry</span>
-              <span className="text-amber-400 font-bold">Stripe · Lead</span>
-            </div>
-            <div className="text-[10px] bg-emerald-500/15 border border-emerald-500/30 text-emerald-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 font-semibold">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-              <span>99.99% Edge Uptime SLA</span>
-            </div>
-          </motion.div>
-
+        <div className="relative z-10 max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-5xl mx-auto mb-14 relative"
+            className="text-center max-w-4xl mx-auto mb-14"
           >
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-7 shadow-lg">
               <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider">
@@ -451,7 +379,7 @@ export default function Home() {
               <span className="gradient-text">Give It the Stage It Deserves.</span>
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-4xl mx-auto mb-10 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
               Build an executive-grade, interactive portfolio in minutes without writing a single line of code. Engineered with dynamic themes, custom showcase sections, and instant edge publishing to turn recruiters and high-ticket clients into inbound opportunities.
             </p>
 
@@ -472,33 +400,13 @@ export default function Home() {
                 <span>Explore Live Showcases</span>
               </Link>
             </div>
-
-            {/* Animated Portfolio Highlights Ticker */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 text-xs text-slate-400">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass border border-white/10 text-slate-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Live Cloudinary CDN 4K Media
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass border border-white/10 text-slate-300">
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
-                Sub-Millisecond Edge Publishing
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass border border-white/10 text-slate-300">
-                <Code2 className="w-3.5 h-3.5 text-indigo-400" />
-                Figma, Spline & 3D Embeds
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass border border-white/10 text-slate-300">
-                <Lock className="w-3.5 h-3.5 text-cyan-400" />
-                Auto-Renewing SSL /p/ Handles
-              </span>
-            </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="relative mx-auto max-w-6xl 2xl:max-w-7xl"
+            className="relative mx-auto max-w-5xl"
           >
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4 px-2">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400">
@@ -717,7 +625,7 @@ export default function Home() {
       </section>
 
       <section className="border-y border-white/[0.07] py-16 px-6 bg-white/[0.01]">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-slate-500 mb-10">
             Trusted by Designers, Engineers & Creative Directors at World-Class Teams
           </p>
@@ -743,7 +651,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 sm:py-28 px-6">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="badge badge-indigo inline-flex mb-4">
               <Layers className="w-3.5 h-3.5" />
@@ -864,7 +772,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
             <div>
               <div className="badge badge-indigo inline-flex mb-3">
@@ -931,7 +839,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 px-6 border-t border-white/[0.06]">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="badge badge-indigo inline-flex mb-3">
               <Zap className="w-3.5 h-3.5" />
@@ -966,7 +874,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="badge badge-indigo inline-flex mb-3">
               <Award className="w-3.5 h-3.5" />
@@ -1025,7 +933,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 px-6 border-t border-white/[0.06]">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="badge badge-indigo inline-flex mb-3">
               <Share2 className="w-3.5 h-3.5" />
@@ -1077,7 +985,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 px-6 border-t border-white/[0.06] bg-white/[0.01]">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="badge badge-emerald inline-flex mb-3">
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -1144,7 +1052,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 px-6 border-t border-white/[0.06]">
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="badge badge-indigo inline-flex mb-3">
               <Crown className="w-3.5 h-3.5" />
@@ -1280,7 +1188,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 px-6 border-t border-white/[0.06]">
-        <div className="max-w-5xl 2xl:max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="badge badge-indigo inline-flex mb-3">
               <HelpCircle className="w-3.5 h-3.5" />
@@ -1337,7 +1245,7 @@ export default function Home() {
       </section>
 
       <section className="py-24 sm:py-28 px-6 border-t border-white/[0.06] bg-white/[0.01]">
-        <div className="max-w-6xl 2xl:max-w-7xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}

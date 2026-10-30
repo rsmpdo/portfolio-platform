@@ -103,7 +103,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Header />
 
-      <main className="flex-1 pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl 2xl:max-w-[1440px] mx-auto w-full">
+      <main className="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto w-full">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="badge badge-indigo inline-flex mb-4">
             <CreditCard className="w-3.5 h-3.5" />
