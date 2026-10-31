@@ -1,9 +1,9 @@
 # System Overview & Feature Specifications
 
-**Course:** EC4307 Web Application Development Mini Project  
-**Institution:** University of Ruhuna, Faculty of Engineering  
+**Course:** EE4207 Web Application Development Mini Project  
+**Institution:** Faculty of Engineering, University of Ruhuna  
 **Application Title:** PortfolioCraft (MERN Stack Portfolio Management Platform)  
-**Author:** Ranaweerage Shashika Madhusankha Priyanath  
+**Author:** Priyanath  R.S.M.
 
 ---
 
