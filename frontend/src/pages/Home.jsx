@@ -407,7 +407,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto mb-14"
+            className="text-center max-w-5xl xl:max-w-6xl mx-auto mb-14"
           >
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-7 shadow-lg">
               <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider">
@@ -416,10 +416,9 @@ export default function Home() {
               <span>PortfolioCraft · Visual CMS & Global Edge Publishing</span>
             </div>
 
-            <h1 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] text-white leading-[1.04] tracking-tight mb-6">
-              Your Craft Is Extraordinary.
-              <br />
-              <span className="gradient-text">Give It the Stage It Deserves.</span>
+            <h1 className="font-heading font-black text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5rem] text-white leading-[1.08] tracking-tight mb-6">
+              <span className="block sm:whitespace-nowrap">Your Craft Is Extraordinary.</span>
+              <span className="block gradient-text sm:whitespace-nowrap">Give It the Stage It Deserves.</span>
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
