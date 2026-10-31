@@ -328,24 +328,28 @@ const FAQS = [
 
 const HERO_BG_IMAGES = [
   {
-    url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1920&q=80',
-    title: 'Minimalist Editorial Portfolio'
+    url: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1920&q=80',
+    title: 'UI & Product System Design'
   },
   {
-    url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=80',
-    title: 'Spatial UI & Fintech OS'
+    url: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&w=1920&q=80',
+    title: 'Executive Design Strategy'
   },
   {
-    url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1920&q=80',
-    title: 'Distributed Cloud Architecture'
+    url: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1920&q=80',
+    title: 'Distributed Systems & Code'
   },
   {
-    url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80',
-    title: 'WebGL & Creative Direction'
+    url: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=1920&q=80',
+    title: 'Spatial Architecture & 3D'
   },
   {
-    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80',
-    title: 'Global Studio & Agency Design'
+    url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1920&q=80',
+    title: 'Haute Editorial & Brand Direction'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1920&q=80',
+    title: 'Product Analytics & KPI Telemetry'
   }
 ];
 
@@ -399,92 +403,6 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto">
-          {/* Left Flanking Portfolio Card (Desktop) */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0, y: [0, -10, 0] }}
-            transition={{
-              opacity: { duration: 0.8 },
-              x: { duration: 0.8 },
-              y: { duration: 5, repeat: Infinity, ease: 'easeInOut' }
-            }}
-            className="hidden lg:flex absolute -left-4 xl:-left-16 2xl:-left-24 top-12 flex-col gap-3 p-4 rounded-2xl glass border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[260px] text-left select-none z-20 pointer-events-none"
-          >
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live Portfolio
-              </span>
-              <span className="text-[10px] text-slate-400 font-mono">/p/alex</span>
-            </div>
-
-            <div className="flex items-center gap-3 pt-1">
-              <img
-                src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80"
-                alt="Alex Morgan"
-                className="w-11 h-11 rounded-xl object-cover border border-indigo-400/40 shrink-0"
-              />
-              <div className="min-w-0">
-                <div className="text-xs font-bold text-white truncate">Alex Morgan</div>
-                <div className="text-[11px] text-indigo-300 truncate">Staff Product Designer</div>
-              </div>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
-              <div className="text-[10px] text-slate-400 font-medium flex items-center justify-between">
-                <span>Inbound Recruiter Offers</span>
-                <span className="text-amber-400 font-bold">3 this week</span>
-              </div>
-              <div className="text-[11px] text-slate-200 font-semibold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                <span>+34% Response Lift</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right Flanking Portfolio Card (Desktop) */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0, y: [0, 10, 0] }}
-            transition={{
-              opacity: { duration: 0.8 },
-              x: { duration: 0.8 },
-              y: { duration: 5.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }
-            }}
-            className="hidden lg:flex absolute -right-4 xl:-right-16 2xl:-right-24 top-16 flex-col gap-3 p-4 rounded-2xl glass border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[260px] text-left select-none z-20 pointer-events-none"
-          >
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold">
-                <Zap className="w-3 h-3 text-indigo-400" />
-                Interactive Showcase
-              </span>
-              <span className="text-[10px] text-emerald-400 font-bold">Edge SSL</span>
-            </div>
-
-            <div className="flex items-center gap-3 pt-1">
-              <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80"
-                alt="Elena Rostova"
-                className="w-11 h-11 rounded-xl object-cover border border-purple-400/40 shrink-0"
-              />
-              <div className="min-w-0">
-                <div className="text-xs font-bold text-white truncate">Elena Rostova</div>
-                <div className="text-[11px] text-purple-300 truncate">VP Brand Direction</div>
-              </div>
-            </div>
-
-            <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
-              <div className="text-[10px] text-slate-400 font-medium flex items-center justify-between">
-                <span>Direct Client Retainer</span>
-                <span className="text-emerald-400 font-bold">$45,000</span>
-              </div>
-              <div className="text-[11px] text-slate-200 font-semibold flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>3D Spline & Figma Embeds</span>
-              </div>
-            </div>
-          </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
