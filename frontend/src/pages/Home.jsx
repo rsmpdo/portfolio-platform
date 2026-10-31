@@ -32,7 +32,8 @@ import {
   Share2,
   Cpu,
   Crown,
-  CreditCard
+  CreditCard,
+  Sparkles
 } from 'lucide-react';
 
 const HERO_PERSONAS = [
@@ -351,16 +352,14 @@ const HERO_BG_IMAGES = [
 export default function Home() {
   const [activePersonaIdx, setActivePersonaIdx] = useState(0);
   const [openFaqIdx, setOpenFaqIdx] = useState(null);
-  const [bgMode, setBgMode] = useState('video'); // 'video' | 'slideshow'
   const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
 
   useEffect(() => {
-    if (bgMode !== 'slideshow') return;
     const interval = setInterval(() => {
       setCurrentSlideIdx((prev) => (prev + 1) % HERO_BG_IMAGES.length);
     }, 4500);
     return () => clearInterval(interval);
-  }, [bgMode]);
+  }, []);
   const activePersona = HERO_PERSONAS[activePersonaIdx];
 
   const toggleFaq = (idx) => {
@@ -372,28 +371,16 @@ export default function Home() {
       <Header />
 
       <section className="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 overflow-hidden">
-        {/* Hero Dynamic Background: Looping Video or Cycling Portfolio Images */}
+        {/* Hero Dynamic Background: Cycling Portfolio Showcases */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-          {bgMode === 'video' ? (
-            <video
-              key="hero-video-bg"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover opacity-25 scale-105 filter blur-[0.4px] transition-opacity duration-1000"
-              src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-with-graphs-and-data-31913-large.mp4"
+          <div className="absolute inset-0 transition-all duration-1000">
+            <img
+              key={currentSlideIdx}
+              src={HERO_BG_IMAGES[currentSlideIdx].url}
+              alt={HERO_BG_IMAGES[currentSlideIdx].title}
+              className="w-full h-full object-cover opacity-30 scale-105 transition-all duration-1000 filter blur-[0.4px]"
             />
-          ) : (
-            <div className="absolute inset-0 transition-all duration-1000">
-              <img
-                key={currentSlideIdx}
-                src={HERO_BG_IMAGES[currentSlideIdx].url}
-                alt={HERO_BG_IMAGES[currentSlideIdx].title}
-                className="w-full h-full object-cover opacity-30 scale-105 animate-pulse transition-all duration-1000 filter blur-[0.5px]"
-              />
-            </div>
-          )}
+          </div>
 
           {/* Contrast & Depth Overlays */}
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/70 to-slate-950" />
@@ -412,40 +399,98 @@ export default function Home() {
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto">
+          {/* Left Flanking Portfolio Card (Desktop) */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0, y: [0, -10, 0] }}
+            transition={{
+              opacity: { duration: 0.8 },
+              x: { duration: 0.8 },
+              y: { duration: 5, repeat: Infinity, ease: 'easeInOut' }
+            }}
+            className="hidden lg:flex absolute -left-4 xl:-left-16 2xl:-left-24 top-12 flex-col gap-3 p-4 rounded-2xl glass border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[260px] text-left select-none z-20 pointer-events-none"
+          >
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Live Portfolio
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono">/p/alex</span>
+            </div>
+
+            <div className="flex items-center gap-3 pt-1">
+              <img
+                src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80"
+                alt="Alex Morgan"
+                className="w-11 h-11 rounded-xl object-cover border border-indigo-400/40 shrink-0"
+              />
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-white truncate">Alex Morgan</div>
+                <div className="text-[11px] text-indigo-300 truncate">Staff Product Designer</div>
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
+              <div className="text-[10px] text-slate-400 font-medium flex items-center justify-between">
+                <span>Inbound Recruiter Offers</span>
+                <span className="text-amber-400 font-bold">3 this week</span>
+              </div>
+              <div className="text-[11px] text-slate-200 font-semibold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <span>+34% Response Lift</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right Flanking Portfolio Card (Desktop) */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0, y: [0, 10, 0] }}
+            transition={{
+              opacity: { duration: 0.8 },
+              x: { duration: 0.8 },
+              y: { duration: 5.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }
+            }}
+            className="hidden lg:flex absolute -right-4 xl:-right-16 2xl:-right-24 top-16 flex-col gap-3 p-4 rounded-2xl glass border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl max-w-[260px] text-left select-none z-20 pointer-events-none"
+          >
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold">
+                <Zap className="w-3 h-3 text-indigo-400" />
+                Interactive Showcase
+              </span>
+              <span className="text-[10px] text-emerald-400 font-bold">Edge SSL</span>
+            </div>
+
+            <div className="flex items-center gap-3 pt-1">
+              <img
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80"
+                alt="Elena Rostova"
+                className="w-11 h-11 rounded-xl object-cover border border-purple-400/40 shrink-0"
+              />
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-white truncate">Elena Rostova</div>
+                <div className="text-[11px] text-purple-300 truncate">VP Brand Direction</div>
+              </div>
+            </div>
+
+            <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 space-y-1">
+              <div className="text-[10px] text-slate-400 font-medium flex items-center justify-between">
+                <span>Direct Client Retainer</span>
+                <span className="text-emerald-400 font-bold">$45,000</span>
+              </div>
+              <div className="text-[11px] text-slate-200 font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>3D Spline & Figma Embeds</span>
+              </div>
+            </div>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto mb-14"
           >
-            {/* Background Style Switcher */}
-            <div className="flex items-center justify-center gap-2 mb-5">
-              <div className="inline-flex items-center p-1 rounded-full glass border border-white/10 text-[11px] font-semibold text-slate-400 shadow-lg">
-                <button
-                  type="button"
-                  onClick={() => setBgMode('video')}
-                  className={`px-3 py-1 rounded-full transition flex items-center gap-1.5 ${
-                    bgMode === 'video'
-                      ? 'bg-indigo-500 text-white font-bold shadow'
-                      : 'hover:text-white'
-                  }`}
-                >
-                  <span>🎥 Video Background</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBgMode('slideshow')}
-                  className={`px-3 py-1 rounded-full transition flex items-center gap-1.5 ${
-                    bgMode === 'slideshow'
-                      ? 'bg-indigo-500 text-white font-bold shadow'
-                      : 'hover:text-white'
-                  }`}
-                >
-                  <span>🖼️ Changing Portfolios</span>
-                </button>
-              </div>
-            </div>
-
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-7 shadow-lg">
               <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider">
                 NEW
