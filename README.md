@@ -557,7 +557,6 @@ No variables required: the API base is the relative path `/api` (Vite proxy in d
 | Editor (desktop) | `![Editor](documentation/screenshots/editor.png)` |
 | Editor (mobile viewport) | `![Mobile](documentation/screenshots/editor-mobile.png)` |
 | Public portfolio | `![Portfolio](documentation/screenshots/portfolio.png)` |
-| Analytics | `![Analytics](documentation/screenshots/analytics.png)` |
 | Profile and 2FA | `![Profile](documentation/screenshots/profile.png)` |
 | Admin dashboard | `![Admin](documentation/screenshots/admin.png)` |
 
