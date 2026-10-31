@@ -1,8 +1,8 @@
 # Technical Stack & Software Architecture
 
-**Course:** EC4307 Web Application Development Mini Project  
-**Author:** Ranaweerage Shashika Madhusankha Priyanath  
+**Course:** EE4207 Web Application Development Mini Project  
 **Application Title:** PortfolioCraft  
+**Author:** Priyanath  R.S.M.
 
 ---
 
@@ -157,7 +157,7 @@ PortfolioCraft implements an RFC 6238 compliant Time-Based One-Time Password (TO
    - Secret Generation: `crypto.randomBytes(20)` encoded into RFC 4648 Base32.
    - Counter Calculation: $T = \lfloor \text{time} / 30 \rfloor$.
    - HMAC-SHA1: Computes HMAC of 8-byte big-endian counter using decoded Base32 secret.
-   - Dynamic Truncation: Extracts 4 bytes starting at offset (last byte $\&\; 0x0f$), masks with $0x7fffffff$, and applies modulo $10^6$ to derive the 6-digit integer.
+   - Dynamic Truncation: Extracts 4 bytes starting at offset (last byte), masks with $0x7fffffff$, and applies modulo $10^6$ to derive the 6-digit integer.
 2. **Drift Window Tolerance:** Validates tokens across counter steps $T-1, T, T+1$ (allowing a $\pm 30$-second clock skew).
 3. **Standalone SVG QR Code Generation:** Emits vector SVG matrices directly into `data:image/svg+xml` URLs for instant QR rendering without heavy native canvas packages.
 
