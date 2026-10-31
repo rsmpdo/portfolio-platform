@@ -551,14 +551,14 @@ No variables required: the API base is the relative path `/api` (Vite proxy in d
 
 | Screen | Image |
 |---|---|
-| Home page | `![Home](documentation/screenshots/home.png)` |
-| Login / Register | `![Auth](documentation/screenshots/auth.png)` |
-| Template gallery | `![Templates](documentation/screenshots/templates.png)` |
-| Editor (desktop) | `![Editor](documentation/screenshots/editor.png)` |
-| Editor (mobile viewport) | `![Mobile](documentation/screenshots/editor-mobile.png)` |
-| Public portfolio | `![Portfolio](documentation/screenshots/portfolio.png)` |
-| Profile and 2FA | `![Profile](documentation/screenshots/profile.png)` |
-| Admin dashboard | `![Admin](documentation/screenshots/admin.png)` |
+| Home page | ![Home](documentation/screenshots/home.png) |
+| Login / Register | ![Auth](documentation/screenshots/auth.png) |
+| Template gallery | ![Templates](documentation/screenshots/templates.png) |
+| Editor (desktop) | ![Editor](documentation/screenshots/editor.png) |
+| Editor (mobile viewport) | ![Mobile](documentation/screenshots/editor-mobile.png) |
+| Public portfolio | ![Portfolio](documentation/screenshots/portfolio.png) |
+| Profile and 2FA | ![Profile](documentation/screenshots/profile.png) |
+| Admin dashboard | ![Admin](documentation/screenshots/admin.png) |
 
 ---
 
