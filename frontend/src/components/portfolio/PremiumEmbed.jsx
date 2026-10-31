@@ -5,14 +5,13 @@ import { Monitor, Figma } from 'lucide-react';
 export default function PremiumEmbed({ props = {}, templateId, viewportMode }) {
   const {
     heading = 'Interactive Prototype',
-    embedUrl = '', // E.g. figma embed, spline, youtube
-    embedType = 'figma', // figma, spline, youtube, custom
+    embedUrl = '',
+    embedType = 'figma',
     height = '600px'
   } = props;
 
   const isMobile = viewportMode === 'mobile';
 
-  // Extract source from Figma iframe snippet if they pasted the whole iframe
   let finalUrl = embedUrl;
   if (finalUrl.includes('<iframe')) {
     const srcMatch = finalUrl.match(/src="([^"]+)"/);
@@ -26,7 +25,7 @@ export default function PremiumEmbed({ props = {}, templateId, viewportMode }) {
           <h2 className="text-2xl md:text-4xl text-white font-bold">{heading}</h2>
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -34,9 +33,9 @@ export default function PremiumEmbed({ props = {}, templateId, viewportMode }) {
           style={{ height: isMobile ? '400px' : height }}
         >
           {finalUrl ? (
-            <iframe 
-              src={finalUrl} 
-              allowFullScreen 
+            <iframe
+              src={finalUrl}
+              allowFullScreen
               title={heading}
               className="w-full h-full border-none bg-black/50"
             />

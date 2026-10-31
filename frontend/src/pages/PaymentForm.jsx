@@ -107,7 +107,6 @@ export default function PaymentForm() {
       <main className="flex-1 pt-28 pb-20 px-4">
         <div className="max-w-3xl mx-auto">
 
-          {/* Page Title */}
           <div className="text-center mb-10">
             <div className="badge badge-indigo inline-flex mb-4">
               <CreditCard className="w-3.5 h-3.5 text-indigo-400" />
@@ -119,7 +118,6 @@ export default function PaymentForm() {
             <p className="text-slate-400 text-sm">One-time payment · No recurring charges · Lifetime access</p>
           </div>
 
-          {/* Active Plan Banner Alert */}
           {(user?.plan === planId || (user?.plan === 'studio' && planId === 'pro')) && (
             <div className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm font-semibold flex items-center gap-3 max-w-2xl mx-auto shadow-xl">
               <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
@@ -130,7 +128,6 @@ export default function PaymentForm() {
             </div>
           )}
 
-          {/* Step Indicator */}
           {step < 3 && (
             <div className="flex items-center justify-center gap-2 mb-10">
               {STEPS.slice(0, 3).map((label, i) => (
@@ -149,10 +146,8 @@ export default function PaymentForm() {
             </div>
           )}
 
-          {/* ─── STEP 0: Bank Transfer Instructions ───────────────── */}
           {step === 0 && (
             <div className="space-y-6">
-              {/* Plan Summary */}
               <div className="glass gradient-border rounded-3xl p-6 flex items-center justify-between gap-4 flex-wrap">
                 <div>
                   <p className="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-1">You are purchasing</p>
@@ -172,7 +167,6 @@ export default function PaymentForm() {
                 </div>
               </div>
 
-              {/* Important Notice */}
               <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
@@ -183,7 +177,6 @@ export default function PaymentForm() {
                 </div>
               </div>
 
-              {/* Bank Account Details */}
               <div className="glass gradient-border rounded-3xl p-6">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
@@ -228,7 +221,6 @@ export default function PaymentForm() {
             </div>
           )}
 
-          {/* ─── STEP 1: Personal Details ──────────────────────────── */}
           {step === 1 && (
             <div className="glass gradient-border rounded-3xl p-8 space-y-6">
               <div className="flex items-center gap-3 mb-2">
@@ -304,7 +296,6 @@ export default function PaymentForm() {
             </div>
           )}
 
-          {/* ─── STEP 2: Document Upload ───────────────────────────── */}
           {step === 2 && (
             <div className="space-y-6">
               <div className="glass gradient-border rounded-3xl p-8">
@@ -319,7 +310,6 @@ export default function PaymentForm() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {/* National ID Upload */}
                   <div>
                     <p className="text-xs font-bold text-slate-300 mb-3 flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-indigo-400" /> National ID / Passport <span className="text-red-400">*</span>
@@ -343,7 +333,6 @@ export default function PaymentForm() {
                     </label>
                   </div>
 
-                  {/* Payment Slip Upload */}
                   <div>
                     <p className="text-xs font-bold text-slate-300 mb-3 flex items-center gap-2">
                       <CreditCard className="w-4 h-4 text-indigo-400" /> Bank Transfer Receipt / Payment Slip <span className="text-red-400">*</span>
@@ -391,7 +380,6 @@ export default function PaymentForm() {
             </div>
           )}
 
-          {/* ─── STEP 3: Confirmation ──────────────────────────────── */}
           {step === 3 && (
             <div className="glass gradient-border rounded-3xl p-10 text-center max-w-lg mx-auto">
               <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30">

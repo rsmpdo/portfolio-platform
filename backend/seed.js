@@ -14,11 +14,9 @@ const seedData = async () => {
 
     console.log('Connected to MongoDB Atlas for seeding...');
 
-    // Clear existing sample user if any
     await User.deleteMany({ email: 'admin@portfolioplatform.dev' });
     await Layout.deleteMany({ handle: 'admin_1' });
 
-    // Create sample admin user
     const adminUser = await User.create({
       username: 'admin_1',
       email: 'admin@portfolioplatform.dev',
@@ -29,7 +27,6 @@ const seedData = async () => {
 
     console.log(`Created sample admin user: ${adminUser.username} (${adminUser.email})`);
 
-    // Create rich showcase portfolio layout for admin_1
     const sampleLayout = await Layout.create({
       userId: adminUser._id,
       handle: 'admin_1',

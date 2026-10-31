@@ -1,8 +1,4 @@
-/**
- * Centralized Branded Email Template Builder for PortfolioCraft.
- * Produces clean, responsive, dark-mode luxury HTML emails matching
- * the platform's signature styling.
- */
+
 
 const PRODUCTION_CLIENT_URL = 'https://portfoliocraftlk.vercel.app';
 
@@ -120,9 +116,6 @@ function createBrandedEmailTemplate({
   `.trim();
 }
 
-/**
- * Pre-built template for Initial Email Verification
- */
 function getEmailVerificationTemplate({ recipientName, verifyUrl }) {
   return createBrandedEmailTemplate({
     subtitle: 'Verify Your Email Address',
@@ -144,9 +137,6 @@ function getEmailVerificationTemplate({ recipientName, verifyUrl }) {
   });
 }
 
-/**
- * Pre-built template for Password Reset
- */
 function getPasswordResetTemplate({ recipientName, resetUrl, expiresIn = '10 minutes' }) {
   return createBrandedEmailTemplate({
     subtitle: 'Password Reset Request',
@@ -165,9 +155,6 @@ function getPasswordResetTemplate({ recipientName, resetUrl, expiresIn = '10 min
   });
 }
 
-/**
- * Pre-built template for Premium Tier Purchase Confirmation
- */
 function getPaymentApprovedTemplate({ recipientName, plan, amount, adminNote, clientUrl }) {
   const planUpper = String(plan || 'pro').toUpperCase();
   const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
@@ -206,9 +193,6 @@ function getPaymentApprovedTemplate({ recipientName, plan, amount, adminNote, cl
   });
 }
 
-/**
- * Pre-built template for Payment Request Update Required / Rejection
- */
 function getPaymentRejectedTemplate({ recipientName, plan, reason, clientUrl }) {
   const planUpper = String(plan || 'pro').toUpperCase();
   const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
@@ -234,9 +218,6 @@ function getPaymentRejectedTemplate({ recipientName, plan, reason, clientUrl }) 
   });
 }
 
-/**
- * Pre-built template for Admin Moderation Warning
- */
 function getModerationWarningTemplate({ recipientName, warningMessage, clientUrl }) {
   const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
   const editorUrl = `${baseUrl}/editor`;
@@ -261,9 +242,6 @@ function getModerationWarningTemplate({ recipientName, warningMessage, clientUrl
   });
 }
 
-/**
- * Pre-built template for Newsletter Welcome
- */
 function getNewsletterWelcomeTemplate({ email, clientUrl }) {
   const baseUrl = normalizeEmailUrl(clientUrl || PRODUCTION_CLIENT_URL);
   const exploreUrl = `${baseUrl}/templates`;
@@ -288,9 +266,6 @@ function getNewsletterWelcomeTemplate({ email, clientUrl }) {
   });
 }
 
-/**
- * Pre-built template for Portfolio Ban / Unban Notification
- */
 function getPortfolioBanStatusTemplate({
   recipientName,
   portfolioTitle,

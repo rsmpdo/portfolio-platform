@@ -16,10 +16,9 @@ const {
   buildOtpAuthUrl
 } = require('../utils/totp');
 
-// Strict rate limiters for authentication endpoints to prevent brute-force attacks and email spamming
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // max 10 attempts per 15 minutes per IP
+  windowMs: 15 * 60 * 1000,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -29,8 +28,8 @@ const loginLimiter = rateLimit({
 });
 
 const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // max 10 account registrations per hour per IP
+  windowMs: 60 * 60 * 1000,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -40,8 +39,8 @@ const registerLimiter = rateLimit({
 });
 
 const forgotPasswordLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // max 5 password reset requests per 15 minutes
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -51,8 +50,8 @@ const forgotPasswordLimiter = rateLimit({
 });
 
 const resendVerificationLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // max 5 resend requests per 15 minutes
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -63,7 +62,6 @@ const resendVerificationLimiter = rateLimit({
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_CODE || 'PORTFOLIO_CRAFT_ADMIN_2026';
 
-// Helper to get client frontend URL dynamically (always uses production URL for emails instead of localhost)
 const getClientUrl = () => {
   if (
     process.env.CLIENT_URL &&
@@ -75,7 +73,6 @@ const getClientUrl = () => {
   return 'https://portfoliocraftlk.vercel.app';
 };
 
-// Helper to generate JWT token
 const sendTokenResponse = (user, statusCode, res) => {
   const token = jwt.sign(
     { id: user._id, role: user.role, username: user.username },
@@ -108,9 +105,7 @@ const sendTokenResponse = (user, statusCode, res) => {
   });
 };
 
-// @route   POST /api/auth/register
-// @desc    Register new user (Supports optional Admin Secret Code)
-// @access  Public
+// /api/auth/register
 router.post('/register', registerLimiter, async (req, res) => {
   try {
     const { username, email, password, adminSecretCode } = req.body;
@@ -119,13 +114,11 @@ router.post('/register', registerLimiter, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide username, email and password' });
     }
 
-    // Check if user exists
     const existingUser = await User.findOne({ $or: [{ email: email.toLowerCase() }, { username }] });
     if (existingUser) {
       return res.status(400).json({ success: false, message: 'Username or email already exists' });
     }
 
-    // Verify Admin Secret Code if provided
     let assignedRole = 'standard';
     if (adminSecretCode) {
       if (adminSecretCode.trim() === ADMIN_SECRET) {
@@ -135,7 +128,6 @@ router.post('/register', registerLimiter, async (req, res) => {
       }
     }
 
-    // Create user instance
     const user = new User({
       username,
       email: email.toLowerCase(),
@@ -148,11 +140,9 @@ router.post('/register', registerLimiter, async (req, res) => {
     if (assignedRole === 'admin') {
       await user.save();
     } else {
-      // Generate email verification token for standard users
       const verificationToken = user.getVerificationToken();
       await user.save();
 
-      // Send verification email
       const clientUrl = getClientUrl(req);
       const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
       const message = `You are receiving this email because you (or someone else) registered a new account on PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
@@ -177,7 +167,6 @@ router.post('/register', registerLimiter, async (req, res) => {
       }
     }
 
-    // Create default initial portfolio layout for user
     await Layout.create({
       userId: user._id,
       handle: username.toLowerCase(),
@@ -251,9 +240,7 @@ router.post('/register', registerLimiter, async (req, res) => {
   }
 });
 
-// @route   GET /api/auth/verify-email/:verificationToken
-// @desc    Verify email address token
-// @access  Public
+// /api/auth/verify-email/:verificationToken
 router.get('/verify-email/:verificationToken', async (req, res) => {
   try {
     const verificationToken = crypto
@@ -281,9 +268,7 @@ router.get('/verify-email/:verificationToken', async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/login
-// @desc    Login user & get JWT token
-// @access  Public
+// /api/auth/login
 router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -292,19 +277,16 @@ router.post('/login', loginLimiter, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
     }
 
-    // Check user
     const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Check password
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Check if Two-Factor Authentication (Authenticator App) is enabled
     if (user.twoFactorEnabled) {
       const tempToken = jwt.sign(
         { id: user._id, purpose: '2fa_login' },
@@ -325,9 +307,7 @@ router.post('/login', loginLimiter, async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/2fa/login-verify
-// @desc    Verify 6-digit Authenticator App TOTP code or backup recovery code during login
-// @access  Public (Requires valid 2FA tempToken)
+// /api/auth/2fa/login-verify
 router.post('/2fa/login-verify', loginLimiter, async (req, res) => {
   try {
     const { tempToken, code } = req.body;
@@ -385,9 +365,7 @@ router.post('/2fa/login-verify', loginLimiter, async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/forgot-password
-// @desc    Send password reset token link via email
-// @access  Public
+// /api/auth/forgot-password
 router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
   try {
     const { email } = req.body;
@@ -400,11 +378,9 @@ router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
       return res.status(404).json({ success: false, message: 'No account found with that email address' });
     }
 
-    // Generate reset token
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
-    // Build reset URL
     const clientUrl = getClientUrl(req);
     const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
 
@@ -440,9 +416,7 @@ router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/reset-password/:token
-// @desc    Reset password using token
-// @access  Public
+// /api/auth/reset-password/:token
 router.post('/reset-password/:token', async (req, res) => {
   try {
     const { password } = req.body;
@@ -470,7 +444,6 @@ router.post('/reset-password/:token', async (req, res) => {
       });
     }
 
-    // Set new password
     user.password = String(password);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
@@ -485,9 +458,7 @@ router.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-// @route   GET /api/auth/me
-// @desc    Get logged in user profile
-// @access  Private
+// /api/auth/me
 router.get(
   '/me',
   passport.authenticate('jwt', { session: false }),
@@ -499,9 +470,7 @@ router.get(
   }
 );
 
-// @route   POST /api/auth/resend-verification
-// @desc    Resend verification email
-// @access  Private
+// /api/auth/resend-verification
 router.post(
   '/resend-verification',
   resendVerificationLimiter,
@@ -509,7 +478,7 @@ router.post(
   async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
-      
+
       if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
       }
@@ -518,11 +487,9 @@ router.post(
         return res.status(400).json({ success: false, message: 'Email is already verified' });
       }
 
-      // Generate email verification token
       const verificationToken = user.getVerificationToken();
       await user.save();
 
-      // Send verification email
       const clientUrl = getClientUrl(req);
       const verifyUrl = `${clientUrl}/verify-email/${verificationToken}`;
       const message = `You requested a new verification link for PortfolioCraft.\n\nPlease click the link below to verify your email address:\n\n${verifyUrl}`;
@@ -552,9 +519,7 @@ router.post(
   }
 );
 
-// @route   POST /api/auth/elevate-admin
-// @desc    Elevate logged-in user account to Administrator using secret code
-// @access  Private
+// /api/auth/elevate-admin
 router.post(
   '/elevate-admin',
   passport.authenticate('jwt', { session: false }),
@@ -595,9 +560,7 @@ router.post(
   }
 );
 
-// @route   PUT /api/auth/profile
-// @desc    Update logged-in user's profile information (name, bio, headline, links, etc.)
-// @access  Private
+// /api/auth/profile
 router.put(
   '/profile',
   passport.authenticate('jwt', { session: false }),
@@ -681,9 +644,7 @@ router.put(
   }
 );
 
-// @route   PUT /api/auth/password
-// @desc    Update logged-in user's account password after verifying current password
-// @access  Private
+// /api/auth/password
 router.put(
   '/password',
   passport.authenticate('jwt', { session: false }),
@@ -729,9 +690,7 @@ router.put(
   }
 );
 
-// @route   POST /api/auth/2fa/setup
-// @desc    Generate TOTP secret & QR code for Authenticator App setup
-// @access  Private
+// /api/auth/2fa/setup
 router.post(
   '/2fa/setup',
   passport.authenticate('jwt', { session: false }),
@@ -767,9 +726,7 @@ router.post(
   }
 );
 
-// @route   POST /api/auth/2fa/verify-setup
-// @desc    Verify 6-digit TOTP code from Authenticator App and activate 2FA
-// @access  Private
+// /api/auth/2fa/verify-setup
 router.post(
   '/2fa/verify-setup',
   passport.authenticate('jwt', { session: false }),
@@ -838,9 +795,7 @@ router.post(
   }
 );
 
-// @route   POST /api/auth/2fa/disable
-// @desc    Disable Authenticator App 2FA after verifying password or 6-digit TOTP code
-// @access  Private
+// /api/auth/2fa/disable
 router.post(
   '/2fa/disable',
   passport.authenticate('jwt', { session: false }),
@@ -911,9 +866,7 @@ router.post(
   }
 );
 
-// @route   POST /api/auth/delete-account
-// @desc    Permanently delete logged-in user's account and portfolios after password verification
-// @access  Private
+// /api/auth/delete-account
 router.post(
   '/delete-account',
   passport.authenticate('jwt', { session: false }),

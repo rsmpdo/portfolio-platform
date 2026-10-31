@@ -288,7 +288,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
   };
 
   const handleAddComponent = (item) => {
-    // Plan gates
     if (item.tier === 'studio' && !isStudioPlan) {
       setUpgradeModalInfo({
         title: 'Studio Plan Feature',
@@ -355,7 +354,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
         )}
       </div>
 
-      {/* Template Identity Strip */}
       {templateLabel && (
         <div
           className="px-4 py-2.5 flex items-center gap-2 border-b border-white/[0.06]"
@@ -426,11 +424,9 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
         ))}
       </div>
 
-      {/* Tab Content Stream */}
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         {activeTab === 'components' && (
           <>
-            {/* Active Sections list */}
             <div>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
@@ -525,7 +521,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </div>
             </div>
 
-            {/* Add Section List */}
             <div>
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
                 Add Section
@@ -566,7 +561,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
 
         {activeTab === 'theme' && (
           <div className="space-y-6">
-            {/* Active Template Card */}
             <div className="p-3.5 rounded-2xl glass border border-indigo-500/30 bg-indigo-500/5 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Active Template</span>
@@ -598,7 +592,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </div>
             </div>
 
-            {/* Typography & Font Family Selection */}
             <div className="p-3.5 rounded-2xl glass border border-white/[0.08] space-y-3 bg-white/[0.01]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -642,7 +635,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </div>
             </div>
 
-            {/* White-Label Branding (Studio Feature) */}
             <div className="p-3.5 rounded-2xl glass border border-white/[0.08] space-y-3 bg-white/[0.01]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -656,7 +648,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 Remove the "PortfolioCraft" floating navigation badge and platform footer on your live public site.
               </p>
-              
+
               <div className="pt-1 flex items-center justify-between">
                 <span className="text-xs text-slate-300 font-medium">Hide Platform Branding</span>
                 {isStudioPlan ? (
@@ -690,7 +682,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </div>
             </div>
 
-            {/* Quick Theme Palettes */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Color Schemes</h3>
@@ -802,7 +793,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </div>
             </div>
 
-            {/* Granular Color Controls */}
             <div className="space-y-4 pt-2 border-t border-white/[0.06]">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Custom Colors</h3>
@@ -865,7 +855,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
 
         {activeTab === 'settings' && (
           <div className="space-y-6">
-            {/* Portfolio URL Handle */}
             <div>
               <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Portfolio URL Handle</h3>
               <label className="block text-xs font-semibold text-slate-400 mb-2">Custom Page Slug</label>
@@ -886,7 +875,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </p>
             </div>
 
-            {/* 1-Click ATS Resume & PDF Download */}
             <div className="pt-4 border-t border-white/[0.06] space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -937,7 +925,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
               </div>
             </div>
 
-            {/* SEO Meta Optimization (Pro & Studio) */}
             <div className="pt-4 border-t border-white/[0.06] space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -1065,7 +1052,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                 </button>
               </div>
             ) : isFreePlan && analyticsData?.isLocked ? (
-              /* Free Plan: Teaser + Upgrade Card */
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-3 rounded-xl glass border border-white/[0.08] relative overflow-hidden">
@@ -1120,9 +1106,7 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                 </div>
               </div>
             ) : (
-              /* Pro & Studio Plan: Full Dashboard */
               <div className="space-y-4">
-                {/* 4 Stat Cards */}
                 <div className="grid grid-cols-2 gap-2">
                   <div className="p-3 rounded-xl glass border border-white/[0.08]">
                     <div className="flex items-center justify-between text-slate-400 mb-1">
@@ -1169,7 +1153,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                   </div>
                 </div>
 
-                {/* 14-Day Activity Chart */}
                 <div className="p-3.5 rounded-2xl glass border border-white/[0.08] space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-white">Traffic Velocity</span>
@@ -1214,7 +1197,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                   )}
                 </div>
 
-                {/* Top Referrer Sources Breakdown */}
                 <div className="p-3.5 rounded-2xl glass border border-white/[0.08] space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-white">Referrer Sources</span>
@@ -1258,7 +1240,6 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                   })()}
                 </div>
 
-                {/* Privacy Guarantee Note */}
                 <div className="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span className="text-[10px] text-slate-400">

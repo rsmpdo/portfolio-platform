@@ -66,7 +66,6 @@ export default function CookiePolicy() {
             </p>
           </div>
 
-          {/* Core Highlights */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div className="p-4 rounded-2xl glass border border-white/[0.08] space-y-2">
               <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
@@ -142,7 +141,6 @@ export default function CookiePolicy() {
             </div>
           </div>
 
-          {/* Browser Controls Section */}
           <div className="p-6 sm:p-8 rounded-3xl glass border border-white/[0.08] space-y-4 mb-10">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">

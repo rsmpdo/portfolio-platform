@@ -6,21 +6,16 @@ const rateLimit = require('express-rate-limit');
 const passport = require('passport');
 const connectDB = require('./config/db');
 
-// Load env vars
 dotenv.config();
 
-// Connect to MongoDB Database
 connectDB();
 
 const app = express();
 
-// Trust reverse proxy headers (e.g. Vercel, Nginx, Cloudflare) for accurate client IP rate limiting
 app.set('trust proxy', 1);
 
-// Security Middlewares
 app.use(helmet());
 
-// CORS configuration
 const allowedOrigins = [
   process.env.CLIENT_URL || 'http://localhost:5173',
   'http://localhost:3000'
@@ -32,14 +27,13 @@ app.use(
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
-        callback(null, true); // Allow during development/staging
+        callback(null, true);
       }
     },
     credentials: true
   })
 );
 
-// Body Parser Middleware
 app.use((req, res, next) => {
   if (req.originalUrl === '/api/payment/webhook') {
     next();
@@ -49,15 +43,13 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Rate Limiting
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { success: false, message: 'Too many requests from this IP, please try again after 15 minutes' }
 });
 app.use('/api/', apiLimiter);
 
-// Passport Middleware
 app.use(passport.initialize());
 require('./config/passport')(passport);
 
@@ -71,12 +63,10 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/messages', require('./routes/message'));
 app.use('/api/careers', require('./routes/career'));
 
-// Health Check Route
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Portfolio API Backend is running smoothly', timestamp: new Date() });
 });
 
-// Dynamic Sitemap Generator for Search Engines
 app.get(['/sitemap.xml', '/api/sitemap.xml'], async (req, res) => {
   try {
     const Layout = require('./models/Layout');
@@ -141,7 +131,6 @@ ${allUrls
   }
 });
 
-// Robots.txt
 app.get(['/robots.txt', '/api/robots.txt'], (req, res) => {
   const baseUrl =
     process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost') && !process.env.CLIENT_URL.includes('127.0.0.1')
@@ -151,12 +140,10 @@ app.get(['/robots.txt', '/api/robots.txt'], (req, res) => {
   res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /editor\nDisallow: /profile\nDisallow: /api/\n\nSitemap: ${baseUrl}/sitemap.xml\n`);
 });
 
-// Global 404 Handler
 app.use((req, res, next) => {
   res.status(404).json({ success: false, message: 'API route not found' });
 });
 
-// Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
@@ -175,4 +162,3 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
 
 module.exports = app;
 
-// Trigger nodemon restart for environment variables

@@ -70,9 +70,7 @@ export default function SocialLinks({ props = {}, templateId, viewportMode, them
 
   const activeLinks = Array.isArray(links) ? links.filter((l) => l && (l.url || l.label || l.platform)) : [];
 
-  // ---------------------------------------------------------
   // CYBER & AI (Terminal Grid, Monospace)
-  // ---------------------------------------------------------
   if (templateId === 'dark-cyber' || templateId === 'ai-neural-labs-pro') {
     return (
       <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} font-mono bg-[#050505]`}>
@@ -120,9 +118,6 @@ export default function SocialLinks({ props = {}, templateId, viewportMode, them
     );
   }
 
-  // ---------------------------------------------------------
-  // EDITORIAL & COUTURE (High Contrast Minimal)
-  // ---------------------------------------------------------
   if (templateId === 'minimalist-editorial' || templateId === 'haute-couture-studio') {
     return (
       <section className="py-20 px-6 bg-white text-black border-b-4 border-black">
@@ -172,9 +167,6 @@ export default function SocialLinks({ props = {}, templateId, viewportMode, them
     );
   }
 
-  // ---------------------------------------------------------
-  // DEFAULT / MODERN GLASS (Adapts to custom theme colors)
-  // ---------------------------------------------------------
   return (
     <section className={`${isSmall ? 'py-14 px-4' : 'py-20 px-6'} relative overflow-hidden`}>
       <div className="max-w-5xl mx-auto">

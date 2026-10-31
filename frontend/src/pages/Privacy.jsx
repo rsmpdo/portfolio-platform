@@ -190,7 +190,6 @@ export default function Privacy() {
             ))}
           </div>
 
-          {/* Sections Stream */}
           <div className="space-y-8">
             {sections.map((section) => (
               <section

@@ -39,7 +39,6 @@ const LayoutSchema = new mongoose.Schema(
       hideBranding: { type: Boolean, default: false },
       showResumeDownload: { type: Boolean, default: true }
     },
-    // Creator Analytics Tracking (Views, Unique Visitors, ATS Resume Downloads)
     analytics: {
       views: { type: Number, default: 0 },
       uniqueVisitors: { type: Number, default: 0 },
@@ -59,7 +58,6 @@ const LayoutSchema = new mongoose.Schema(
         }
       ]
     },
-    // Dynamic array of layout components (schema-less / mixed objects for full design flexibility)
     components: [
       {
         id: { type: String, required: true },
@@ -85,7 +83,6 @@ const LayoutSchema = new mongoose.Schema(
         title: String,
         order: { type: Number, default: 0 },
         isVisible: { type: Boolean, default: true },
-        // Schema-less props object for component-specific configurations
         props: {
           type: mongoose.Schema.Types.Mixed,
           default: {}
@@ -94,22 +91,21 @@ const LayoutSchema = new mongoose.Schema(
     ],
     isPublished: {
       type: Boolean,
-      default: false, // Users must explicitly publish their portfolio
+      default: false,
       index: true
     },
     isBanned: {
       type: Boolean,
-      default: false, // Admin can ban a portfolio independently of publish status
+      default: false,
       index: true
     }
   },
   {
     timestamps: true,
-    strict: false // Allows dynamic top-level metadata if needed
+    strict: false
   }
 );
 
-// Compound index for fast handle lookup and publishing/ban filter
 LayoutSchema.index({ handle: 1, isPublished: 1, isBanned: 1 });
 LayoutSchema.index({ userId: 1, updatedAt: -1 });
 

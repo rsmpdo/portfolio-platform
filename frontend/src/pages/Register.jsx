@@ -75,7 +75,6 @@ export default function Register() {
         <div className="w-full max-w-5xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-            {/* Left - Value Pitch */}
             <div className="hidden lg:block">
               <h1 className="font-heading font-black text-5xl text-white leading-tight mb-6">
                 Start building<br />
@@ -95,7 +94,6 @@ export default function Register() {
                 ))}
               </div>
 
-              {/* Social proof */}
               <div className="mt-12 glass rounded-2xl p-5 border border-white/[0.06]">
                 <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
@@ -183,7 +181,6 @@ export default function Register() {
                     </div>
                   </div>
 
-                  {/* Optional Admin Registration Checkbox */}
                   <div className="pt-2">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input

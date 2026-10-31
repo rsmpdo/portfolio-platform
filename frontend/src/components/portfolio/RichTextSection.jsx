@@ -1,10 +1,6 @@
 import React, { useMemo } from 'react';
 import { Quote, FileCode, Check, Copy } from 'lucide-react';
 
-/**
- * Lightweight, zero-dependency Markdown parser designed for portfolio case studies.
- * Safely parses Headings, Blockquotes, Code Blocks, Inline Code, Lists, Bold, Italic, and Links.
- */
 function parseCustomMarkdown(rawMarkdown = '') {
   if (!rawMarkdown || typeof rawMarkdown !== 'string') return [];
 
@@ -16,7 +12,6 @@ function parseCustomMarkdown(rawMarkdown = '') {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // Code block toggle (```lang)
     if (line.trim().startsWith('```')) {
       if (currentCodeBlock) {
         blocks.push(currentCodeBlock);
@@ -32,13 +27,11 @@ function parseCustomMarkdown(rawMarkdown = '') {
       continue;
     }
 
-    // Inside code block
     if (currentCodeBlock) {
       currentCodeBlock.lines.push(line);
       continue;
     }
 
-    // Unordered list item (- or *)
     const ulMatch = line.match(/^\s*[-*]\s+(.*)$/);
     if (ulMatch) {
       if (!currentList || currentList.type !== 'ul') {
@@ -49,7 +42,6 @@ function parseCustomMarkdown(rawMarkdown = '') {
       continue;
     }
 
-    // Ordered list item (1. 2.)
     const olMatch = line.match(/^\s*(\d+)\.\s+(.*)$/);
     if (olMatch) {
       if (!currentList || currentList.type !== 'ol') {
@@ -60,26 +52,22 @@ function parseCustomMarkdown(rawMarkdown = '') {
       continue;
     }
 
-    // Close list if line is not a list item
     if (currentList) {
       blocks.push(currentList);
       currentList = null;
     }
 
-    // Horizontal Rule (--- or ***)
     if (/^(\*\*\*|---|___)$/.test(line.trim())) {
       blocks.push({ type: 'hr' });
       continue;
     }
 
-    // Blockquote (> text)
     if (line.trim().startsWith('>')) {
       const quoteText = line.replace(/^>\s?/, '');
       blocks.push({ type: 'quote', text: quoteText });
       continue;
     }
 
-    // Headings (##, ###, ####)
     if (line.startsWith('#### ')) {
       blocks.push({ type: 'h4', text: line.replace('#### ', '') });
       continue;
@@ -97,12 +85,10 @@ function parseCustomMarkdown(rawMarkdown = '') {
       continue;
     }
 
-    // Empty line
     if (!line.trim()) {
       continue;
     }
 
-    // Standard paragraph
     blocks.push({ type: 'p', text: line });
   }
 
@@ -112,19 +98,13 @@ function parseCustomMarkdown(rawMarkdown = '') {
   return blocks;
 }
 
-/**
- * Inline text formatter for bold, italic, inline code, and links.
- */
 function renderInlineFormatting(text = '') {
   if (!text) return null;
 
-  // Split tokens safely
-  // Regex matches: [link](url) | `code` | **bold** | *italic*
   const pattern = /(\[[^\]]+\]\([^)]+\)|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
   const parts = text.split(pattern);
 
   return parts.map((part, index) => {
-    // Link [label](url)
     const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (linkMatch) {
       return (
@@ -140,7 +120,6 @@ function renderInlineFormatting(text = '') {
       );
     }
 
-    // Inline code `code`
     if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
       return (
         <code
@@ -152,7 +131,6 @@ function renderInlineFormatting(text = '') {
       );
     }
 
-    // Bold **text**
     if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
       return (
         <strong key={index} className="font-bold text-white">
@@ -161,7 +139,6 @@ function renderInlineFormatting(text = '') {
       );
     }
 
-    // Italic *text*
     if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
       return (
         <em key={index} className="italic text-slate-300">
@@ -186,7 +163,6 @@ function CodeBlock({ language, lines = [] }) {
 
   return (
     <div className="my-6 rounded-2xl overflow-hidden glass border border-white/10 bg-slate-950/80 shadow-2xl">
-      {/* Code window titlebar */}
       <div className="flex items-center justify-between px-4 py-2.5 bg-white/[0.03] border-b border-white/[0.06] text-xs">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
@@ -210,7 +186,6 @@ function CodeBlock({ language, lines = [] }) {
         </button>
       </div>
 
-      {/* Code content */}
       <pre className="p-4 sm:p-5 overflow-x-auto text-xs font-mono leading-relaxed text-slate-200">
         <code>{codeString}</code>
       </pre>
@@ -254,7 +229,6 @@ export default function RichTextSection({ props = {}, theme = {} }) {
           </div>
         )}
 
-        {/* Prose Body */}
         <div className="space-y-4 text-slate-300 text-sm md:text-base leading-relaxed">
           {parsedBlocks.map((block, idx) => {
             switch (block.type) {

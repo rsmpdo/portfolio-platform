@@ -54,7 +54,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
     setMessageSent(false);
   }, [creator]);
 
-  // Support deep-linking to a specific project via ?project=id
   useEffect(() => {
     const projId = searchParams.get('project');
     if (projId && creator?.projects) {
@@ -122,7 +121,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
       className="min-h-screen text-slate-100 flex flex-col transition-colors duration-300"
       style={{ backgroundColor: creator.bgColor || '#050811' }}
     >
-      {/* Top Showcase Bar (Separate from Editor Templates) */}
       <nav className="fixed top-0 left-0 right-0 z-40">
         <div className="mx-4 md:mx-8 mt-4">
           <div className="glass-dark rounded-2xl px-4 md:px-6 h-14 flex items-center justify-between shadow-2xl border border-white/10">
@@ -145,7 +143,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
               </div>
             </div>
 
-            {/* Creator Switcher Pills */}
             <div className="hidden lg:flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-white/10">
               {SHOWCASE_CREATORS.map((c) => {
                 const isActive = c.handle === creator.handle;
@@ -178,7 +175,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
         </div>
       </nav>
 
-      {/* Main Showcase Portfolio Content */}
       <main className="flex-1 pt-28 pb-20">
         {/* Hero Section */}
         <section className="relative px-6 py-16 md:py-24 overflow-hidden">
@@ -293,7 +289,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
           </div>
         </section>
 
-        {/* Key Metrics Strip */}
         <section className="px-6 py-10 border-y border-white/[0.06] bg-white/[0.01]">
           <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
             {creator.stats.map((stat, idx) => (
@@ -315,7 +310,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
           </div>
         </section>
 
-        {/* Featured Showcase Projects (Deep Production Case Studies) */}
         <section id="showcase-projects" className="px-6 py-20">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
@@ -373,7 +367,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                         {proj.summary}
                       </p>
 
-                      {/* Mini KPI strip inside card */}
                       {proj.metrics && (
                         <div className="grid grid-cols-2 gap-2 mb-4 p-3 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
                           {proj.metrics.slice(0, 2).map((m, mIdx) => (
@@ -428,7 +421,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
         {/* Experience & Skills Grid */}
         <section className="px-6 py-16 border-t border-white/[0.06]">
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Experience Timeline */}
             <div className="lg:col-span-7 space-y-6">
               <h3 className="font-heading font-bold text-2xl text-white">
                 Experience & Leadership
@@ -464,7 +456,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
               </div>
             </div>
 
-            {/* Skills & Competencies */}
             <div className="lg:col-span-5 space-y-6">
               <h3 className="font-heading font-bold text-2xl text-white">
                 Core Specialties & Stack
@@ -490,7 +481,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                 </div>
               </div>
 
-              {/* Availability & Advisory Rate Card */}
               <div className="p-6 rounded-2xl glass border border-white/[0.08] space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -512,7 +502,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
           </div>
         </section>
 
-        {/* Full Dedicated Contact Section with Direct Contact Details & Form */}
         <section id="showcase-contact" className="px-6 py-20 border-t border-white/[0.08]">
           <div className="max-w-6xl mx-auto">
             <div className="text-center max-w-2xl mx-auto mb-14">
@@ -532,9 +521,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Left Column: Complete Contact Information Cards */}
               <div className="lg:col-span-5 space-y-4">
-                {/* Direct Email Card */}
                 <div className="p-5 rounded-2xl glass border border-white/10 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div
@@ -574,7 +561,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </button>
                 </div>
 
-                {/* Direct Phone / Studio Line Card */}
                 <div className="p-5 rounded-2xl glass border border-white/10 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div
@@ -613,7 +599,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </button>
                 </div>
 
-                {/* Location & Timezone Card */}
                 <div className="p-5 rounded-2xl glass border border-white/10 flex items-center gap-3.5">
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
@@ -633,7 +618,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 </div>
 
-                {/* Personal Website & Social Profiles */}
                 <div className="p-5 rounded-2xl glass border border-white/10 space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -666,7 +650,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                 </div>
               </div>
 
-              {/* Right Column: Interactive Direct Project Inquiry Form */}
               <div className="lg:col-span-7 glass-card gradient-border rounded-3xl p-6 sm:p-8 border border-white/10">
                 <h3 className="font-heading font-bold text-2xl text-white mb-2">
                   Send a Direct Message to {creator.name.split(' ')[0]}
@@ -799,7 +782,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
         </section>
       </main>
 
-      {/* Comprehensive Multi-Section Production Case Study Modal */}
       <AnimatePresence>
         {selectedProject && (
           <motion.div
@@ -864,7 +846,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                 </div>
               </div>
 
-              {/* Interactive Gallery Thumbnails Strip */}
               {selectedProject.gallery && selectedProject.gallery.length > 1 && (
                 <div className="px-6 sm:px-8 py-4 bg-slate-950/80 border-b border-white/10 flex items-center gap-3 overflow-x-auto">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 shrink-0">
@@ -891,7 +872,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                 </div>
               )}
 
-              {/* Project Metadata Strip (Client, Role, Timeline, Team) */}
               <div className="px-6 sm:px-8 py-4 bg-white/[0.02] border-b border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                 <div>
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
@@ -923,9 +903,7 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                 </div>
               </div>
 
-              {/* Case Study Body */}
               <div className="p-6 sm:p-8 space-y-8">
-                {/* 4 KPI Metric Cards */}
                 {selectedProject.metrics && (
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3 flex items-center gap-1.5">
@@ -954,7 +932,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 )}
 
-                {/* Executive Overview */}
                 {selectedProject.overview && (
                   <div className="space-y-3">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -966,7 +943,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 )}
 
-                {/* The Challenge & The Solution */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/20 space-y-2">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-rose-400">
@@ -986,7 +962,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 </div>
 
-                {/* 4-Step Architecture & Execution Process */}
                 {selectedProject.process && (
                   <div className="space-y-4">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -1013,7 +988,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 )}
 
-                {/* Key Deliverables */}
                 {selectedProject.deliverables && (
                   <div className="space-y-3">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -1036,7 +1010,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 )}
 
-                {/* Client Testimonial Quote */}
                 {selectedProject.testimonial && (
                   <div
                     className="p-6 rounded-2xl border relative overflow-hidden"
@@ -1064,7 +1037,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 )}
 
-                {/* Technologies & Stack */}
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">
                     Technologies, Tools & Stack
@@ -1081,7 +1053,6 @@ export default function ShowcasePortfolio({ overrideHandle = null }) {
                   </div>
                 </div>
 
-                {/* Modal Footer: Switch to other projects or Close */}
                 <div className="pt-5 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-slate-400">More by {creator.name.split(' ')[0]}:</span>

@@ -14,18 +14,16 @@ export default function Editor() {
   const { activeLayout, userPortfolios, selectedComponentId, isSaving, saveSuccess, loading, error, past = [], future = [] } = useSelector((state) => state.layout);
   const [viewportMode, setViewportMode] = useState('desktop');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
-  const [mobilePanel, setMobilePanel] = useState(null); // null | 'sidebar' | 'inspector'
+  const [mobilePanel, setMobilePanel] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fetch the user's layout and apply any requested ?template=
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const layoutId = params.get('id');
     const templateId = params.get('template');
 
     dispatch(fetchUserLayout({ layoutId, templateId })).then((res) => {
-      // If a template was requested, auto-save it to MongoDB so it persists across reloads
       if (res.payload?.templateId && templateLayouts[res.payload.templateId]) {
         const { layout, templateId: tId } = res.payload;
         const template = templateLayouts[tId];
@@ -49,7 +47,6 @@ export default function Editor() {
           };
           dispatch(saveUserLayout(persistedLayout));
         }
-        // Clean URL query silently without re-triggering React Router navigation
         window.history.replaceState(null, '', layoutId ? `/editor?id=${layoutId}` : '/editor');
       }
     });
@@ -57,7 +54,6 @@ export default function Editor() {
     dispatch(fetchUserPortfolios());
   }, [dispatch, location.search]);
 
-  // Global Undo / Redo keyboard shortcuts (Ctrl+Z, Ctrl+Y, Cmd+Z, Cmd+Shift+Z)
   useEffect(() => {
     const handleKeyDown = (e) => {
       const target = e.target;
@@ -101,7 +97,6 @@ export default function Editor() {
     dispatch(fetchUserPortfolios());
   };
 
-  // Resolve editor theme from the active template and user custom colors
   const theme = activeLayout?.theme || {};
   const templateId = theme.templateId;
   const editorTheme = (templateId && templateLayouts[templateId]?.editorTheme) || null;
@@ -242,7 +237,6 @@ export default function Editor() {
           </div>
 
           <div className="h-5 w-px bg-white/10 hidden sm:block" />
-          {/* Undo / Redo History Controls */}
           <div className="flex items-center glass p-1 rounded-xl">
             <button
               type="button"
@@ -382,7 +376,7 @@ export default function Editor() {
                     <span className="text-[10px] font-bold text-slate-400 tracking-wider">5G</span>
                   </div>
 
-                  <div 
+                  <div
                     className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] portfolio-theme-root transition-colors duration-300"
                     style={themeCssVariables}
                   >
@@ -419,7 +413,7 @@ export default function Editor() {
                     <div className="w-2.5 h-2.5 rounded-full bg-slate-950 border border-slate-700/60" />
                   </div>
 
-                  <div 
+                  <div
                     className="w-full overflow-x-hidden overflow-y-auto max-h-[calc(100vh-240px)] portfolio-theme-root transition-colors duration-300"
                     style={themeCssVariables}
                   >
@@ -451,7 +445,7 @@ export default function Editor() {
                   </div>
                 </div>
               ) : (
-                <div 
+                <div
                   className="w-full max-w-6xl mx-auto portfolio-theme-root rounded-3xl p-4 md:p-8 transition-colors duration-300 shadow-2xl"
                   style={themeCssVariables}
                 >

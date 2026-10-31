@@ -7,9 +7,7 @@ const User = require('../models/User');
 
 const PLAN_AMOUNTS = { pro: 12, studio: 29 };
 
-// @route   POST /api/payment/submit
-// @desc    Submit a manual payment request with national ID and payment slip
-// @access  Private
+// /api/payment/submit
 router.post(
   '/submit',
   passport.authenticate('jwt', { session: false }),
@@ -38,7 +36,6 @@ router.post(
         return res.status(400).json({ success: false, message: 'Both National ID and Payment Slip uploads are required.' });
       }
 
-      // Check for an existing pending request for the same plan
       const existingPending = await PaymentRequest.findOne({ userId: user._id, plan, status: 'pending' });
       if (existingPending) {
         return res.status(409).json({
@@ -74,9 +71,7 @@ router.post(
   }
 );
 
-// @route   GET /api/payment/my-requests
-// @desc    Get all payment requests submitted by the logged-in user
-// @access  Private
+// /api/payment/my-requests
 router.get(
   '/my-requests',
   passport.authenticate('jwt', { session: false }),
@@ -90,9 +85,7 @@ router.get(
   }
 );
 
-// @route   GET /api/payment/history
-// @desc    Get approved payment history for user (billing history)
-// @access  Private
+// /api/payment/history
 router.get(
   '/history',
   passport.authenticate('jwt', { session: false }),

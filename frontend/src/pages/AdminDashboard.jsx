@@ -41,20 +41,17 @@ function AdminMessagesSection() {
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Filters for Recipient Contact Analytics Table
-  const [statTypeFilter, setStatTypeFilter] = useState('all'); // 'all' | 'user' | 'showcase' | 'platform'
+  const [statTypeFilter, setStatTypeFilter] = useState('all');
   const [statSearch, setStatSearch] = useState('');
 
-  // Filters for Chronological Contact Events Log
-  const [msgReadFilter, setMsgReadFilter] = useState('all'); // 'all' | 'unread' | 'read'
-  const [msgTypeFilter, setMsgTypeFilter] = useState('all'); // 'all' | 'user' | 'showcase' | 'platform'
+  const [msgReadFilter, setMsgReadFilter] = useState('all');
+  const [msgTypeFilter, setMsgTypeFilter] = useState('all');
   const [msgSearch, setMsgSearch] = useState('');
 
   // Delete Message Popup Modal State
   const [deleteMsgTarget, setDeleteMsgTarget] = useState(null);
   const [deletingMsg, setDeletingMsg] = useState(false);
 
-  // Password Authorization State for Message Bodies
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [unlockedBodies, setUnlockedBodies] = useState({});
   const [showUnlockModal, setShowUnlockModal] = useState(false);
@@ -706,7 +703,7 @@ function JobApplicationsSection() {
   const [updatingId, setUpdatingId] = useState(null);
 
   // Filters for Job Applications & CVs
-  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'pending' | 'reviewed' | 'shortlisted' | 'rejected'
+  const [statusFilter, setStatusFilter] = useState('all');
   const [deptFilter, setDeptFilter] = useState('all');
   const [cvSearch, setCvSearch] = useState('');
 
@@ -1040,7 +1037,6 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  // Active Section ('users' | 'portfolios' | 'messages' | 'payments' | 'careers') - No 'all' section
   const [activeTab, setActiveTab] = useState('users');
 
   const [stats, setStats] = useState(null);
@@ -1050,19 +1046,17 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
   const [actionMessage, setActionMessage] = useState('');
 
-  // Section 1: User Accounts & Plan Control Filters & Selected User Inspector
-  const [userPlanFilter, setUserPlanFilter] = useState('all'); // 'all' | 'free' | 'pro' | 'studio'
-  const [userRoleFilter, setUserRoleFilter] = useState('all'); // 'all' | 'standard' | 'admin'
+  const [userPlanFilter, setUserPlanFilter] = useState('all');
+  const [userRoleFilter, setUserRoleFilter] = useState('all');
   const [userSearch, setUserSearch] = useState('');
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  // Section 2: Portfolio Content Moderation Filters
-  const [layoutStatusFilter, setLayoutStatusFilter] = useState('all'); // 'all' | 'published' | 'unpublished' | 'banned' | 'showcase'
+  const [layoutStatusFilter, setLayoutStatusFilter] = useState('all');
   const [layoutSearch, setLayoutSearch] = useState('');
 
   // Section 4: Manual Payment Requests Filters
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState('all'); // 'all' | 'pending' | 'approved' | 'rejected'
-  const [paymentPlanFilter, setPaymentPlanFilter] = useState('all'); // 'all' | 'pro' | 'studio'
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState('all');
+  const [paymentPlanFilter, setPaymentPlanFilter] = useState('all');
   const [paymentSearch, setPaymentSearch] = useState('');
 
   // Warning Modal State
@@ -1070,19 +1064,16 @@ export default function AdminDashboard() {
   const [warningMessage, setWarningMessage] = useState('');
   const [sendingWarn, setSendingWarn] = useState(false);
 
-  // Payment Requests State
   const [paymentRequests, setPaymentRequests] = useState([]);
-  const [reviewingRequest, setReviewingRequest] = useState(null); // { id, action: 'approve'|'reject' }
+  const [reviewingRequest, setReviewingRequest] = useState(null);
   const [reviewNote, setReviewNote] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
 
-  // Admin Password Authorization Modal State for Delete User & Delete Portfolio
-  const [adminAuthModal, setAdminAuthModal] = useState(null); // { type: 'delete-user' | 'delete-layout', targetUser?, targetLayout? }
+  const [adminAuthModal, setAdminAuthModal] = useState(null);
   const [adminAuthPassword, setAdminAuthPassword] = useState('');
   const [adminAuthError, setAdminAuthError] = useState('');
   const [adminAuthLoading, setAdminAuthLoading] = useState(false);
 
-  // Ban / Unban Portfolio Modal State (collects message to email to user)
   const [banModalTarget, setBanModalTarget] = useState(null);
   const [banMessage, setBanMessage] = useState('');
   const [togglingBanId, setTogglingBanId] = useState(null);

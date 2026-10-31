@@ -22,16 +22,13 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
   const textColor = theme.textColor;
   const textMutedColor = theme.textMutedColor;
 
-  // ---------------------------------------------------------
-  // 1. MINIMALIST EDITORIAL (Brutalist, Sharp, High Contrast)
-  // ---------------------------------------------------------
   if (templateId === 'minimalist-editorial') {
     return (
       <section className={`${isMobile ? 'min-h-[auto] px-4 pt-12 pb-8' : isTablet ? 'min-h-[auto] px-6 pt-16 pb-12' : 'min-h-[80vh] px-6 pt-32 pb-16'} flex flex-col justify-center border-b-8`} style={{ borderColor: primaryColor }}>
         <div className="max-w-7xl mx-auto w-full">
-          <motion.h1 
-            initial={{ y: 50, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
+          <motion.h1
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             className={`font-serif font-black ${isMobile ? 'text-4xl' : isTablet ? 'text-6xl' : 'text-6xl md:text-8xl lg:text-[10rem]'} leading-[0.9] tracking-tighter mb-6 uppercase`}
             style={textColor ? { color: textColor } : undefined}
           >
@@ -52,9 +49,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 2. DARK CYBER (Terminal, Matrix, Glow)
-  // ---------------------------------------------------------
   if (templateId === 'dark-cyber') {
     return (
       <section className={`relative ${isSmall ? 'min-h-[auto] pt-12 pb-10 px-4' : 'min-h-[85vh] pt-20 pb-16 px-6'} flex items-center overflow-hidden font-mono`} style={{ color: primaryColor }}>
@@ -79,9 +73,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 3. CREATIVE DIRECTOR (Full Bleed, Overlay, Bold)
-  // ---------------------------------------------------------
   if (templateId === 'creative-director') {
     return (
       <section className={`relative ${isSmall ? 'min-h-[auto] px-4 pt-16 pb-12' : 'min-h-[100vh] px-6 pt-32 pb-20'} flex items-center overflow-hidden`}>
@@ -110,9 +101,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 4. INTERACTIVE SHOWCASE (Floating Glass, Glow)
-  // ---------------------------------------------------------
   if (templateId === 'interactive-showcase') {
     return (
       <section className={`relative ${isSmall ? 'min-h-[auto] pt-16 pb-12 px-4' : 'min-h-[90vh] pt-32 pb-16 px-6'} flex items-center overflow-hidden`}>
@@ -137,15 +125,12 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 5. LUXURY MOTION PRO (Serif, Elegant, Cinematic)
-  // ---------------------------------------------------------
   if (templateId === 'luxury-motion-pro') {
     return (
       <section className={`relative ${isSmall ? 'min-h-[auto] pt-16 pb-12 px-4' : 'min-h-[100vh] pt-32 pb-16 px-6'} flex items-center overflow-hidden`}>
         <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full blur-[120px] pointer-events-none" style={{ backgroundColor: `${primaryColor}15` }} />
-        
+
         <div className="max-w-6xl mx-auto text-center relative z-10 w-full flex flex-col items-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease: "easeOut" }} className="w-full">
             <h1 className={`font-serif ${isMobile ? 'text-3xl' : isTablet ? 'text-5xl' : 'text-6xl md:text-8xl'} text-transparent bg-clip-text mb-6 leading-[1.1] tracking-tight drop-shadow-sm`} style={{ backgroundImage: `linear-gradient(180deg, ${textColor || '#f3e5ab'}, ${primaryColor}, ${secondaryColor})` }}>
@@ -171,9 +156,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 6. FINTECH SAAS PRO (Clean, Dashboard, Enterprise)
-  // ---------------------------------------------------------
   if (templateId === 'fintech-saas-pro') {
     return (
       <section className={`${isSmall ? 'min-h-[auto] pt-12 pb-10 px-4' : 'min-h-[80vh] pt-32 pb-16 px-6'} border-b border-white/10 overflow-hidden relative`}>
@@ -205,9 +187,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 7. AI NEURAL LABS PRO (Dark, Code-like, Node Graph)
-  // ---------------------------------------------------------
   if (templateId === 'ai-neural-labs-pro') {
     return (
       <section className={`relative ${isSmall ? 'min-h-[auto] pt-14 pb-12 px-4' : 'min-h-[85vh] pt-32 pb-16 px-6'} flex items-center overflow-hidden`}>
@@ -242,9 +221,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 8. GLOBAL AGENCY STUDIO (Bold, Split Screen, Type heavy)
-  // ---------------------------------------------------------
   if (templateId === 'global-agency-studio') {
     return (
       <section className={`${isSmall ? 'min-h-[auto] flex-col' : 'min-h-[90vh] flex-col md:flex-row'} flex relative overflow-hidden`}>
@@ -276,9 +252,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 9. HAUTE COUTURE STUDIO (Fashion, Asymmetric, Minimal)
-  // ---------------------------------------------------------
   if (templateId === 'haute-couture-studio') {
     return (
       <section className={`relative ${isSmall ? 'min-h-[auto] pt-14 pb-12 px-4' : 'min-h-[100vh] pt-24 pb-16 px-6'} flex flex-col items-center text-center overflow-hidden`}>
@@ -308,9 +281,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // 10. SPATIAL ARCHITECT STUDIO (Blueprint, Technical, Wide)
-  // ---------------------------------------------------------
   if (templateId === 'spatial-architect-studio') {
     return (
       <section className={`relative ${isSmall ? 'min-h-[auto] pt-14 pb-12 px-4' : 'min-h-[90vh] pt-32 pb-16 px-6'} flex items-center overflow-hidden`}>
@@ -337,9 +307,6 @@ export default function HeroBanner({ props = {}, templateId, viewportMode, theme
     );
   }
 
-  // ---------------------------------------------------------
-  // FALLBACK (Original Default)
-  // ---------------------------------------------------------
   return (
     <section
       className={`relative flex items-center overflow-hidden ${

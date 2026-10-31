@@ -184,7 +184,6 @@ export default function Terms() {
             ))}
           </div>
 
-          {/* Sections Stream */}
           <div className="space-y-8">
             {sections.map((section) => (
               <section

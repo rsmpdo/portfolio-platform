@@ -28,7 +28,6 @@ const getClientUrl = () => {
   return 'https://portfoliocraftlk.vercel.app';
 };
 
-// Helper to verify Admin Password or Admin Secret Code
 const verifyAdminAuthPassword = async (req, password) => {
   if (!password || !String(password).trim()) return false;
   const trimmed = String(password).trim();
@@ -40,7 +39,6 @@ const verifyAdminAuthPassword = async (req, password) => {
   return false;
 };
 
-// Admin Auth Middleware
 const checkAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     return next();
@@ -48,9 +46,7 @@ const checkAdmin = (req, res, next) => {
   return res.status(403).json({ success: false, message: 'Administrator privileges required' });
 };
 
-// @route   GET /api/admin/stats
-// @desc    Get system-wide analytics & stats
-// @access  Private (Admin only)
+// /api/admin/stats
 router.get(
   '/stats',
   passport.authenticate('jwt', { session: false }),
@@ -82,9 +78,7 @@ router.get(
   }
 );
 
-// @route   GET /api/admin/users
-// @desc    Get list of all users
-// @access  Private (Admin only)
+// /api/admin/users
 router.get(
   '/users',
   passport.authenticate('jwt', { session: false }),
@@ -99,9 +93,7 @@ router.get(
   }
 );
 
-// @route   PUT /api/admin/user/:id/warn
-// @desc    Send moderation warning note email to user
-// @access  Private (Admin only)
+// /api/admin/user/:id/warn
 router.put(
   '/user/:id/warn',
   passport.authenticate('jwt', { session: false }),
@@ -136,9 +128,7 @@ router.put(
   }
 );
 
-// @route   PUT /api/admin/user/:id/plan
-// @desc    Change user plan (free, pro, studio)
-// @access  Private (Admin only)
+// /api/admin/user/:id/plan
 router.put(
   '/user/:id/plan',
   passport.authenticate('jwt', { session: false }),
@@ -165,9 +155,7 @@ router.put(
   }
 );
 
-// @route   DELETE /api/admin/user/:id
-// @desc    Delete user and their layout (Requires Admin password authorization)
-// @access  Private (Admin only)
+// /api/admin/user/:id
 router.delete(
   '/user/:id',
   passport.authenticate('jwt', { session: false }),
@@ -199,9 +187,7 @@ router.delete(
   }
 );
 
-// @route   GET /api/admin/layouts
-// @desc    Get all portfolio layouts for moderation
-// @access  Private (Admin only)
+// /api/admin/layouts
 router.get(
   '/layouts',
   passport.authenticate('jwt', { session: false }),
@@ -216,9 +202,7 @@ router.get(
   }
 );
 
-// @route   PUT /api/admin/layout/:id/toggle-publish
-// @desc    Admin toggle layout publication status (does NOT ban)
-// @access  Private (Admin only)
+// /api/admin/layout/:id/toggle-publish
 router.put(
   '/layout/:id/toggle-publish',
   passport.authenticate('jwt', { session: false }),
@@ -244,9 +228,7 @@ router.put(
   }
 );
 
-// @route   PUT /api/admin/layout/:id/toggle-ban
-// @desc    Admin ban/unban an inappropriate portfolio and email owner with message
-// @access  Private (Admin only)
+// /api/admin/layout/:id/toggle-ban
 router.put(
   '/layout/:id/toggle-ban',
   passport.authenticate('jwt', { session: false }),
@@ -268,7 +250,6 @@ router.put(
         { new: true }
       ).populate('userId', 'username fullName email role plan');
 
-      // Send branded email notification to the portfolio owner
       const owner = updatedLayout.userId;
       if (owner && owner.email) {
         try {
@@ -317,9 +298,7 @@ router.put(
   }
 );
 
-// @route   DELETE /api/admin/layout/:id
-// @desc    Admin delete a portfolio layout (Requires Admin password authorization)
-// @access  Private (Admin only)
+// /api/admin/layout/:id
 router.delete(
   '/layout/:id',
   passport.authenticate('jwt', { session: false }),
@@ -352,14 +331,7 @@ router.delete(
   }
 );
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MANUAL PAYMENT REQUEST REVIEW ROUTES
-// ─────────────────────────────────────────────────────────────────────────────
-
-// @route   GET /api/admin/payment-requests
-// @desc    Get all manual payment requests (all statuses)
-// @access  Private (Admin only)
+// /api/admin/payment-requests
 router.get(
   '/payment-requests',
   passport.authenticate('jwt', { session: false }),
@@ -376,9 +348,7 @@ router.get(
   }
 );
 
-// @route   PUT /api/admin/payment-request/:id/approve
-// @desc    Approve a payment request - upgrades user plan and notifies them
-// @access  Private (Admin only)
+// /api/admin/payment-request/:id/approve
 router.put(
   '/payment-request/:id/approve',
   passport.authenticate('jwt', { session: false }),
@@ -393,7 +363,6 @@ router.put(
         return res.status(400).json({ success: false, message: `This request is already ${request.status}` });
       }
 
-      // Upgrade the user's plan
       const user = await User.findById(request.userId);
       if (!user) {
         return res.status(404).json({ success: false, message: 'User not found' });
@@ -401,14 +370,12 @@ router.put(
       user.plan = request.plan;
       await user.save();
 
-      // Mark request approved
       request.status = 'approved';
       request.adminNote = req.body.adminNote || 'Your payment has been verified and your plan has been upgraded.';
       request.reviewedAt = new Date();
       request.reviewedBy = req.user._id;
       await request.save();
 
-      // Send approval email
       try {
         const clientUrl = getClientUrl(req);
         const noteMsg = req.body.adminNote ? `\n\nNote from Admin: "${req.body.adminNote}"` : '';
@@ -441,9 +408,7 @@ router.put(
   }
 );
 
-// @route   PUT /api/admin/payment-request/:id/reject
-// @desc    Reject a payment request - notifies user with reason
-// @access  Private (Admin only)
+// /api/admin/payment-request/:id/reject
 router.put(
   '/payment-request/:id/reject',
   passport.authenticate('jwt', { session: false }),
@@ -466,7 +431,6 @@ router.put(
       request.reviewedBy = req.user._id;
       await request.save();
 
-      // Send rejection email
       try {
         const user = await User.findById(request.userId);
         if (user) {

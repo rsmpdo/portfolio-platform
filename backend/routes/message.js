@@ -28,9 +28,7 @@ const SHOWCASE_DIRECTORY = {
   }
 };
 
-// @route   POST /api/messages
-// @desc    Submit a new contact message (Public)
-// @access  Public
+// /api/messages
 router.post('/', async (req, res) => {
   try {
     const {
@@ -57,7 +55,6 @@ router.post('/', async (req, res) => {
     const isShowcaseHandle = Boolean(SHOWCASE_DIRECTORY[cleanHandle]);
     let targetUserId = recipientUserId || null;
 
-    // Resolve user ID from portfolio handle if it's a user portfolio (not a standalone showcase handle)
     if (!targetUserId && cleanHandle && !isShowcaseHandle) {
       const layout = await Layout.findOne({ handle: cleanHandle });
       if (layout) {
@@ -93,9 +90,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// @route   GET /api/messages/me
-// @desc    Get received messages for logged-in user (Owner sees full message)
-// @access  Private
+// /api/messages/me
 router.get(
   '/me',
   passport.authenticate('jwt', { session: false }),
@@ -116,9 +111,7 @@ router.get(
   }
 );
 
-// @route   GET /api/messages/admin
-// @desc    Get privacy-preserving contact analytics & metadata log for Admin (NO raw message content exposed)
-// @access  Private (Admin)
+// /api/messages/admin
 router.get(
   '/admin',
   passport.authenticate('jwt', { session: false }),
@@ -132,7 +125,6 @@ router.get(
         .sort({ createdAt: -1 })
         .populate('recipientUserId', 'username email plan');
 
-      // Seed map with the 3 Showcase creators so Admin always sees their contact stats
       const statsMap = {};
       Object.entries(SHOWCASE_DIRECTORY).forEach(([handle, info]) => {
         const key = `showcase:${handle}`;
@@ -240,7 +232,6 @@ router.get(
         }))
         .sort((a, b) => b.totalContacts - a.totalContacts);
 
-      // Build privacy-safe contact activity log (NO full message body!)
       const sanitizedLogs = rawMessages.map((m) => {
         let handle = (m.recipientHandle || '').toLowerCase().trim();
         if (handle === 'demo') handle = 'marcus';
@@ -270,7 +261,6 @@ router.get(
           subject: m.subject || 'Portfolio Contact Inquiry',
           isRead: m.isRead,
           createdAt: m.createdAt
-          // Note: `message` content is intentionally omitted for privacy!
         };
       });
 
@@ -289,9 +279,7 @@ router.get(
   }
 );
 
-// @route   POST /api/messages/admin/unlock
-// @desc    Verify Admin password or Admin Secret Code to unlock private message bodies
-// @access  Private (Admin)
+// /api/messages/admin/unlock
 router.post(
   '/admin/unlock',
   passport.authenticate('jwt', { session: false }),
@@ -312,12 +300,10 @@ router.post(
       const trimmed = password.trim();
       let isAuthorized = false;
 
-      // 1. Check if it matches ADMIN_SECRET
       if (trimmed === ADMIN_SECRET) {
         isAuthorized = true;
       }
 
-      // 2. Or check if it matches the logged-in Admin user's account password
       if (!isAuthorized) {
         const adminUser = await User.findById(req.user._id).select('+password');
         if (adminUser && (await adminUser.matchPassword(trimmed))) {
@@ -349,9 +335,7 @@ router.post(
   }
 );
 
-// @route   GET /api/messages/:id/read
-// @desc    Toggle or set isRead state of a message
-// @access  Private
+// /api/messages/:id/read
 router.get(
   '/:id/read',
   passport.authenticate('jwt', { session: false }),
@@ -360,7 +344,6 @@ router.get(
       const msg = await Message.findById(req.params.id);
       if (!msg) return res.status(404).json({ success: false, message: 'Message not found' });
 
-      // Check ownership or admin
       if (String(msg.recipientUserId) !== String(req.user._id) && req.user.role !== 'admin') {
         return res.status(403).json({ success: false, message: 'Unauthorized' });
       }
@@ -375,9 +358,7 @@ router.get(
   }
 );
 
-// @route   DELETE /api/messages/:id
-// @desc    Delete a message log entry
-// @access  Private
+// /api/messages/:id
 router.delete(
   '/:id',
   passport.authenticate('jwt', { session: false }),
@@ -386,7 +367,6 @@ router.delete(
       const msg = await Message.findById(req.params.id);
       if (!msg) return res.status(404).json({ success: false, message: 'Message not found' });
 
-      // Check ownership or admin
       if (String(msg.recipientUserId) !== String(req.user._id) && req.user.role !== 'admin') {
         return res.status(403).json({ success: false, message: 'Unauthorized' });
       }

@@ -39,9 +39,7 @@ export default function ExperienceTimeline({ props = {} }) {
           {subheading && <p className="text-slate-400 text-base max-w-lg mx-auto">{subheading}</p>}
         </div>
 
-        {/* Timeline */}
         <div className="relative">
-          {/* Center line */}
           <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500/50 via-purple-500/30 to-transparent" />
 
           <div className="space-y-8">
@@ -54,12 +52,10 @@ export default function ExperienceTimeline({ props = {} }) {
                 transition={{ duration: 0.5, delay: index * 0.12 }}
                 className="relative pl-20"
               >
-                {/* Timeline Dot */}
                 <div className="absolute left-[22px] top-6 z-10">
                   <div className="w-[13px] h-[13px] rounded-full border-[3px] border-indigo-500 bg-slate-950 shadow-lg shadow-indigo-500/30" />
                 </div>
 
-                {/* Card */}
                 <div className="glass-card gradient-border rounded-2xl p-7 group hover:bg-white/[0.04] transition-all">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
                     <div>

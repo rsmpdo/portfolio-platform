@@ -92,7 +92,6 @@ export default function Security() {
             ))}
           </div>
 
-          {/* Two-Factor Authentication (2FA) Spotlight Card */}
           <div className="p-6 sm:p-8 rounded-3xl glass-card gradient-border border border-indigo-500/30 space-y-6 mb-12">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -149,7 +148,6 @@ export default function Security() {
             </div>
           </div>
 
-          {/* Compliance & Standards */}
           <div className="p-6 sm:p-8 rounded-3xl glass border border-white/[0.08] space-y-6 mb-12">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
@@ -175,7 +173,6 @@ export default function Security() {
             </div>
           </div>
 
-          {/* Responsible Vulnerability Disclosure Program */}
           <div className="p-6 sm:p-8 rounded-3xl glass border border-white/[0.08] space-y-4 mb-12">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">

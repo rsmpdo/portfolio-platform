@@ -5,7 +5,6 @@ import { fetchCurrentUser, elevateToAdmin } from './store/authSlice';
 import Header from './components/common/Header';
 import { KeyRound, ShieldAlert, AlertCircle, Loader2, ArrowUp } from 'lucide-react';
 
-// Eagerly loaded public and marketing pages for instant navigation with zero loading delay
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -29,7 +28,6 @@ import VerifyEmail from './pages/VerifyEmail';
 import VerifyPending from './pages/VerifyPending';
 import PublicPortfolio from './pages/PublicPortfolio';
 
-// Heavy application modules loaded on demand
 const Editor = lazy(() => import('./pages/Editor'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ProfileSettings = lazy(() => import('./pages/ProfileSettings'));
@@ -151,12 +149,10 @@ function ScrollToTopAndBackToTopButton() {
   const { pathname } = useLocation();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
-  // Always scroll to top when switching between pages
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [pathname]);
 
-  // Show floating Go-to-Top arrow button when user scrolls down
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 300);
@@ -185,7 +181,6 @@ export default function App() {
   const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // Disable right click context menu site-wide
     const handleContextMenu = (e) => {
       e.preventDefault();
     };

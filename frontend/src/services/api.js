@@ -4,7 +4,6 @@ const API = axios.create({
   baseURL: '/api'
 });
 
-// Request interceptor to attach JWT token to header
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('portfolio_jwt_token');
   if (token) {

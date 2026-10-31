@@ -1,8 +1,5 @@
 import API from '../services/api';
 
-/**
- * Extracts structured ATS-friendly resume data from a portfolio layout.
- */
 export function extractResumeData(layout) {
   if (!layout) return null;
 
@@ -15,11 +12,9 @@ export function extractResumeData(layout) {
   const contact = comps.find((c) => c.type === 'ContactSection')?.props || {};
   const user = layout.userId || {};
 
-  // Extract name
   const rawHeadline = hero.headline || '';
   const cleanName = rawHeadline.replace(/^Hi,\s*I'm\s*/i, '').trim() || user.fullName || user.username || 'Creator Portfolio';
 
-  // Extract skills (from SkillsCloud, AboutMe, or defaults)
   let skillsList = [];
   if (Array.isArray(skillsComp.skills) && skillsComp.skills.length > 0) {
     skillsList = skillsComp.skills.map(s => typeof s === 'string' ? s : s.name);
@@ -27,10 +22,8 @@ export function extractResumeData(layout) {
     skillsList = about.skills.map(s => typeof s === 'string' ? s : s.name);
   }
 
-  // Extract experiences
   const experiences = Array.isArray(timeline.items) ? timeline.items : [];
 
-  // Extract projects
   const projects = Array.isArray(projectsComp.items) ? projectsComp.items : [];
 
   return {
@@ -49,13 +42,9 @@ export function extractResumeData(layout) {
   };
 }
 
-/**
- * Generates and triggers clean, ATS-compliant printable PDF view.
- */
 export async function downloadAtsResume(layout) {
   if (!layout) return;
 
-  // Track download event for Creator Analytics in background
   if (layout.handle) {
     try {
       API.post(`/layouts/track-download/${layout.handle}`).catch(() => {});

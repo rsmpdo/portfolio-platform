@@ -107,7 +107,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -130,7 +129,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Verify 2FA Login
       .addCase(verifyTwoFactorLogin.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -147,7 +145,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Register
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -162,7 +159,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Fetch current user
       .addCase(fetchCurrentUser.pending, (state) => {
         state.loading = true;
       })
@@ -177,7 +173,6 @@ const authSlice = createSlice({
         state.token = null;
         state.user = null;
       })
-      // Elevate to Admin
       .addCase(elevateToAdmin.pending, (state) => {
         state.loading = true;
         state.error = null;

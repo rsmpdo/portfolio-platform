@@ -325,7 +325,6 @@ const FAQS = [
   }
 ];
 
-
 const HERO_BG_IMAGES = [
   {
     url: 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=1920&q=80',
@@ -375,7 +374,6 @@ export default function Home() {
       <Header />
 
       <section className="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 overflow-hidden">
-        {/* Hero Dynamic Background: Cycling Portfolio Showcases */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
           <div className="absolute inset-0 transition-all duration-1000">
             <img
@@ -386,11 +384,9 @@ export default function Home() {
             />
           </div>
 
-          {/* Contrast & Depth Overlays */}
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/70 to-slate-950" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#020617_90%)]" />
 
-          {/* Dynamic persona atmosphere glow */}
           <div
             className="absolute top-12 left-1/2 -translate-x-1/2 w-[850px] h-[500px] rounded-full blur-[150px] transition-colors duration-700 opacity-20"
             style={{ backgroundColor: activePersona.accent }}

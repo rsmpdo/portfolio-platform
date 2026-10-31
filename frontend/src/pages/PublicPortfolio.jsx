@@ -33,8 +33,6 @@ export default function PublicPortfolio() {
     }
   }, [isSystemShowcase, publicLayout]);
 
-  // System showcase handles render via the dedicated standalone ShowcasePortfolio viewer
-  // (completely separate from Editor Templates / ComponentRenderer)
   if (isSystemShowcase) {
     return <ShowcasePortfolio overrideHandle={lowerHandle} />;
   }
@@ -51,7 +49,6 @@ export default function PublicPortfolio() {
     );
   }
 
-  // If user portfolio is not found / unpublished -> show Private lock screen
   if (!publicLayout) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6 text-center">
@@ -80,7 +77,7 @@ export default function PublicPortfolio() {
   const hideBranding = theme?.hideBranding === true;
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col portfolio-theme-root transition-colors duration-300"
       style={{
         backgroundColor: theme?.backgroundColor || '#050811',
@@ -149,17 +146,16 @@ export default function PublicPortfolio() {
         </div>
       </nav>
 
-      {/* Components Stream */}
       <main className="flex-1 pt-20">
         {components
           ?.filter((comp) => comp.isVisible !== false)
           ?.sort((a, b) => (a.order || 0) - (b.order || 0))
           ?.map((comp) => (
-            <ComponentRenderer 
-              key={comp.id} 
-              component={comp} 
-              isEditing={false} 
-              templateId={theme?.templateId} 
+            <ComponentRenderer
+              key={comp.id}
+              component={comp}
+              isEditing={false}
+              templateId={theme?.templateId}
               accentColor={theme?.primaryColor || '#6366f1'}
               theme={theme || {}}
             />

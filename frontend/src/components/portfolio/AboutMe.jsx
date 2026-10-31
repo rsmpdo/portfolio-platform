@@ -62,7 +62,7 @@ export default function AboutMe({ props = {}, templateId, viewportMode }) {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {[ 
+              {[
                 { v: experienceYears, l: 'YEARS_EXP' },
                 { v: completedProjects, l: 'PROJECTS_DONE' },
                 { v: happyClients, l: 'CLIENTS' }
@@ -83,7 +83,6 @@ export default function AboutMe({ props = {}, templateId, viewportMode }) {
     <section className="py-20 px-6">
       <div className="max-w-6xl mx-auto">
         <div className={`grid gap-16 items-center ${gridClass}`}>
-          {/* Left - Story */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -98,7 +97,6 @@ export default function AboutMe({ props = {}, templateId, viewportMode }) {
               {bio}
             </p>
 
-            {/* Skill tags */}
             <div>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">What I Do</p>
               <div className="flex flex-wrap gap-2">

@@ -31,7 +31,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Luxury Studio 2% Matte SVG Film-Grain Texture Overlay */
   body::before {
     content: "";
     position: fixed;
@@ -44,7 +43,6 @@
     background-size: 180px 180px;
   }
 
-  /* Remove text carets on general UI text elements */
   h1, h2, h3, h4, h5, h6,
   span, label, p, header, nav, footer, aside,
   .badge, .font-heading, .glass, .glass-card {
@@ -52,7 +50,6 @@
     user-select: none;
   }
 
-  /* Interactive Pointer Cursors */
   button,
   a,
   label,
@@ -67,7 +64,6 @@
     cursor: pointer !important;
   }
 
-  /* Explicit Text Inputs only */
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -85,13 +81,13 @@
   }
 }
 
-/* ─── Custom Scrollbar ─────────────────────────── */
+/* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #050811; }
 ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(99,102,241,0.5), rgba(168,85,247,0.5)); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(99,102,241,0.8), rgba(168,85,247,0.8)); }
 
-/* ─── Glassmorphism Panels ─────────────────────── */
+/* Glassmorphism Panels */
 .glass {
   background: linear-gradient(160deg, rgba(255,255,255,0.048) 0%, rgba(255,255,255,0.02) 100%);
   backdrop-filter: blur(24px) saturate(190%);
@@ -124,7 +120,7 @@
   box-shadow: 0 20px 40px -15px rgba(99,102,241,0.2);
 }
 
-/* ─── Glow Effects ─────────────────────────────── */
+/* Glow Effects */
 .glow-indigo {
   box-shadow: 0 0 50px rgba(99,102,241,0.25), 0 0 100px rgba(99,102,241,0.1);
 }
@@ -137,7 +133,7 @@
   text-shadow: 0 0 30px rgba(129,140,248,0.6);
 }
 
-/* ─── Gradient Text ────────────────────────────── */
+/* Gradient Text */
 .gradient-text {
   background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 25%, #a5b4fc 55%, #818cf8 80%, #6366f1 100%);
   -webkit-background-clip: text;
@@ -153,7 +149,7 @@
   background-clip: text;
 }
 
-/* ─── Gradient Borders ─────────────────────────── */
+/* Gradient Borders */
 .gradient-border {
   position: relative;
   background: var(--bg-card);
@@ -172,7 +168,7 @@
   pointer-events: none;
 }
 
-/* ─── Premium Button ───────────────────────────── */
+/* Premium Button */
 .btn-primary {
   background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #7c3aed 100%);
   box-shadow: 0 4px 25px -2px rgba(99,102,241,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
@@ -194,7 +190,7 @@
   border-color: rgba(255,255,255,0.15);
 }
 
-/* ─── Noise Texture Overlay ────────────────────── */
+/* Noise Texture Overlay */
 .noise::after {
   content: '';
   position: absolute;
@@ -204,7 +200,7 @@
   z-index: 0;
 }
 
-/* ─── Masonry Grid ─────────────────────────────── */
+/* Masonry Grid */
 .masonry-grid {
   columns: 2;
   column-gap: 1.5rem;
@@ -217,7 +213,7 @@
   .masonry-grid { columns: 1; }
 }
 
-/* ─── Smooth Underline Hover ───────────────────── */
+/* Smooth Underline Hover */
 .underline-hover {
   position: relative;
   display: inline-block;
@@ -234,7 +230,7 @@
 }
 .underline-hover:hover::after { width: 100%; }
 
-/* ─── Section Fade Animation ───────────────────── */
+/* Section Fade Animation */
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(24px);
@@ -245,14 +241,14 @@
   transform: translateY(0);
 }
 
-/* ─── Avatar Ring ──────────────────────────────── */
+/* Avatar Ring */
 .avatar-ring {
   background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
   padding: 2px;
   border-radius: 9999px;
 }
 
-/* ─── Input Focus & Dropdown Select Visibility ─── */
+/* Input Focus & Dropdown Select Visibility */
 .input-field {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
@@ -281,7 +277,7 @@ option {
   color: #f8fafc !important;
 }
 
-/* ─── Badge Pill ───────────────────────────────── */
+/* Badge Pill */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -303,7 +299,7 @@ option {
   color: #6ee7b7;
 }
 
-/* ─── Dynamic Portfolio Theme System ────────────── */
+/* Dynamic Portfolio Theme System */
 .portfolio-theme-root {
   background-color: var(--theme-bg, #050811);
   color: var(--theme-text, #f8fafc);
@@ -378,5 +374,4 @@ option {
 .portfolio-theme-root p {
   color: var(--theme-muted, #94a3b8) !important;
 }
-
 

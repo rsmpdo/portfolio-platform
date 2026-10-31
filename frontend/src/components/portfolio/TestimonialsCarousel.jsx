@@ -44,7 +44,6 @@ export default function TestimonialsCarousel({ props = {} }) {
         <h2 className="font-heading font-black text-3xl md:text-5xl text-white mb-16">{heading}</h2>
 
         <div className="relative glass gradient-border rounded-3xl p-10 md:p-14">
-          {/* Big quote icon */}
           <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-8">
             <Quote className="w-6 h-6 text-indigo-400" />
           </div>
@@ -55,7 +54,6 @@ export default function TestimonialsCarousel({ props = {} }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            {/* Stars */}
             <div className="flex items-center justify-center gap-1 mb-6">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />

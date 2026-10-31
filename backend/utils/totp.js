@@ -2,9 +2,6 @@ const crypto = require('crypto');
 
 const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
-/**
- * Generate a random Base32 secret (default 20 bytes = 32 Base32 chars, RFC 6238 compliant)
- */
 function generateBase32Secret(byteLength = 20) {
   const bytes = crypto.randomBytes(byteLength);
   let bits = 0;
@@ -27,9 +24,6 @@ function generateBase32Secret(byteLength = 20) {
   return output;
 }
 
-/**
- * Decode a Base32 string into a Buffer
- */
 function base32ToBuffer(base32) {
   const cleaned = String(base32 || '')
     .toUpperCase()
@@ -54,9 +48,6 @@ function base32ToBuffer(base32) {
   return Buffer.from(bytes);
 }
 
-/**
- * Compute 6-digit HOTP/TOTP code for a given counter
- */
 function generateTOTPForCounter(secret, counter, digits = 6) {
   const key = base32ToBuffer(secret);
   const counterBuffer = Buffer.alloc(8);
@@ -78,9 +69,6 @@ function generateTOTPForCounter(secret, counter, digits = 6) {
   return String(otp).padStart(digits, '0');
 }
 
-/**
- * Verify a 6-digit TOTP code with a +/- 1 time-step window (30s per step)
- */
 function verifyTOTP(token, secret, window = 1, stepSeconds = 30) {
   if (!token || !secret) return false;
   const cleanToken = String(token).replace(/\s+/g, '').trim();
@@ -96,9 +84,6 @@ function verifyTOTP(token, secret, window = 1, stepSeconds = 30) {
   return false;
 }
 
-/**
- * Generate 8 human-readable backup recovery codes (e.g. "7F2A-9C4E")
- */
 function generateRecoveryCodes(count = 8) {
   const codes = [];
   for (let i = 0; i < count; i++) {
@@ -108,9 +93,6 @@ function generateRecoveryCodes(count = 8) {
   return codes;
 }
 
-/**
- * Build standard otpauth:// URI for QR code scanners
- */
 function buildOtpAuthUrl({ secret, accountName, issuer = 'PortfolioCraft' }) {
   const label = `${encodeURIComponent(issuer)}:${encodeURIComponent(accountName)}`;
   return `otpauth://totp/${label}?secret=${encodeURIComponent(secret)}&issuer=${encodeURIComponent(

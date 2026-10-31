@@ -267,7 +267,6 @@ export default function Templates() {
           })}
         </div>
 
-        {/* More Templates Coming Soon Banner */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

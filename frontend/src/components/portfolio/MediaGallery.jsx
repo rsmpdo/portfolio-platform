@@ -25,7 +25,6 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
       <img src={item.url} alt={item.title || 'Media'} className={className} loading="lazy" />
     );
 
-  // Helper to render Lightbox universally
   const renderLightbox = (themeClass = "") => (
     <AnimatePresence>
       {lightboxItem && (
@@ -59,9 +58,7 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
     </AnimatePresence>
   );
 
-  // ---------------------------------------------------------
   // CYBER & AI (Terminal Grid, Monospace)
-  // ---------------------------------------------------------
   if (templateId === 'dark-cyber' || templateId === 'ai-neural-labs-pro') {
     return (
       <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} font-mono bg-[#050505]`}>
@@ -89,9 +86,6 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // EDITORIAL & COUTURE (Masonry, High Fashion, Asymmetric)
-  // ---------------------------------------------------------
   if (templateId === 'minimalist-editorial' || templateId === 'haute-couture-studio') {
     return (
       <section className="py-24 px-6 bg-white border-b-8 border-black">
@@ -117,9 +111,6 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // SPATIAL ARCHITECT (Blueprint Horizontal Grid)
-  // ---------------------------------------------------------
   if (templateId === 'spatial-architect-studio') {
     return (
       <section className="py-24 px-6 bg-slate-900 border-y border-slate-700">
@@ -153,9 +144,6 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // LUXURY MOTION PRO (Cinematic Full Bleed, Gold Accents)
-  // ---------------------------------------------------------
   if (templateId === 'luxury-motion-pro') {
     return (
       <section className="py-32 px-6 bg-[#0a0908] relative overflow-hidden">
@@ -185,9 +173,6 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // GLOBAL AGENCY STUDIO (Cinematic Full Bleed, Dark Slate)
-  // ---------------------------------------------------------
   if (templateId === 'global-agency-studio') {
     return (
       <section className="py-32 px-6 bg-slate-900 border-y border-white/5">
@@ -218,9 +203,6 @@ export default function MediaGallery({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // FALLBACK (Default SaaS / Showcase)
-  // ---------------------------------------------------------
   return (
     <section className="py-20 px-6 bg-slate-950">
       <div className="max-w-6xl mx-auto">

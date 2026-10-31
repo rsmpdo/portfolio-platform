@@ -1,5 +1,3 @@
-// Single source of truth for all template data.
-// Used by: Editor (applyTemplate), TemplatePreview/Demo, EditorSidebar theming.
 export const templateLayouts = {
 
   "minimalist-editorial": {

@@ -22,8 +22,7 @@ export default function LogoIcon({ className = "w-5 h-5" }) {
           <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#6366F1" floodOpacity="0.4" />
         </filter>
       </defs>
-      
-      {/* Outer Geometric Hex Shield */}
+
       <path
         d="M16 2.5L27 8.8507V21.1493L16 27.5L5 21.1493V8.8507L16 2.5Z"
         fill="url(#logo-grad-primary)"
@@ -33,8 +32,7 @@ export default function LogoIcon({ className = "w-5 h-5" }) {
         strokeLinejoin="round"
         filter="url(#logo-glow)"
       />
-      
-      {/* Stylized Craftsman Diamond Prism 'P' & 'C' Monogram */}
+
       <path
         d="M11 8.5H16.5C19.5376 8.5 22 10.9624 22 14C22 17.0376 19.5376 19.5 16.5 19.5H11V8.5Z"
         stroke="url(#logo-grad-primary)"
@@ -49,8 +47,7 @@ export default function LogoIcon({ className = "w-5 h-5" }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      
-      {/* Central Diamond Spark */}
+
       <circle cx="16" cy="14" r="1.5" fill="#FFFFFF" />
     </svg>
   );

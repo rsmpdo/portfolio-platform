@@ -14,7 +14,7 @@ export default function VerifyEmail() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [status, setStatus] = useState('loading'); // loading, success, error
+  const [status, setStatus] = useState('loading');
   const [message, setMessage] = useState('');
   const hasCalledRef = useRef(false);
 

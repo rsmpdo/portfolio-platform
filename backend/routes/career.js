@@ -11,9 +11,7 @@ const checkAdmin = (req, res, next) => {
   return res.status(403).json({ success: false, message: 'Admin access required' });
 };
 
-// @route   POST /api/careers/apply
-// @desc    Submit candidate job application (Public)
-// @access  Public
+// /api/careers/apply
 router.post('/apply', async (req, res) => {
   try {
     const { jobId, jobTitle, department, fullName, email, portfolioUrl, resumeUrl, coverNote } = req.body;
@@ -49,9 +47,7 @@ router.post('/apply', async (req, res) => {
   }
 });
 
-// @route   GET /api/careers/admin
-// @desc    Get all candidate job applications for Admin
-// @access  Private (Admin)
+// /api/careers/admin
 router.get(
   '/admin',
   passport.authenticate('jwt', { session: false }),
@@ -76,9 +72,7 @@ router.get(
   }
 );
 
-// @route   PUT /api/careers/admin/:id/status
-// @desc    Update candidate application status
-// @access  Private (Admin)
+// /api/careers/admin/:id/status
 router.put(
   '/admin/:id/status',
   passport.authenticate('jwt', { session: false }),
@@ -99,9 +93,7 @@ router.put(
   }
 );
 
-// @route   DELETE /api/careers/admin/:id
-// @desc    Delete candidate application
-// @access  Private (Admin)
+// /api/careers/admin/:id
 router.delete(
   '/admin/:id',
   passport.authenticate('jwt', { session: false }),

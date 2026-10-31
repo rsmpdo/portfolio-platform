@@ -204,7 +204,6 @@ export default function Pricing() {
         </div>
       </main>
 
-      {/* ─── Plan Status Popup Modal Window (Portaled to document.body) ─── */}
       {bannerNotice && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"

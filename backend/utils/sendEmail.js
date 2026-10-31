@@ -12,14 +12,13 @@ const sendEmail = async (options) => {
       footerNote: options.footerNote || ''
     });
 
-  // Option 1: Gmail Direct SMTP (App Password)
   if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
     try {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.GMAIL_USER,
-          pass: process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, '') // remove spaces
+          pass: process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, '')
         },
         tls: {
           rejectUnauthorized: false
@@ -43,7 +42,6 @@ const sendEmail = async (options) => {
     }
   }
 
-  // Option 2: SendGrid API
   if (process.env.SENDGRID_API_KEY) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     const msg = {

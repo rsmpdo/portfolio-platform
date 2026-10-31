@@ -25,22 +25,19 @@ export default function AdvancedMetrics({ props = {}, templateId, viewportMode }
     }
   };
 
-  // ---------------------------------------------------------
-  // AGENCY & COUTURE (Studio Tier)
-  // ---------------------------------------------------------
   if (templateId === 'global-agency-studio' || templateId === 'haute-couture-studio') {
     return (
       <section className={`${isSmall ? 'py-14 px-4' : 'py-24 px-6'} bg-slate-900 border-y border-white/5 relative overflow-hidden`}>
         <div className="absolute top-0 right-0 -mr-32 -mt-32 w-[500px] h-[500px] bg-slate-500/10 rounded-full blur-[100px]" />
-        
+
         <div className="max-w-7xl mx-auto relative z-10">
           <div className={`flex items-center gap-4 ${isSmall ? 'mb-8' : 'mb-16'}`}>
             <h2 className={`font-heading font-black ${isMobile ? 'text-3xl' : isTablet ? 'text-4xl' : 'text-5xl md:text-7xl'} text-white uppercase tracking-tighter`}>{heading}</h2>
           </div>
-          
+
           <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-3 md:gap-12'}`}>
             {metrics.map((metric, idx) => (
-              <motion.div 
+              <motion.div
                 key={metric.id || idx}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -59,19 +56,16 @@ export default function AdvancedMetrics({ props = {}, templateId, viewportMode }
     );
   }
 
-  // ---------------------------------------------------------
-  // ARCHITECT & LABS (Studio Tier)
-  // ---------------------------------------------------------
   return (
     <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} font-mono bg-black text-emerald-500 border-t border-emerald-500/30 relative`}>
       <div className="max-w-6xl mx-auto">
         <div className={`flex items-center justify-between ${isSmall ? 'mb-8 pb-4' : 'mb-16 pb-6'} border-b border-emerald-500/30`}>
           <h2 className={`${isMobile ? 'text-xl' : 'text-2xl md:text-3xl'} text-emerald-400 uppercase tracking-widest`}>{heading}_</h2>
         </div>
-        
+
         <div className={`grid gap-5 ${isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'}`}>
           {metrics.map((metric, idx) => (
-            <motion.div 
+            <motion.div
               key={metric.id || idx}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}

@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import API from '../services/api';
 import { templateLayouts } from '../data/templateLayouts';
 
-// Fetch current user's CMS layout for editing (supports optional { layoutId, templateId })
 export const fetchUserLayout = createAsyncThunk(
   'layout/fetchUserLayout',
   async (args = {}, { rejectWithValue }) => {
@@ -18,7 +17,6 @@ export const fetchUserLayout = createAsyncThunk(
   }
 );
 
-// Fetch all portfolios created by current user
 export const fetchUserPortfolios = createAsyncThunk(
   'layout/fetchUserPortfolios',
   async (_, { rejectWithValue }) => {
@@ -31,7 +29,6 @@ export const fetchUserPortfolios = createAsyncThunk(
   }
 );
 
-// Save entire layout changes to backend database
 export const saveUserLayout = createAsyncThunk(
   'layout/saveUserLayout',
   async (layoutData, { rejectWithValue }) => {
@@ -44,7 +41,6 @@ export const saveUserLayout = createAsyncThunk(
   }
 );
 
-// Apply a template and immediately persist it to database
 export const applyTemplateAndSave = createAsyncThunk(
   'layout/applyTemplateAndSave',
   async (templateId, { dispatch, getState, rejectWithValue }) => {
@@ -61,7 +57,6 @@ export const applyTemplateAndSave = createAsyncThunk(
   }
 );
 
-// Fetch public portfolio layout by user handle
 export const fetchPublicLayout = createAsyncThunk(
   'layout/fetchPublicLayout',
   async (handle, { rejectWithValue }) => {
@@ -167,7 +162,6 @@ const layoutSlice = createSlice({
       const result = Array.from(state.activeLayout.components);
       const [removed] = result.splice(sourceIndex, 1);
       result.splice(destinationIndex, 0, removed);
-      // Re-assign order values
       state.activeLayout.components = result.map((comp, idx) => ({
         ...comp,
         order: idx
@@ -197,10 +191,10 @@ const layoutSlice = createSlice({
       if (!template || !state.activeLayout) return;
 
       pushSnapshot(state);
-      state.activeLayout.theme = { 
-        ...state.activeLayout.theme, 
+      state.activeLayout.theme = {
+        ...state.activeLayout.theme,
         ...template.theme,
-        templateId 
+        templateId
       };
       const ts = Date.now();
       state.activeLayout.components = template.components.map((c, i) => ({
@@ -218,7 +212,6 @@ const layoutSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch user layout
       .addCase(fetchUserLayout.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -257,12 +250,10 @@ const layoutSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Fetch user portfolios
       .addCase(fetchUserPortfolios.fulfilled, (state, action) => {
         state.userPortfolios = action.payload.layouts || [];
         state.maxAllowedPortfolios = action.payload.maxAllowed || 1;
       })
-      // Save user layout
       .addCase(saveUserLayout.pending, (state) => {
         state.isSaving = true;
         state.saveSuccess = false;
@@ -276,7 +267,6 @@ const layoutSlice = createSlice({
         state.isSaving = false;
         state.error = action.payload;
       })
-      // Public layout
       .addCase(fetchPublicLayout.pending, (state) => {
         state.loading = true;
         state.publicLayout = null;

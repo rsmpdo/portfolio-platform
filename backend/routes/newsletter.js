@@ -4,9 +4,7 @@ const Subscriber = require('../models/Subscriber');
 const sendEmail = require('../utils/sendEmail');
 const { getNewsletterWelcomeTemplate } = require('../utils/emailTemplate');
 
-// @route   POST /api/newsletter/subscribe
-// @desc    Subscribe to weekly portfolio tips & masterclasses
-// @access  Public
+// /api/newsletter/subscribe
 router.post('/subscribe', async (req, res) => {
   try {
     const { email } = req.body;
@@ -17,7 +15,6 @@ router.post('/subscribe', async (req, res) => {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // Check if subscriber already exists
     let subscriber = await Subscriber.findOne({ email: cleanEmail });
 
     if (subscriber) {
@@ -29,7 +26,6 @@ router.post('/subscribe', async (req, res) => {
       subscriber = await Subscriber.create({ email: cleanEmail });
     }
 
-    // Send confirmation welcome email with weekly portfolio tips
     try {
       const clientUrl =
         process.env.CLIENT_URL && !process.env.CLIENT_URL.includes('localhost') && !process.env.CLIENT_URL.includes('127.0.0.1')
@@ -48,7 +44,6 @@ router.post('/subscribe', async (req, res) => {
       });
     } catch (mailErr) {
       console.log('Email dispatch warning (SMTP sandbox or dev mode):', mailErr.message);
-      // Non-blocking for email delivery in development
     }
 
     res.status(200).json({
@@ -61,9 +56,7 @@ router.post('/subscribe', async (req, res) => {
   }
 });
 
-// @route   GET /api/newsletter/subscribers
-// @desc    Get total count of subscribers (Admin / Public stats)
-// @access  Public
+// /api/newsletter/subscribers
 router.get('/count', async (req, res) => {
   try {
     const count = await Subscriber.countDocuments({ isActive: true });

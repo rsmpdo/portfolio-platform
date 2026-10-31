@@ -64,7 +64,6 @@ export default function SkillsCloud({ props = {}, viewportMode }) {
                 <h3 className="font-heading font-bold text-lg text-white">{cat.name}</h3>
               </div>
 
-              {/* Skills */}
               <div className="flex flex-wrap gap-2">
                 {cat.skills?.map((skill, sIdx) => (
                   <motion.span

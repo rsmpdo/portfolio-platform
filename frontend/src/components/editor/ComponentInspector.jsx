@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateComponentProps } from '../../store/layoutSlice';
 import API from '../../services/api';
-import { 
-  Upload, 
-  Image as ImageIcon, 
-  Sliders, 
-  Loader2, 
-  Pencil, 
-  X, 
-  Plus, 
-  Trash2, 
-  Crown, 
-  Layers, 
+import {
+  Upload,
+  Image as ImageIcon,
+  Sliders,
+  Loader2,
+  Pencil,
+  X,
+  Plus,
+  Trash2,
+  Crown,
+  Layers,
   ExternalLink,
   Video,
   Eye,
@@ -146,7 +146,6 @@ function TagEditor({ tags = [], onChange, placeholder = "Add tag & press Enter..
   );
 }
 
-// Fast client-side image optimizer to shrink multi-MB photos before upload
 async function optimizeImageFile(file) {
   if (!file || !file.type.startsWith('image/') || file.type === 'image/gif' || file.size < 350 * 1024) {
     return file;
@@ -197,7 +196,6 @@ async function optimizeImageFile(file) {
   });
 }
 
-// Reusable Image & Media Uploader field with isolated per-field upload state, direct CDN upload, and preview
 function MediaUploadField({ value, onChange, accept = "image/*", placeholder = "https://...", onUploadComplete }) {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -219,7 +217,6 @@ function MediaUploadField({ value, onChange, accept = "image/*", placeholder = "
       let uploadedUrl = '';
       let resourceType = file.type.startsWith('video/') ? 'video' : 'image';
 
-      // 1. Try direct browser-to-Cloudinary upload (single network hop, much faster)
       try {
         const sigRes = await API.get('/upload/signature');
         if (sigRes.data?.success && sigRes.data.cloudName && sigRes.data.apiKey) {
@@ -253,10 +250,8 @@ function MediaUploadField({ value, onChange, accept = "image/*", placeholder = "
           });
         }
       } catch {
-        // Fallback to backend proxy upload if direct upload is blocked
       }
 
-      // 2. Fallback to backend /api/upload if direct upload wasn't used
       if (!uploadedUrl) {
         const formData = new FormData();
         formData.append('file', file);
@@ -497,7 +492,6 @@ export default function ComponentInspector() {
                 </h4>
               </div>
 
-              {/* Quick-add buttons for popular social platforms */}
               <div className="mb-3 p-2.5 rounded-xl glass border border-white/[0.08] bg-white/[0.01]">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
                   Quick Add Platform
@@ -1414,7 +1408,7 @@ export default function ComponentInspector() {
               />
             </Field>
 
-            <Field 
+            <Field
               label="Embed URL / Iframe Code"
               tip="Paste the share link or whole iframe embed snippet. URLs are automatically extracted."
             >
@@ -1423,7 +1417,6 @@ export default function ComponentInspector() {
                 value={props.embedUrl}
                 onChange={(e) => {
                   let val = e.target.value;
-                  // If user pasted a full iframe tag, auto extract src
                   if (val.includes('<iframe')) {
                     const srcMatch = val.match(/src="([^"]+)"/);
                     if (srcMatch) val = srcMatch[1];
@@ -1603,7 +1596,6 @@ export default function ComponentInspector() {
               />
             </Field>
 
-            {/* Template Presets */}
             <div className="p-3 rounded-2xl glass border border-white/[0.08] bg-white/[0.01] space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Insert Sample Template</span>
               <div className="grid grid-cols-2 gap-2 pt-1">
@@ -1628,7 +1620,6 @@ export default function ComponentInspector() {
               </div>
             </div>
 
-            {/* Markdown Quick Toolbar */}
             <Field label="Markdown & Code Editor" tip="Supports ## H2, ### H3, **bold**, *italic*, > quotes, ```code blocks```, lists, and links">
               <div className="flex flex-wrap gap-1 p-1.5 rounded-xl glass border border-white/[0.08] mb-1.5 bg-slate-900/50">
                 {[

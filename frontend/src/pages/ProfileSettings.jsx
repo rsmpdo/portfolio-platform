@@ -55,7 +55,7 @@ function PortfoliosManager() {
   const [deletePortfolioTarget, setDeletePortfolioTarget] = useState(null);
   const [deletingPortfolio, setDeletingPortfolio] = useState(false);
   const [deletePortfolioError, setDeletePortfolioError] = useState('');
-  
+
   const [form, setForm] = useState({
     title: '',
     handle: '',
@@ -156,10 +156,10 @@ function PortfoliosManager() {
               </span>
             </h2>
             <p className="text-slate-400 text-xs">
-              {plan === 'studio' 
-                ? 'Studio tier allows up to 5 multi-portfolio showcases' 
-                : plan === 'pro' 
-                ? 'Pro tier allows up to 3 portfolios. Upgrade to Studio for 5 portfolios!' 
+              {plan === 'studio'
+                ? 'Studio tier allows up to 5 multi-portfolio showcases'
+                : plan === 'pro'
+                ? 'Pro tier allows up to 3 portfolios. Upgrade to Studio for 5 portfolios!'
                 : 'Free tier allows 1 portfolio. Upgrade to Pro for 3 portfolios, or Studio for 5!'}
             </p>
           </div>
@@ -176,8 +176,8 @@ function PortfoliosManager() {
             }
           }}
           className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition ${
-            isLimitReached 
-              ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5' 
+            isLimitReached
+              ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5'
               : 'btn-primary text-white shadow-lg shadow-indigo-500/20'
           }`}
         >
@@ -261,10 +261,9 @@ function PortfoliosManager() {
                   <span className="px-2.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 text-[10px] font-mono font-bold capitalize">
                     {item.theme?.templateId || 'minimalist-editorial'}
                   </span>
-                  {/* Status Badge */}
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider flex items-center gap-1.5 ${
-                    item.isPublished 
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
+                    item.isPublished
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                       : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${item.isPublished ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
@@ -287,7 +286,6 @@ function PortfoliosManager() {
                 </a>
 
                 <div className="flex items-center gap-2">
-                  {/* Inline Publish / Unpublish Toggle */}
                   <button
                     onClick={() => handleTogglePublishPortfolio(item._id, item.isPublished)}
                     className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
@@ -324,7 +322,6 @@ function PortfoliosManager() {
         </div>
       )}
 
-      {/* ─── Create Portfolio Modal (Portaled to document.body) ────────────────────────── */}
       {showModal && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
@@ -425,7 +422,6 @@ function PortfoliosManager() {
         document.body
       )}
 
-      {/* ─── Delete Portfolio Confirmation Popup Modal (Portaled to document.body) ────────────────────────── */}
       {deletePortfolioTarget && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
@@ -459,7 +455,6 @@ function PortfoliosManager() {
               </button>
             </div>
 
-            {/* Target Portfolio Summary Box */}
             <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 mb-4">
               <div className="flex items-center justify-between gap-2 mb-1.5">
                 <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 text-[10px] font-mono font-bold capitalize">
@@ -530,7 +525,7 @@ function MessagesInbox() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [filterMode, setFilterMode] = useState('all'); // 'all' | 'unread' | 'read'
+  const [filterMode, setFilterMode] = useState('all');
   const [deleteMsgTarget, setDeleteMsgTarget] = useState(null);
   const [deletingMsg, setDeletingMsg] = useState(false);
 
@@ -713,7 +708,6 @@ function MessagesInbox() {
         </div>
       )}
 
-      {/* ─── Delete Message Confirmation Popup Modal (Portaled to document.body) ────────────────────────── */}
       {deleteMsgTarget && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
@@ -779,7 +773,6 @@ export default function ProfileSettings() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  // Active Section Navigation ('profile' | 'portfolios' | 'messages' | 'settings')
   const [activeSection, setActiveSection] = useState('profile');
 
   // Personal Profile Info & Bio Form State
@@ -808,8 +801,7 @@ export default function ProfileSettings() {
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  // Authenticator App 2FA State
-  const [twoFactorSetupData, setTwoFactorSetupData] = useState(null); // { secret, otpauthUrl, qrCodeUrl }
+  const [twoFactorSetupData, setTwoFactorSetupData] = useState(null);
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [twoFactorRecoveryCodes, setTwoFactorRecoveryCodes] = useState([]);
   const [twoFactorLoading, setTwoFactorLoading] = useState(false);
@@ -823,7 +815,7 @@ export default function ProfileSettings() {
   // 2-Step Account Deletion Modal State
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteStep, setDeleteStep] = useState(1); // 1 = Warning & Checkboxes, 2 = Password Authentication
+  const [deleteStep, setDeleteStep] = useState(1);
   const [confirmUnderstood, setConfirmUnderstood] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
@@ -1073,7 +1065,6 @@ export default function ProfileSettings() {
           </Link>
         </div>
 
-        {/* Top Profile Identity Banner */}
         <div className="glass-card gradient-border rounded-3xl p-6 md:p-8 mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
@@ -1159,7 +1150,6 @@ export default function ProfileSettings() {
               </div>
             </div>
 
-            {/* Plan Status Badge */}
             <div className="glass p-4 rounded-2xl border border-white/10 flex items-center gap-4 shrink-0 self-start md:self-center">
               <div>
                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Plan</div>
@@ -1215,7 +1205,6 @@ export default function ProfileSettings() {
         </div>
 
         <div className="space-y-8">
-          {/* ─── SECTION 1: Update Personal Information & Bio ────────────────────────── */}
           {showProfile && (
             <section className="glass-card gradient-border rounded-3xl p-8">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
@@ -1425,16 +1414,12 @@ export default function ProfileSettings() {
             </section>
           )}
 
-          {/* ─── SECTION 2: My Portfolios Management ────────────────────────── */}
           {showPortfolios && <PortfoliosManager />}
 
-          {/* ─── SECTION 3: Received Contact Messages Inbox ────────────────────────── */}
           {showMessages && <MessagesInbox />}
 
-          {/* ─── SECTION 4: Account Settings, Security & Deletion ────────────────────────── */}
           {showSettings && (
             <div className="space-y-8">
-              {/* Password & Security Settings Card */}
               <section className="glass-card gradient-border rounded-3xl p-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/[0.06]">
                   <div className="flex items-center gap-3">
@@ -1543,7 +1528,6 @@ export default function ProfileSettings() {
                   </div>
                 </form>
 
-                {/* ─── Two-Factor Authentication (Authenticator App) Sub-Section ─── */}
                 <div className="mt-8 pt-8 border-t border-white/[0.06]">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                     <div className="flex items-start sm:items-center gap-3">
@@ -1635,7 +1619,6 @@ export default function ProfileSettings() {
                     </div>
                   )}
 
-                  {/* Setup Wizard: QR Code + Manual Key + 6-Digit Verification */}
                   {twoFactorSetupData && (
                     <div className="p-6 rounded-2xl glass border border-indigo-500/25 bg-indigo-500/[0.03] space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
@@ -1735,7 +1718,6 @@ export default function ProfileSettings() {
                     </div>
                   )}
 
-                  {/* Backup Recovery Codes Display (shown right after enabling 2FA) */}
                   {twoFactorRecoveryCodes.length > 0 && (
                     <div className="mt-4 p-6 rounded-2xl bg-amber-500/5 border border-amber-500/30 space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1832,7 +1814,6 @@ export default function ProfileSettings() {
                 </div>
               </section>
 
-              {/* Session & Subscription Quick Actions */}
               <section className="glass-card gradient-border rounded-3xl p-8">
                 <h2 className="font-heading font-bold text-xl text-white mb-2">Session & Subscription Actions</h2>
                 <p className="text-slate-400 text-xs mb-6">
@@ -1869,7 +1850,6 @@ export default function ProfileSettings() {
                 </div>
               </section>
 
-              {/* Danger Zone - Account Deletion */}
               <section className="p-8 rounded-3xl bg-red-500/5 border border-red-500/20">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                   <div>
@@ -1901,7 +1881,6 @@ export default function ProfileSettings() {
         </div>
       </main>
 
-      {/* ─── 2-Step Account Deletion Confirmation & Password Authentication Modal (Portaled to document.body) ─── */}
       {showDeleteModal && createPortal(
         <div
           className="fixed inset-0 z-[9999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
@@ -1940,14 +1919,12 @@ export default function ProfileSettings() {
               </button>
             </div>
 
-            {/* Step Progress Bar */}
             <div className="grid grid-cols-2 gap-2 mb-6">
               <div className="h-1.5 rounded-full bg-red-500" />
               <div className={`h-1.5 rounded-full transition-colors ${deleteStep === 2 ? 'bg-red-500' : 'bg-white/10'}`} />
             </div>
 
             {deleteStep === 1 ? (
-              /* STEP 1: Warning & Explicit Acknowledgement */
               <div>
                 <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 mb-5">
                   <div className="text-xs font-bold text-red-300 mb-2 flex items-center gap-1.5">
@@ -2008,7 +1985,6 @@ export default function ProfileSettings() {
                 </div>
               </div>
             ) : (
-              /* STEP 2: Password Authentication */
               <form onSubmit={handleDeleteAccount} className="space-y-4">
                 <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-white/10 text-xs text-slate-300 leading-relaxed">
                   Final step: Please enter the password for <span className="text-white font-semibold">{user.email}</span> to authenticate and permanently delete your account.

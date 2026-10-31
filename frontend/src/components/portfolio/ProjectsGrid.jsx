@@ -58,9 +58,7 @@ export default function ProjectsGrid({ props = {}, templateId, viewportMode }) {
   const isTablet = viewportMode === 'tablet';
   const isSmall = isMobile || isTablet;
 
-  // ---------------------------------------------------------
   // CYBER & AI (Terminal Grid, Monospace)
-  // ---------------------------------------------------------
   if (templateId === 'dark-cyber' || templateId === 'ai-neural-labs-pro') {
     return (
       <section className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} font-mono border-t border-emerald-500/20 bg-slate-950 text-emerald-500`}>
@@ -88,9 +86,6 @@ export default function ProjectsGrid({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // EDITORIAL & COUTURE (Huge Typography, Minimal borders)
-  // ---------------------------------------------------------
   if (templateId === 'minimalist-editorial' || templateId === 'haute-couture-studio') {
     return (
       <section className={`${isSmall ? 'py-14 px-4' : 'py-24 px-6'} bg-[#f8f9fa] border-t-2 border-black`}>
@@ -117,9 +112,6 @@ export default function ProjectsGrid({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // LUXURY MOTION PRO (Cinematic, Dark, Gold)
-  // ---------------------------------------------------------
   if (templateId === 'luxury-motion-pro') {
     return (
       <section className={`${isSmall ? 'py-14 px-4' : 'py-24 px-6'} bg-[#0a0908] relative overflow-hidden`}>
@@ -156,9 +148,6 @@ export default function ProjectsGrid({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // GLOBAL AGENCY STUDIO (Cinematic, Dark Slate)
-  // ---------------------------------------------------------
   if (templateId === 'global-agency-studio') {
     return (
       <section className={`${isSmall ? 'py-14 px-4' : 'py-24 px-6'} bg-[#1a1816] border-t border-white/5`}>
@@ -192,9 +181,6 @@ export default function ProjectsGrid({ props = {}, templateId, viewportMode }) {
     );
   }
 
-  // ---------------------------------------------------------
-  // FALLBACK (Default SaaS / Showcase)
-  // ---------------------------------------------------------
   return (
     <section id="projects" className={`${isSmall ? 'py-12 px-4' : 'py-20 px-6'} bg-slate-900`}>
       <div className="max-w-6xl mx-auto">

@@ -19,7 +19,7 @@ This directory contains the complete technical documentation, architecture speci
 | [**04. Database Design & ERD**](./04_DATABASE_DESIGN_AND_ERD.md) | Complete Entity-Relationship Diagram (ERD), full data dictionary, Mongoose schema definitions, field data types, foreign key relationships, and query indexing strategies. | **Database Design** |
 | [**05. Build, Installation & Deployment**](./05_BUILD_INSTALLATION_AND_DEPLOYMENT.md) | System requirements, environment variables (`.env`), step-by-step local installation, database seeding (`npm run seed`), production Vite build, and Vercel/Render cloud deployment. | Setup Steps, Build Pipeline |
 | [**06. UI/UX & Responsiveness**](./06_UI_UX_AND_RESPONSIVENESS.md) | Design system, dark glassmorphism visual tokens, responsive breakpoints, live multi-device viewport emulator (Desktop, Tablet, Mobile), and accessibility (a11y). | **UI/UX & Responsiveness** |
-| [**07. Demonstration & Evaluation Guide**](./07_DEMONSTRATION_AND_EVALUATION_GUIDE.md) | 5-Minute Demonstration Video link, rubric compliance checklist, and technical defense questions. | **Demonstration, Documentation** |
+| [**07. Demonstration & Evaluation Guide**](./07_DEMONSTRATION_AND_EVALUATION_GUIDE.md) | 5-Minute Demonstration Video link, rubric compliance checklist | **Demonstration, Documentation** |
 
 ---
 

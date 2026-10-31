@@ -3,9 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const { cloudinary, upload } = require('../config/cloudinary');
 
-// @route   GET /api/upload/signature
-// @desc    Generate signed parameters for direct browser-to-Cloudinary upload (eliminates backend proxy hop)
-// @access  Private
+// /api/upload/signature
 router.get(
   '/signature',
   passport.authenticate('jwt', { session: false }),
@@ -32,9 +30,7 @@ router.get(
   }
 );
 
-// @route   POST /api/upload
-// @desc    Upload media asset (image/video) to Cloudinary CDN
-// @access  Private
+// /api/upload
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),

@@ -214,7 +214,7 @@ export default function Blog() {
       return [];
     }
   });
-  const [filterMode, setFilterMode] = useState('all'); // 'all' | 'saved'
+  const [filterMode, setFilterMode] = useState('all');
   const [shareMenuPostId, setShareMenuPostId] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -251,7 +251,6 @@ export default function Blog() {
     }, 2600);
   };
 
-  // Support deep-linking via ?post=<id>
   useEffect(() => {
     const postId = searchParams.get('post');
     if (postId) {
@@ -285,7 +284,6 @@ export default function Blog() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       } catch {
-        // ignore storage errors
       }
       triggerToast(exists ? 'Removed from Saved Bookmarks' : 'Saved to your Bookmarks!');
       return updated;
@@ -304,7 +302,6 @@ export default function Blog() {
       await navigator.clipboard.writeText(url);
       triggerToast('Article link copied to clipboard!');
     } catch {
-      // Fallback
     }
 
     setShareMenuPostId((prev) => (prev === post.id ? null : post.id));
@@ -428,7 +425,6 @@ export default function Blog() {
             </button>
           </div>
         ) : (
-          /* 3 Full Readable Articles Cards (Only the button opens the article) */
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             {displayedPosts.map((post) => {
               const isBookmarked = bookmarks.includes(post.id);

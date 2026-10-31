@@ -9,7 +9,7 @@ export default function TemplatePreview() {
   const { templateId } = useParams();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  
+
   const template = demoLayouts[templateId];
 
   useEffect(() => {
@@ -25,7 +25,6 @@ export default function TemplatePreview() {
     );
   }
 
-  // Convert template layout data to the format expected by the editor renderer
   const mockLayout = {
     title: `${template.name} Demo`,
     theme: { ...template.theme, templateId },
@@ -72,7 +71,6 @@ export default function TemplatePreview() {
         '--theme-muted': mockLayout.theme?.textMutedColor || '#94a3b8'
       }}
     >
-      {/* Top Demo Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50">
         <div className="mx-4 md:mx-8 mt-4">
           <div className="glass-dark rounded-2xl px-6 h-14 flex items-center justify-between shadow-2xl border border-indigo-500/30">
@@ -98,15 +96,14 @@ export default function TemplatePreview() {
         </div>
       </nav>
 
-      {/* Components Stream using the specific template structural logic */}
       <main className="flex-1 pt-24 pb-12">
         {mockLayout.components
           .sort((a, b) => a.order - b.order)
           .map((comp) => (
-            <ComponentRenderer 
-              key={comp.id} 
-              component={comp} 
-              isEditing={false} 
+            <ComponentRenderer
+              key={comp.id}
+              component={comp}
+              isEditing={false}
               templateId={mockLayout.theme.templateId}
               accentColor={mockLayout.theme?.primaryColor || '#6366f1'}
               theme={mockLayout.theme}

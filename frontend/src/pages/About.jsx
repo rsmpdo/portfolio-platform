@@ -152,7 +152,6 @@ export default function About() {
           ))}
         </section>
 
-        {/* Core Vision Cards */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="glass-card gradient-border rounded-3xl p-8 text-center">
             <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4 text-indigo-400">
@@ -185,7 +184,6 @@ export default function About() {
           </div>
         </section>
 
-        {/* Deep Story & Why We Built PortfolioCraft */}
         <section className="glass gradient-border rounded-3xl p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-5">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-400">
@@ -266,7 +264,6 @@ export default function About() {
           </div>
         </section>
 
-        {/* Company Journey Timeline */}
         <section>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="font-heading font-black text-3xl md:text-4xl text-white mb-3">
@@ -293,7 +290,6 @@ export default function About() {
           </div>
         </section>
 
-        {/* Leadership Team */}
         <section>
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="font-heading font-black text-3xl md:text-4xl text-white mb-3">
