@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/common/Header';
@@ -324,9 +324,43 @@ const FAQS = [
   }
 ];
 
+
+const HERO_BG_IMAGES = [
+  {
+    url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1920&q=80',
+    title: 'Minimalist Editorial Portfolio'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=80',
+    title: 'Spatial UI & Fintech OS'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1920&q=80',
+    title: 'Distributed Cloud Architecture'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80',
+    title: 'WebGL & Creative Direction'
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80',
+    title: 'Global Studio & Agency Design'
+  }
+];
+
 export default function Home() {
   const [activePersonaIdx, setActivePersonaIdx] = useState(0);
   const [openFaqIdx, setOpenFaqIdx] = useState(null);
+  const [bgMode, setBgMode] = useState('video'); // 'video' | 'slideshow'
+  const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
+
+  useEffect(() => {
+    if (bgMode !== 'slideshow') return;
+    const interval = setInterval(() => {
+      setCurrentSlideIdx((prev) => (prev + 1) % HERO_BG_IMAGES.length);
+    }, 4500);
+    return () => clearInterval(interval);
+  }, [bgMode]);
   const activePersona = HERO_PERSONAS[activePersonaIdx];
 
   const toggleFaq = (idx) => {
@@ -338,9 +372,36 @@ export default function Home() {
       <Header />
 
       <section className="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Hero Dynamic Background: Looping Video or Cycling Portfolio Images */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
+          {bgMode === 'video' ? (
+            <video
+              key="hero-video-bg"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover opacity-25 scale-105 filter blur-[0.4px] transition-opacity duration-1000"
+              src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-with-graphs-and-data-31913-large.mp4"
+            />
+          ) : (
+            <div className="absolute inset-0 transition-all duration-1000">
+              <img
+                key={currentSlideIdx}
+                src={HERO_BG_IMAGES[currentSlideIdx].url}
+                alt={HERO_BG_IMAGES[currentSlideIdx].title}
+                className="w-full h-full object-cover opacity-30 scale-105 animate-pulse transition-all duration-1000 filter blur-[0.5px]"
+              />
+            </div>
+          )}
+
+          {/* Contrast & Depth Overlays */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/70 to-slate-950" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#020617_90%)]" />
+
+          {/* Dynamic persona atmosphere glow */}
           <div
-            className="absolute top-12 left-1/2 -translate-x-1/2 w-[850px] h-[500px] rounded-full blur-[150px] transition-colors duration-700 opacity-25"
+            className="absolute top-12 left-1/2 -translate-x-1/2 w-[850px] h-[500px] rounded-full blur-[150px] transition-colors duration-700 opacity-20"
             style={{ backgroundColor: activePersona.accent }}
           />
           <div
@@ -350,15 +411,6 @@ export default function Home() {
           <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[120px]" />
         </div>
 
-        <div
-          className="absolute inset-0 opacity-[0.025] pointer-events-none"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
-            backgroundSize: '64px 64px'
-          }}
-        />
-
         <div className="relative z-10 max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -366,6 +418,34 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto mb-14"
           >
+            {/* Background Style Switcher */}
+            <div className="flex items-center justify-center gap-2 mb-5">
+              <div className="inline-flex items-center p-1 rounded-full glass border border-white/10 text-[11px] font-semibold text-slate-400 shadow-lg">
+                <button
+                  type="button"
+                  onClick={() => setBgMode('video')}
+                  className={`px-3 py-1 rounded-full transition flex items-center gap-1.5 ${
+                    bgMode === 'video'
+                      ? 'bg-indigo-500 text-white font-bold shadow'
+                      : 'hover:text-white'
+                  }`}
+                >
+                  <span>🎥 Video Background</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBgMode('slideshow')}
+                  className={`px-3 py-1 rounded-full transition flex items-center gap-1.5 ${
+                    bgMode === 'slideshow'
+                      ? 'bg-indigo-500 text-white font-bold shadow'
+                      : 'hover:text-white'
+                  }`}
+                >
+                  <span>🖼️ Changing Portfolios</span>
+                </button>
+              </div>
+            </div>
+
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-7 shadow-lg">
               <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[10px] font-black uppercase tracking-wider">
                 NEW
