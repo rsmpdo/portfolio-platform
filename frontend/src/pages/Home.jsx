@@ -1147,7 +1147,7 @@ export default function Home() {
                   'Real-Time Visitor Traffic Analytics',
                   'Custom Portfolio Handle per Layout'
                 ],
-                ctaText: 'Explore Pro Creator',
+                ctaText: 'Purchase Pro Creator',
                 ctaLink: '/pricing',
                 popular: true
               },
@@ -1167,7 +1167,7 @@ export default function Home() {
                   'Interactive 3D Spline WebGL Scenes',
                   'Full White-Label Branding Removal'
                 ],
-                ctaText: 'Explore Studio Plan',
+                ctaText: 'Purchase Studio Plan',
                 ctaLink: '/pricing',
                 popular: false
               }
