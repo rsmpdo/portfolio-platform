@@ -1,12 +1,12 @@
 # CRUD Functionalities & Operations Manual
 
-**Course:** EC4307 Web Application Development Mini Project  
+**Course:** EE4207 Web Application Development Mini Project  
 **Evaluation Rubric Alignment:**  
-- **Create (4 Marks):** Adding new records through forms  
-- **Read (4 Marks):** Listing, viewing details, search, filter, and sort  
-- **Update (4 Marks):** Editing existing records  
-- **Delete (4 Marks):** Removing records safely with safeguards  
-- **Validation & Error Handling (2 Marks):** Client & server-side validation, error states  
+- **Create :** Adding new records through forms  
+- **Read :** Listing, viewing details, search, filter, and sort  
+- **Update :** Editing existing records  
+- **Delete :** Removing records safely with safeguards  
+- **Validation & Error Handling :** Client & server-side validation, error states  
 
 ---
 
@@ -25,7 +25,7 @@ PortfolioCraft implements full, persistent CRUD operations across multiple inter
 
 ---
 
-## 2. CREATE Operations (Rubric: 4 Marks)
+## 2. CREATE Operations
 *Assessment: Adding new records persistently through validated forms.*
 
 ### 2.1. Creating a New Portfolio Layout
@@ -81,7 +81,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), async (req, r
 
 ---
 
-## 3. READ Operations (Rubric: 4 Marks)
+## 3. READ Operations
 *Assessment: Listing records, viewing details, searching, filtering, and sorting.*
 
 ### 3.1. Public Portfolio Retrieval by Unique Handle
@@ -112,7 +112,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), async (req, r
 
 ---
 
-## 4. UPDATE Operations (Rubric: 4 Marks)
+## 4. UPDATE Operations
 *Assessment: Modifying existing records safely with immediate reflection.*
 
 ### 4.1. Layout CMS Updating (Components, Theme, SEO)
@@ -145,7 +145,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), async (req, r
 
 ---
 
-## 5. DELETE Operations (Rubric: 4 Marks)
+## 5. DELETE Operations
 *Assessment: Removing records safely with safeguards and cascading cleanup.*
 
 ### 5.1. Deleting a Portfolio Layout (With Safety Constraint)
@@ -189,7 +189,7 @@ router.delete('/id/:layoutId', passport.authenticate('jwt', { session: false }),
 
 ---
 
-## 6. Validation and Error Handling (Rubric: 2 Marks)
+## 6. Validation and Error Handling
 
 ### 6.1. Client-Side Validation
 - **Form Validation:** Real-time checking of required fields, valid email structures, minimum password length (6 characters), and URL regex.
