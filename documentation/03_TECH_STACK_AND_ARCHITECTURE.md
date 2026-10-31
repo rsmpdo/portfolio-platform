@@ -118,10 +118,58 @@ The state architecture in `frontend/src/store/` is separated into dedicated doma
 ## 4. Frontend Performance & Code Splitting Optimization
 
 To guarantee sub-second First Contentful Paint (FCP) and smooth page navigation, PortfolioCraft implements **Option A Route-Level Code Splitting**:
-- **Eagerly Loaded Modules:** High-traffic marketing and public pages (`Home`, `About`, `Blog`, `Careers`, `ContactPage`, `Features`, `Pricing`, `Templates`, `Showcase`, `Terms`, `Privacy`) are imported synchronously to guarantee instant page transitions with zero loading delays.
+- **Eagerly Loaded Modules:** High-traffic marketing and public pages (`Home`, `About`, `Blog`, `Careers`, `ContactPage`, `Features`, `Plans`, `Templates`, `Showcase`, `Terms`, `Privacy`) are imported synchronously to guarantee instant page transitions with zero loading delays.
 - **Lazy Loaded Heavy Modules:** Complex application workbenches (`Editor`, `AdminDashboard`, `ProfileSettings`, `PaymentForm`) are dynamically loaded on demand via `React.lazy()` and `Suspense`.
 - **Vite Manual Chunking:** Configured in `vite.config.js` to split vendor dependencies into optimized bundles:
   - `vendor-react` (React, React-DOM, React-Router)
   - `vendor-state` (Redux Toolkit, React-Redux)
   - `vendor-ui` (Framer Motion, Lucide React)
 - **Bundle Size:** Main entry chunk is optimized to ~129 kB gzipped, well within Google Core Web Vitals thresholds.
+
+---
+
+## 5. Security & Two-Factor Authentication Engine Architecture
+
+PortfolioCraft implements an RFC 6238 compliant Time-Based One-Time Password (TOTP) engine in `backend/utils/totp.js`.
+
+```
+                               TWO-PHASE LOGIN WORKFLOW
+                               
+   [User] ──(1) Email & Password──> [POST /api/users/login]
+                                              │
+                                 ┌────────────┴────────────┐
+                         2FA Disabled             2FA Enabled
+                                 │                         │
+                     Issues Final Signed JWT    Issues Temporary Token
+                               (200 OK)         { require2FA: true }
+                                                           │
+   [User] ──(2) 6-Digit TOTP Token─────────────────────────┘
+        ──> [POST /api/users/login/2fa-verify]
+                    │
+            Validates Token
+                    │
+         Issues Final Signed JWT
+                 (200 OK)
+```
+
+### 5.1. RFC 6238 Algorithm Implementation
+1. **Zero External Dependencies:** Built entirely with Node.js built-in `crypto` module:
+   - Secret Generation: `crypto.randomBytes(20)` encoded into RFC 4648 Base32.
+   - Counter Calculation: $T = \lfloor \text{time} / 30 \rfloor$.
+   - HMAC-SHA1: Computes HMAC of 8-byte big-endian counter using decoded Base32 secret.
+   - Dynamic Truncation: Extracts 4 bytes starting at offset (last byte $\&\; 0x0f$), masks with $0x7fffffff$, and applies modulo $10^6$ to derive the 6-digit integer.
+2. **Drift Window Tolerance:** Validates tokens across counter steps $T-1, T, T+1$ (allowing a $\pm 30$-second clock skew).
+3. **Standalone SVG QR Code Generation:** Emits vector SVG matrices directly into `data:image/svg+xml` URLs for instant QR rendering without heavy native canvas packages.
+
+---
+
+## 6. Email Normalization & Production Canonical Routing
+
+To eliminate broken localhost redirects in staging and production environments, PortfolioCraft deploys an outbound URL sanitizer in `backend/utils/emailTemplate.js`:
+- **`normalizeEmailUrl(url)`:** Automatically rewrites any outgoing call-to-action link pointing to `localhost` or `127.0.0.1` to the production canonical domain:
+  `https://portfoliocraftlk.vercel.app`
+- **Branded Transactional Layout:** Delivers dark-mode responsive HTML templates for:
+  - Account email address verification.
+  - Password reset tokens.
+  - Weekly newsletter subscription confirmations.
+  - Inbound contact inquiries.

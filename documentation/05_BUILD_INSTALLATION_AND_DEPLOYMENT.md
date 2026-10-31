@@ -51,6 +51,9 @@ EMAIL_SERVICE=smtp
 EMAIL_USER=support@portfoliocraft.io
 EMAIL_PASS=your_email_password_or_api_key
 EMAIL_FROM="PortfolioCraft <support@portfoliocraft.io>"
+
+# Client Domain (Canonical production URL for outgoing emails)
+CLIENT_URL=https://portfoliocraftlk.vercel.app
 ```
 
 ### 2.2. Frontend Environment Setup (`frontend/.env`)

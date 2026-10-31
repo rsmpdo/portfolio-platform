@@ -16,12 +16,12 @@ PortfolioCraft implements full, persistent CRUD operations across multiple inter
 
 | Entity / Collection | Primary Role | CRUD Operations Supported |
 | :--- | :--- | :--- |
-| **`layouts`** *(Main Entity)* | Stores visual portfolio layouts, dynamic component arrays, themes, and analytics | **Full CRUD:** Create layout, Read public/private, Update components & theme, Delete layout |
-| **`users`** | Creator accounts, credentials, plans, roles, and profiles | **Full CRUD:** Register, Read profile, Update account/settings, Cascading Delete |
+| **`layouts`** *(Main Entity)* | Stores visual portfolio layouts, polymorphic component arrays, themes, and visitor analytics | **Full CRUD:** Create layout, Read public/private, Update components & theme, Delete layout |
+| **`users`** | Creator accounts, credentials, 2FA credentials, plans, roles, avatar, and profiles | **Full CRUD:** Register, Read profile, Update profile/avatar/2FA, Cascading Delete |
 | **`messages`** | Visitor inquiries submitted through portfolio contact forms | **Full CRUD:** Create inquiry, Read inbox/admin log, Delete message record |
 | **`paymentrequests`** | Upgrade slips uploaded for plan verification | **Full CRUD:** Create slip upload, Read pending requests, Update status (Approve/Reject), Delete |
 | **`careerapplications`** | Job applicant resumes and details submitted via `/careers` | **Full CRUD:** Submit application, Read candidate list, Update candidate status, Delete candidate |
-| **`newsletters`** | Email newsletter subscriber lists | **CRUD:** Create subscription, Read subscriber list |
+| **`newsletters`** | Email newsletter subscriber records from Blog | **Full CRUD:** Create subscription, Read subscriber directory, Unsubscribe |
 
 ---
 
@@ -67,6 +67,17 @@ router.post('/', passport.authenticate('jwt', { session: false }), async (req, r
 ### 2.5. Submitting Payment Verification Requests
 - **Endpoint:** `POST /api/payment/submit` (Multipart form-data)
 - **Form:** `PaymentForm.jsx` (National ID number, country, phone, payment slip image)
+
+### 2.6. Generating Two-Factor Authentication Setup Credentials
+- **Endpoint:** `POST /api/users/2fa/setup`
+- **Controller File:** `backend/controllers/userController.js`
+- **Mechanism:** Generates a cryptographic Base32 TOTP secret, stores it temporarily in `user.twoFactorTempSecret`, and produces an SVG QR code data URL alongside 8 emergency recovery codes.
+- **Frontend View:** `ProfileSettings.jsx` modal displaying both the scannable QR code and manual entry secret.
+
+### 2.7. Blog Newsletter Subscription
+- **Endpoint:** `POST /api/newsletter/subscribe`
+- **Form:** `Blog.jsx`
+- **Validation:** Regex email structure validation and duplicate check against the `newsletters` collection. Sends an automated welcome email with normalized production links.
 
 ---
 
@@ -114,10 +125,19 @@ router.post('/', passport.authenticate('jwt', { session: false }), async (req, r
   - **Theme Updating:** Granular hex color changes (`updateTheme`), font family switching (`fontFamily`), and resume download button toggle (`showResumeDownload`).
   - **Publishing State:** Toggle between Draft and Live Published modes (`isPublished`).
 
-### 4.2. User Profile & Account Settings
-- **Endpoint:** `PUT /api/auth/profile`
+### 4.2. User Profile, Avatar Photo & Social Channels
+- **Endpoint:** `PUT /api/users/profile`
 - **Page:** `ProfileSettings.jsx`
-- **Fields Updated:** Full name, professional headline, bio, location, website, GitHub/LinkedIn links, and password.
+- **Fields Updated:** Full name, professional headline, bio, location, personal website, avatar image URL (`avatarUrl` via Cloudinary CDN), modular social channel links, and account password.
+
+### 4.3. Verifying & Enabling Two-Factor Authentication
+- **Endpoint:** `POST /api/users/2fa/verify`
+- **Payload:** `{ token: '123456' }`
+- **Mechanism:** Verifies the 6-digit TOTP token against the temporary secret using `backend/utils/totp.js`. Upon success:
+  1. Sets `user.twoFactorSecret = user.twoFactorTempSecret`.
+  2. Sets `user.twoFactorEnabled = true`.
+  3. Clears `user.twoFactorTempSecret`.
+  4. Hashes and commits emergency backup recovery codes.
 
 ### 4.3. Payment Request Status Updating (Admin Approval)
 - **Endpoint:** `PUT /api/admin/payment-request/:id/approve`
@@ -150,7 +170,12 @@ router.delete('/id/:layoutId', passport.authenticate('jwt', { session: false }),
 - **Redux Action:** `removeComponent(componentId)`
 - **Safety Safeguard:** User is prompted with a confirmation dialog before removal; state can be instantly restored using **Undo (`Ctrl + Z`)**.
 
-### 5.3. Cascading User Account Deletion (GDPR "Right to be Forgotten")
+### 5.3. Disabling Two-Factor Authentication
+- **Endpoint:** `POST /api/users/2fa/disable`
+- **Payload:** `{ password: 'userCurrentPassword' }`
+- **Safeguard:** Re-verifies user's active password using `bcrypt.compare` before unsetting `twoFactorSecret` and setting `twoFactorEnabled = false`.
+
+### 5.4. Cascading User Account Deletion (GDPR "Right to be Forgotten")
 - **Endpoint:** `POST /api/auth/delete-account`
 - **Safety Safeguard:** Requires user to re-enter their current password for authorization.
 - **Cascading Cleanup:** Safely deletes:

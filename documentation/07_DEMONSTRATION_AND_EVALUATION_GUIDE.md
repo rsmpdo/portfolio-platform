@@ -19,7 +19,7 @@
 ### Segment 1: Introduction & High-Level Architecture (0:00 – 0:50)
 - **Webcam:** State your name, index number, and project title: *"Hello, I am [Your Name], presenting PortfolioCraft for EC4307 Web Application Development."*
 - **Screen:** Show the Homepage (`/`), pointing out the MERN stack architecture, dynamic theme preview, and responsive navigation.
-- **Showcase & Templates:** Click **Templates** (`/templates`), demonstrate category filtering, and click **Live Preview** on a template. Then show **Showcase** (`/showcase`) to demonstrate public portfolio rendering at `/p/alex-morgan`.
+- **Showcase & Templates:** Click **Templates** (`/templates`), demonstrate category filtering and live previews. Show **Plans** (`/plans`) detailing the 3 transparent creator tiers, and show **Showcase** (`/showcase`) to demonstrate public portfolio rendering at `/p/alex-morgan`.
 
 ---
 
@@ -64,11 +64,12 @@
 
 ---
 
-### Segment 5: Security, Code Quality & Conclusion (4:15 – 4:45)
-- **Code Highlights:** Briefly show VS Code:
-  - `backend/models/User.js`: Bcrypt hashing with 10 salt rounds.
-  - `backend/routes/auth.js`: Rate limiting on auth endpoints.
-  - `backend/routes/layout.js`: Layout CRUD and cookieless visitor analytics.
+### Segment 5: Security, 2FA & Defense Conclusion (4:15 – 4:45)
+- **Account Security & 2FA:** Show `/settings` ("Account Security & Password"). Point out the **Authenticator App 2FA** setup with interactive QR code generator and recovery code safeguards.
+- **Code Highlights:** Briefly show in IDE:
+  - `backend/utils/totp.js`: RFC 6238 TOTP engine built natively with Node `crypto` (zero dependencies).
+  - `backend/models/User.js`: Bcrypt password hashing, 2FA secret protection (`select: false`).
+  - `backend/routes/auth.js`: Rate limiting and two-phase login challenge.
 - **Wrap-up:** *"Thank you for your time and evaluation."*
 
 ---
@@ -77,7 +78,7 @@
 
 | Criterion | Marks | Evidence in Project Codebase |
 | :--- | :---: | :--- |
-| **Create** | **4 / 4** | • Layout creation: `POST /api/layouts`<br>• Component addition in `EditorSidebar.jsx`<br>• User registration: `POST /api/auth/register`<br>• Contact messages: `POST /api/messages`<br>• Payment slips: `POST /api/payment/submit` |
+| **Create** | **4 / 4** | • Layout creation: `POST /api/layouts`<br>• Component addition in `EditorSidebar.jsx`<br>• User registration: `POST /api/auth/register`<br>• Contact messages: `POST /api/messages`<br>• Payment slips: `POST /api/payment/submit`<br>• 2FA secret generation: `POST /api/users/2fa/setup`<br>• Blog newsletter subscribe: `POST /api/newsletter/subscribe` |
 | **Read** | **4 / 4** | • Public portfolio handle resolution: `GET /api/layouts/public/:handle`<br>• Template explorer with category filters (`Templates.jsx`)<br>• Showcase gallery search and tag filtering (`Showcase.jsx`)<br>• Admin dashboard data tables (`AdminDashboard.jsx`) |
 | **Update** | **4 / 4** | • Live component editing & reordering: `PUT /api/layouts/:id`<br>• Theme token and font family customization (`updateTheme`)<br>• User profile settings: `PUT /api/auth/profile`<br>• Admin payment approval: `PUT /api/admin/payment-request/:id/approve` |
 | **Delete** | **4 / 4** | • Safe portfolio deletion with count guard: `DELETE /api/layouts/id/:layoutId`<br>• Component deletion with Undo safety (`removeComponent`)<br>• Cascading account deletion: `POST /api/auth/delete-account`<br>• Admin message/career deletion endpoints |

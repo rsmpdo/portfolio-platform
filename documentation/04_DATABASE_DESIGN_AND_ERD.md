@@ -41,6 +41,11 @@ erDiagram
         string website
         string github
         string linkedin
+        string avatarUrl "Cloudinary profile image URL"
+        boolean twoFactorEnabled "Default: false"
+        string twoFactorSecret "TOTP secret, select: false"
+        string twoFactorTempSecret "Setup cache, select: false"
+        array twoFactorRecoveryCodes "Hashed backup codes"
         date createdAt
         date updatedAt
     }
@@ -131,6 +136,11 @@ erDiagram
 | `location` | `String` | Optional, Default: `''` | City, Country or Remote status |
 | `github` | `String` | Optional, Default: `''` | GitHub profile URL |
 | `linkedin` | `String` | Optional, Default: `''` | LinkedIn profile URL |
+| `avatarUrl` | `String` | Optional, Default: `''` | Cloudinary CDN URL for user profile picture |
+| `twoFactorEnabled` | `Boolean` | Default: `false` | Status indicator for RFC 6238 TOTP authentication |
+| `twoFactorSecret` | `String` | Optional, `select: false` | Base32 TOTP secret key (hidden from standard queries) |
+| `twoFactorTempSecret` | `String` | Optional, `select: false` | Temporary cache key during 2FA setup flow |
+| `twoFactorRecoveryCodes` | `Array` | Optional, `select: false` | Array of hashed backup recovery codes |
 | `createdAt` | `Date` | Timestamp, Auto-generated | Account creation date |
 | `updatedAt` | `Date` | Timestamp, Auto-generated | Last account modification timestamp |
 
