@@ -1,8 +1,8 @@
 # UI/UX Design System & Responsiveness Specifications
 
-**Course:** EC4307 Web Application Development Mini Project  
-**Author:** Ranaweerage Shashika Madhusankha Priyanath  
-**Evaluation Rubric Alignment:** UI/UX & Responsiveness - Layout, navigation, consistency, mobile support (2 Marks)  
+**Course:** EE4207 Web Application Development Mini Project  
+**Author:** Priyanath  R.S.M.  
+**Evaluation Criteria:** UI/UX & Responsiveness - Layout, navigation, consistency, mobile support 
 
 ---
 
