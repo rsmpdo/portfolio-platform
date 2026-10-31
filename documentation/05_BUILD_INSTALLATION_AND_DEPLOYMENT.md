@@ -1,7 +1,7 @@
 # Build, Installation & Deployment Guide
 
-**Course:** EC4307 Web Application Development Mini Project  
-**Author:** Ranaweerage Shashika Madhusankha Priyanath  
+**Course:** EE4207 Web Application Development Mini Project  
+**Author:** Priyanath R.S.M.  
 **Application Title:** PortfolioCraft  
 
 ---
