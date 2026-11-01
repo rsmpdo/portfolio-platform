@@ -36,4 +36,4 @@ This directory contains the complete technical documentation, architecture speci
 - [x] **UI/UX & Responsiveness:** Dark glassmorphism, full-width fixed header with explicit Sign Out indicator, responsive navigation drawer and in-editor device viewport switcher (Desktop, Tablet, Mobile).
 - [x] **Creator Plans & Outbound Pipeline:** 3 creator tiers (`/pricing` & `/plans`), Cloudinary CDN media uploads, and email template domain normalization.
 - [x] **Documentation:** 8 comprehensive, dedicated documentation guides covering all required rubrics.
-- [x] **Demonstration Video Preparation:** 5-minute timed script.
+- [x] **Demonstration Video Preparation:** 5-minute video recording.
