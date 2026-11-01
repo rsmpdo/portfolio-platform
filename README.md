@@ -559,6 +559,7 @@ No variables required: the API base is the relative path `/api` (Vite proxy in d
 | Public portfolio | ![Portfolio](documentation/Screenshots/portfolio.png) |
 | Profile and 2FA | ![Profile](documentation/Screenshots/profile.png) |
 | Admin dashboard | ![Admin](documentation/Screenshots/admin.png) |
+| Mobile view | ![mobile](documentation/Screenshots/mobile-view.jpeg) |
 
 ---
 
