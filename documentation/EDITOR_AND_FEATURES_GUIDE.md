@@ -1,4 +1,4 @@
-# 08. Visual Portfolio Editor & Feature Tier Reference
+# Visual Portfolio Editor & Feature Tier Reference
 
 This document covers the architecture, workspace layout, tools, and plan-based feature availability of the PortfolioCraft Visual Editor (`/editor`). All editor logic is implemented across `frontend/src/pages/Editor.jsx`, `frontend/src/components/editor/EditorSidebar.jsx`, `frontend/src/components/editor/ComponentInspector.jsx`, `frontend/src/store/layoutSlice.js`, and `backend/routes/layout.js`.
 
