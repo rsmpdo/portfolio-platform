@@ -3,8 +3,8 @@
 A full-stack **MERN** web application where users build, theme, publish and track their own portfolio websites using a visual, section-based CMS editor. Every portfolio is stored as flexible JSON in MongoDB and served on a public URL (`/p/<handle>`).
 
 > **EE4207 Web Application Development: Mini Project**
-> Author: Priyanath R.S.M.
-> Faculty of Engineering, University of Ruhuna
+> > Author: Priyanath R.S.M.
+> > > Faculty of Engineering, University of Ruhuna
 
 | | |
 |---|---|
