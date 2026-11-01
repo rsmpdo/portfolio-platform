@@ -9,7 +9,7 @@ A full-stack **MERN** web application where users build, theme, publish and trac
 | | |
 |---|---|
 | **Live deployment** | [Open Live Site](https://portfoliocraftlk.vercel.app) |
-| **Sample Published Portfolio** | [View Portfolio Sample](https://portfoliocraftlk.vercel.app/p/lucia) |
+| **Sample Published Portfolio** | [View Sample Portfolio](https://portfoliocraftlk.vercel.app/p/lucia) |
 | **Demo video** | [Watch on Google Drive](https://drive.google.com/drive/folders/1ZCyJ2a7vWsZ2wUb7fakrdUYzLm9xqYc?usp=drive_link) |
 
 ---
