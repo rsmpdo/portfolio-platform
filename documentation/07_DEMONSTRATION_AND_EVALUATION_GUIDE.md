@@ -9,7 +9,7 @@
 
 ## 1. 5-Minute Demonstration Video
 
-Demonstration Video : `<link>`
+Demonstration Video : `https://drive.google.com/drive/folders/1ZCyJ2a7vWSz2zwUb7fakrdUYzLm9xqYc?usp=sharing`
 
 ---
 
