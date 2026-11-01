@@ -575,7 +575,25 @@ export default function EditorSidebar({ accentColor = '#6366f1', templateLabel =
                 <span className="text-slate-400 text-[11px]">Switch preset:</span>
                 <select
                   value={activeLayout.theme?.templateId || 'minimalist-editorial'}
-                  onChange={(e) => dispatch(applyTemplate(e.target.value))}
+                  onChange={(e) => {
+  const selected = e.target.value;
+  const freeTemplates = ['minimalist-editorial','dark-cyber','creative-director','interactive-showcase'];
+  const proTemplates = ['luxury-motion-pro','fintech-saas-pro','ai-neural-labs-pro'];
+  const studioTemplates = ['global-agency-studio','haute-couture-studio','spatial-architect-studio'];
+  const allowed =
+    freeTemplates.includes(selected) ||
+    (isProOrStudio && proTemplates.includes(selected)) ||
+    (isStudioPlan && studioTemplates.includes(selected));
+  if (!allowed) {
+    setUpgradeModalInfo({
+      title: 'Upgrade required',
+      message: `The "${selected}" template is available on a higher tier. Please upgrade your plan to use it.`,
+      targetPlan: proTemplates.includes(selected) ? 'pro' : 'studio',
+    });
+    return;
+  }
+  dispatch(applyTemplate(selected));
+}}
                   className="bg-slate-900 text-xs font-semibold text-white border border-white/15 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:border-indigo-500"
                 >
                   <option value="minimalist-editorial">Minimalist Editorial</option>

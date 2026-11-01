@@ -26,7 +26,7 @@ This directory contains the complete technical documentation, architecture speci
 ## Submission Checklist Summary
 
 - [x] **Full CRUD on Main Entity (`Layouts`):**
-  - **Create:** Generating new layouts, adding 11 component types via forms.
+  - **Create:** Generating new layouts, adding 12 component types via forms.
   - **Read:** Public `/p/:handle` portfolio viewer, template explorer, showcase search and filters.
   - **Update:** Drag-and-drop component reordering, live prop editing, theme tokens, typography and publishing state.
   - **Delete:** Safely deleting layouts (with constraint preventing deletion of user's only portfolio), removing sections (with Undo support), cascading account deletion.
@@ -34,6 +34,6 @@ This directory contains the complete technical documentation, architecture speci
 - [x] **Validation & Error Handling:** Client-side forms + server-side Mongoose schema validation + `express-rate-limit` on authentication endpoints.
 - [x] **Database Design:** MongoDB collections with primary/foreign keys, schema-less polymorphic components, indexes, and full ERD diagram.
 - [x] **UI/UX & Responsiveness:** Dark glassmorphism, full-width fixed header with explicit Sign Out indicator, responsive navigation drawer and in-editor device viewport switcher (Desktop, Tablet, Mobile).
-- [x] **Creator Plans & Outbound Pipeline:** 3 creator tiers (`/plans`), Cloudinary CDN media uploads, and email template domain normalization.
-- [x] **Documentation:** 7 comprehensive, dedicated documentation guides covering all required rubrics.
+- [x] **Creator Plans & Outbound Pipeline:** 3 creator tiers (`/pricing` & `/plans`), Cloudinary CDN media uploads, and email template domain normalization.
+- [x] **Documentation:** 8 comprehensive, dedicated documentation guides covering all required rubrics.
 - [x] **Demonstration Video Preparation:** 5-minute timed script.
